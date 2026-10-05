@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "token-prediction": {
+      "command": "python",
+      "args": ["-m", "token_prediction.mcp"],
+      "env_vars": ["TOKEN_PREDICTION_MODEL", "TOKEN_PREDICTION_DATA"]
+    }
+  }
+}

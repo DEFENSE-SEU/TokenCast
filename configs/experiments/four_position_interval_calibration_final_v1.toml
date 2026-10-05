@@ -1,0 +1,304 @@
+config_id = "four-position-interval-calibration-final-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.six_full]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+
+[feature_sets.call_start_ours]
+include_all = false
+include_subgroups = ["current_progress", "token_history", "progress_change"]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.in_call_ours_clock]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "prefix_closure",
+  "session_recall",
+  "stream_clock",
+]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.task_update_ours]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "lightgbm_six_full"
+estimator = "lightgbm_quantile"
+feature_set = "six_full"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "call_start_ours"
+estimator = "lightgbm_quantile"
+feature_set = "call_start_ours"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "in_call_ours_clock"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_ours_clock"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "task_update_ours"
+estimator = "lightgbm_quantile"
+feature_set = "task_update_ours"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+
+[[experiments]]
+id = "task_initialization__point"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "lightgbm_six_full"]
+calibrator = "point_conformal"
+
+[[experiments]]
+id = "task_initialization__task_max"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "lightgbm_six_full"]
+calibrator = "task_max_conformal"
+
+[[experiments]]
+id = "task_initialization__task_max_width_scaled"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "lightgbm_six_full"]
+calibrator = "task_max_width_scaled_conformal"
+
+[[experiments]]
+id = "task_initialization__magnitude_bin"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "lightgbm_six_full"]
+calibrator = "magnitude_bin_conformal"
+
+
+[[experiments]]
+id = "call_start__point"
+position = "call_pre"
+target = "call_billable_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "call_start_ours"]
+calibrator = "point_conformal"
+
+[[experiments]]
+id = "call_start__task_max"
+position = "call_pre"
+target = "call_billable_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "call_start_ours"]
+calibrator = "task_max_conformal"
+
+[[experiments]]
+id = "call_start__task_max_width_scaled"
+position = "call_pre"
+target = "call_billable_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "call_start_ours"]
+calibrator = "task_max_width_scaled_conformal"
+
+[[experiments]]
+id = "call_start__magnitude_bin"
+position = "call_pre"
+target = "call_billable_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "call_start_ours"]
+calibrator = "magnitude_bin_conformal"
+
+
+[[experiments]]
+id = "in_call_billed__point"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+required_features = ["observer_committed_tokens"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "in_call_ours_clock"]
+calibrator = "point_conformal"
+
+[[experiments]]
+id = "in_call_billed__task_max"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+required_features = ["observer_committed_tokens"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "in_call_ours_clock"]
+calibrator = "task_max_conformal"
+
+[[experiments]]
+id = "in_call_billed__task_max_width_scaled"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+required_features = ["observer_committed_tokens"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "in_call_ours_clock"]
+calibrator = "task_max_width_scaled_conformal"
+
+[[experiments]]
+id = "in_call_billed__magnitude_bin"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+required_features = ["observer_committed_tokens"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "in_call_ours_clock"]
+calibrator = "magnitude_bin_conformal"
+
+
+[[experiments]]
+id = "task_update__point"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "task_update_ours"]
+calibrator = "point_conformal"
+
+[[experiments]]
+id = "task_update__task_max"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "task_update_ours"]
+calibrator = "task_max_conformal"
+
+[[experiments]]
+id = "task_update__task_max_width_scaled"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "task_update_ours"]
+calibrator = "task_max_width_scaled_conformal"
+
+[[experiments]]
+id = "task_update__magnitude_bin"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical_quantile", "task_update_ours"]
+calibrator = "magnitude_bin_conformal"

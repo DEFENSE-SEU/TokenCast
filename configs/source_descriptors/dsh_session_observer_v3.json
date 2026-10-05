@@ -1,0 +1,27 @@
+{
+  "descriptor_schema_version": 2,
+  "descriptor_id": "source-descriptor:v2:dsh_session_observer_v3:dsh-observer-v3-reader-v2",
+  "source_id": "dsh_session_observer_v3",
+  "revision": "dsh-observer-v3-reader-v2",
+  "manifest_path": "configs/collection/dsh_p1_rollout_v1.json",
+  "capabilities": {
+    "capability_profile_id": "capability-profile:v1:dsh_session_observer_v3:declared:attempt_boundaries+attempt_usage+call_usage+observer_generation_byte_accounting+observer_token_accounting+output_deltas+request_boundaries+request_local_count+task_aggregate_usage+task_termination+task_text+task_usage+tool_events",
+    "source_id": "dsh_session_observer_v3",
+    "source": "declared",
+    "observables": [
+      "attempt_boundaries",
+      "attempt_usage",
+      "call_usage",
+      "observer_generation_byte_accounting",
+      "observer_token_accounting",
+      "output_deltas",
+      "request_boundaries",
+      "request_local_count",
+      "task_aggregate_usage",
+      "task_termination",
+      "task_text",
+      "task_usage",
+      "tool_events"
+    ]
+  }
+}

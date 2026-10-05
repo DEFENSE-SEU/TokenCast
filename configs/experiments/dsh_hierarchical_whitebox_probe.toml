@@ -1,0 +1,89 @@
+config_id = "dsh-hierarchical-whitebox-probe-v2"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_probe_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_probe_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.blackbox]
+include_all = true
+exclude_subgroups = ["raw_text", "context_text", "entropy_stop", "hidden_state", "stream_clock"]
+
+[feature_sets.hidden_probe]
+include_all = true
+exclude_subgroups = ["raw_text", "context_text", "entropy_stop", "stream_clock"]
+
+[[candidates]]
+id = "generation_residual_blackbox"
+estimator = "independent_mlp"
+feature_set = "blackbox"
+role = "model"
+
+[candidates.params]
+hidden_dims = [128, 64]
+learning_rate = 0.001
+weight_decay = 0.0001
+max_epochs = 100
+patience = 12
+output_transform = "attempt_accounting_residual"
+residual_scale = 1.0
+training_device = "cpu"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "independent_mlp"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[candidates]]
+id = "generation_residual_hidden"
+estimator = "independent_mlp"
+feature_set = "hidden_probe"
+role = "ablation"
+
+[candidates.params]
+hidden_dims = [128, 64]
+learning_rate = 0.001
+weight_decay = 0.0001
+max_epochs = 100
+patience = 12
+output_transform = "attempt_accounting_residual"
+residual_scale = 1.0
+training_device = "cpu"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "independent_mlp"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[candidates.ablation]
+reference_candidate_id = "generation_residual_blackbox"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[experiments]]
+id = "generation_hidden_probe"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["generation_residual_blackbox", "generation_residual_hidden"]
+required_features = ["hidden_state_projection"]

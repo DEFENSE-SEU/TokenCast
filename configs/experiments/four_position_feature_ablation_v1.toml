@@ -1,0 +1,440 @@
+config_id = "four-position-feature-ablation-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.task_length]
+include_all = false
+include_features = ["task_char_count"]
+
+[feature_sets.current_blackbox]
+include_all = true
+exclude_subgroups = [
+  "raw_text",
+  "context_text",
+  "entropy_stop",
+  "hidden_state",
+  "action_history",
+  "progress_state",
+  "token_history",
+  "progress_delta",
+  "stream_clock",
+]
+exclude_features = [
+  "task_difficulty",
+  "task_difficulty_ordinal",
+  "task_issue_char_count",
+  "task_issue_word_count",
+  "task_list_item_count",
+  "task_inline_code_count",
+  "initial_tool_count",
+  "cumulative_provider_reasoning_tokens",
+  "last_call_failed_attempts",
+  "last_call_retry_count",
+  "recent_call_failure_rate_5",
+  "recent_call_failure_rate_10",
+  "recent_tool_failure_rate_5",
+  "recent_tool_failure_rate_10",
+  "recent_usage_missing_rate_5",
+  "recent_usage_missing_rate_10",
+  "consecutive_failed_calls",
+  "consecutive_retry_calls",
+  "consecutive_no_progress_calls",
+  "observer_committed_change",
+]
+
+[feature_sets.six_full]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.without_initial_info]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.without_cumulative_history]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.without_current_progress]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.without_failure_stall]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.without_token_history]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "progress_change",
+]
+
+[feature_sets.without_progress_change]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+]
+
+[feature_sets.generation_accounting]
+include_all = false
+include_features = [
+  "attempt_accounting_prior_q05",
+  "attempt_accounting_prior_q50",
+  "attempt_accounting_prior_q95",
+]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "task_text_length"
+estimator = "length_only"
+feature_set = "task_length"
+role = "baseline"
+
+[candidates.params]
+feature_name = "task_char_count"
+alpha = 0.10
+
+[[candidates]]
+id = "lightgbm_current"
+estimator = "lightgbm_quantile"
+feature_set = "current_blackbox"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "lightgbm_six_full"
+estimator = "lightgbm_quantile"
+feature_set = "six_full"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "lightgbm_without_initial_info"
+estimator = "lightgbm_quantile"
+feature_set = "without_initial_info"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_six_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "lightgbm_without_cumulative_history"
+estimator = "lightgbm_quantile"
+feature_set = "without_cumulative_history"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_six_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "lightgbm_without_current_progress"
+estimator = "lightgbm_quantile"
+feature_set = "without_current_progress"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_six_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "lightgbm_without_failure_stall"
+estimator = "lightgbm_quantile"
+feature_set = "without_failure_stall"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_six_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "lightgbm_without_token_history"
+estimator = "lightgbm_quantile"
+feature_set = "without_token_history"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_six_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "lightgbm_without_progress_change"
+estimator = "lightgbm_quantile"
+feature_set = "without_progress_change"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_six_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "generation_accounting_prior"
+estimator = "quantile_features"
+feature_set = "generation_accounting"
+role = "baseline"
+
+[candidates.params]
+lower_feature = "attempt_accounting_prior_q05"
+point_feature = "attempt_accounting_prior_q50"
+upper_feature = "attempt_accounting_prior_q95"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "quantile_features"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[candidates]]
+id = "task_deduct"
+estimator = "cross_position_deduct"
+feature_set = "current_blackbox"
+role = "baseline"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "cross_position_deduct"
+lifecycle_schema = "task_lifecycle_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = [
+  "empirical_quantile",
+  "task_text_length",
+  "lightgbm_current",
+  "lightgbm_six_full",
+  "lightgbm_without_initial_info",
+  "lightgbm_without_cumulative_history",
+  "lightgbm_without_current_progress",
+  "lightgbm_without_failure_stall",
+  "lightgbm_without_token_history",
+  "lightgbm_without_progress_change",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "task_text_length",
+  "lightgbm_current",
+  "lightgbm_six_full",
+  "lightgbm_without_initial_info",
+  "lightgbm_without_cumulative_history",
+  "lightgbm_without_current_progress",
+  "lightgbm_without_failure_stall",
+  "lightgbm_without_token_history",
+  "lightgbm_without_progress_change",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "generation_accounting_prior",
+  "lightgbm_current",
+  "lightgbm_six_full",
+  "lightgbm_without_initial_info",
+  "lightgbm_without_cumulative_history",
+  "lightgbm_without_current_progress",
+  "lightgbm_without_failure_stall",
+  "lightgbm_without_token_history",
+  "lightgbm_without_progress_change",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = [
+  "empirical_quantile",
+  "task_deduct",
+  "lightgbm_current",
+  "lightgbm_six_full",
+  "lightgbm_without_initial_info",
+  "lightgbm_without_cumulative_history",
+  "lightgbm_without_current_progress",
+  "lightgbm_without_failure_stall",
+  "lightgbm_without_token_history",
+  "lightgbm_without_progress_change",
+]

@@ -1,0 +1,157 @@
+config_id = "four-position-task-retrieval-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "point_conformal"
+
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.five_full]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+
+[feature_sets.five_full_task_text]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+include_features = ["task_embedding"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "five_full"
+estimator = "lightgbm_quantile"
+feature_set = "five_full"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "five_full_task_raw"
+estimator = "lightgbm_quantile"
+feature_set = "five_full_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "five_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "five_full_task_retrieval"
+estimator = "lightgbm_quantile"
+feature_set = "five_full_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+
+[candidates.ablation]
+reference_candidate_id = "five_full"
+axis = "method"
+allowed_config_paths = [
+  "feature_set",
+  "params.retrieval_neighbors",
+  "params.retrieval_feature",
+  "params.retrieval_drop_source",
+]
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = ["empirical_quantile", "five_full", "five_full_task_raw", "five_full_task_retrieval"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = ["empirical_quantile", "five_full", "five_full_task_raw", "five_full_task_retrieval"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "five_full", "five_full_task_raw", "five_full_task_retrieval"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "observer:utf8-bytes-v1"
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = ["empirical_quantile", "five_full", "five_full_task_raw", "five_full_task_retrieval"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"

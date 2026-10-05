@@ -1,0 +1,199 @@
+config_id = "four-position-interval-calibration-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.five_full]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "lightgbm_five_full"
+estimator = "lightgbm_quantile"
+feature_set = "five_full"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[experiments]]
+id = "task_initialization__task_max"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+
+[[experiments]]
+id = "task_initialization__point"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+calibrator = "point_conformal"
+
+[[experiments]]
+id = "task_initialization__magnitude_bin"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+calibrator = "magnitude_bin_conformal"
+
+[[experiments]]
+id = "task_initialization__task_max_width_scaled"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+calibrator = "task_max_width_scaled_conformal"
+
+[[experiments]]
+id = "call_start__task_max"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+
+[[experiments]]
+id = "call_start__point"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+calibrator = "point_conformal"
+
+[[experiments]]
+id = "call_start__magnitude_bin"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+calibrator = "magnitude_bin_conformal"
+
+[[experiments]]
+id = "call_start__task_max_width_scaled"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+calibrator = "task_max_width_scaled_conformal"
+
+[[experiments]]
+id = "in_call_update__task_max"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "observer:utf8-bytes-v1"
+
+[[experiments]]
+id = "in_call_update__point"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "observer:utf8-bytes-v1"
+calibrator = "point_conformal"
+
+[[experiments]]
+id = "in_call_update__magnitude_bin"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "observer:utf8-bytes-v1"
+calibrator = "magnitude_bin_conformal"
+
+[[experiments]]
+id = "in_call_update__task_max_width_scaled"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "observer:utf8-bytes-v1"
+calibrator = "task_max_width_scaled_conformal"
+
+[[experiments]]
+id = "task_update__task_max"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+
+[[experiments]]
+id = "task_update__point"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+calibrator = "point_conformal"
+
+[[experiments]]
+id = "task_update__magnitude_bin"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+calibrator = "magnitude_bin_conformal"
+
+[[experiments]]
+id = "task_update__task_max_width_scaled"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = ["empirical_quantile", "lightgbm_five_full"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+calibrator = "task_max_width_scaled_conformal"

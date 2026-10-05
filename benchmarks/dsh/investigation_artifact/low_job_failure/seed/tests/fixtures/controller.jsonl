@@ -1,0 +1,2 @@
+{"cause_event_id":"worker-lease","code":"BATCH_ABORTED","event_id":"ctl-wrap","kind":"error"}
+{"code":"QUEUE_BROKER_DOWN","event_id":"ctl-root","kind":"error"}

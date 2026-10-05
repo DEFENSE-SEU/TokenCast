@@ -1,0 +1,165 @@
+config_id = "position-task-retrieval-v2"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "point_conformal"
+
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.in_call_closure_recall]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_closure_recall_task_text]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall"]
+include_features = ["generation_prefix_embedding", "task_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.without_initial_info]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "failure_stall", "token_history", "progress_change"]
+
+[feature_sets.without_initial_info_task_text]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "failure_stall", "token_history", "progress_change"]
+include_features = ["task_embedding"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "in_call_cs"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure_recall"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "in_call_cs_task_retrieval"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure_recall_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+
+[candidates.ablation]
+reference_candidate_id = "in_call_cs"
+axis = "method"
+allowed_config_paths = [
+  "feature_set",
+  "params.retrieval_neighbors",
+  "params.retrieval_feature",
+  "params.retrieval_drop_source",
+]
+
+[[candidates]]
+id = "task_update_selected"
+estimator = "lightgbm_quantile"
+feature_set = "without_initial_info"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "task_update_task_retrieval"
+estimator = "lightgbm_quantile"
+feature_set = "without_initial_info_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+
+[candidates.ablation]
+reference_candidate_id = "task_update_selected"
+axis = "method"
+allowed_config_paths = [
+  "feature_set",
+  "params.retrieval_neighbors",
+  "params.retrieval_feature",
+  "params.retrieval_drop_source",
+]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_cs", "in_call_cs_task_retrieval"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "observer:utf8-bytes-v1"
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = ["empirical_quantile", "task_update_selected", "task_update_task_retrieval"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"

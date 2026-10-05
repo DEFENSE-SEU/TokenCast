@@ -1,0 +1,234 @@
+config_id = "task-update-recent-feature-refinement-v18"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.task_old]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+exclude_features = [
+  "last_call_argument_chars",
+  "last_call_observation_chars",
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.task_content]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.task_action_results]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+exclude_features = [
+  "last_call_argument_chars",
+  "last_call_observation_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.task_result_structure]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+exclude_features = [
+  "last_call_argument_chars",
+  "last_call_observation_chars",
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+]
+
+[feature_sets.task_full]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+
+[[candidates]]
+id = "task_old"
+estimator = "lightgbm_quantile"
+feature_set = "task_old"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "task_content"
+estimator = "lightgbm_quantile"
+feature_set = "task_content"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "task_old"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "task_action_results"
+estimator = "lightgbm_quantile"
+feature_set = "task_action_results"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "task_old"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "task_result_structure"
+estimator = "lightgbm_quantile"
+feature_set = "task_result_structure"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "task_old"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "task_full"
+estimator = "lightgbm_quantile"
+feature_set = "task_full"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "task_old"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = [
+  "task_old",
+  "task_content",
+  "task_action_results",
+  "task_result_structure",
+  "task_full",
+]
+required_features = ["task_char_count"]

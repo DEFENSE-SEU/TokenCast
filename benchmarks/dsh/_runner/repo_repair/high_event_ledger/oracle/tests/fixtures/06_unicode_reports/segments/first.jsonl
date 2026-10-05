@@ -1,0 +1,5 @@
+{"event_id":"unicode-dup","kind":"adjustment","logical_clock":1,"source":"\u62a5\u544a","sequence":1,"sku":"Alpha","quantity":"1.0"}
+{"event_id":"unicode-target","kind":"adjustment","logical_clock":2,"source":"\u62a5\u544a","sequence":2,"sku":"éclair","quantity":"5.00"}
+{"event_id":"unicode-beta","kind":"adjustment","logical_clock":3,"source":"\u62a5\u544a","sequence":3,"sku":"βeta","quantity":"2"}
+{"event_id":"unicode-upper-b","kind":"adjustment","logical_clock":5,"source":"\u62a5\u544a","sequence":5,"sku":"B","quantity":"3"}
+{"event_id":"unicode-lower-a","kind":"adjustment","logical_clock":6,"source":"\u62a5\u544a","sequence":6,"sku":"a","quantity":"4"}

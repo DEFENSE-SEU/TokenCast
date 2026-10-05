@@ -1,0 +1,42 @@
+config_id = "public-trajectory-position-baselines-v2"
+
+[source]
+dataset = "netpreme/coding_agent_traces"
+revision = "d56ae0d0bc80f3663a7a61a38c4ee60c26ce7b67"
+subset = "opus-pro"
+split = "train"
+license = "MIT"
+url = "https://huggingface.co/datasets/netpreme/coding_agent_traces/resolve/d56ae0d0bc80f3663a7a61a38c4ee60c26ce7b67/opus-pro/train-00000-of-00001.parquet"
+local_path = "workspace/external/public_trajectory_validation/source.parquet"
+sha256 = "3071c2ea1b5a8104c0caa6378c9446b02c7c1d7335a00054a59b2ac21e58c0df"
+token_unit_contract_id = "provider-output-token-v1"
+
+[protocol]
+split_seed = 20260901
+bootstrap_seed = 20260902
+final_holdout_fraction = 0.20
+pilot_tasks = 300
+folds = 5
+alpha = 0.10
+bootstrap_iterations = 5000
+min_call_clock_tasks = 10
+
+[model]
+rounds = 240
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+threads = 4
+
+[gru]
+hidden_dim = 32
+learning_rate = 0.01
+max_epochs = 200
+patience = 20
+threads = 4
+
+[output]
+directory = "workspace/experiments/public_trajectory_position_baselines_v2"

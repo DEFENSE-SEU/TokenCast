@@ -1,0 +1,323 @@
+{
+  "schema_version": 1,
+  "manifest_id": "case-study-claude-haiku-v1",
+  "protocol_id": "case-study-bounded-collection-v1",
+  "source_id": "dsh_session_observer_v2",
+  "status": "design_frozen",
+  "collection_authorized": false,
+  "data_role": "protocol_development",
+  "split": "development",
+  "taxonomy": {
+    "task_types": [
+      "repo_repair"
+    ],
+    "difficulty_strata": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "difficulty_policy_id": "static-pre-execution-vector-v1",
+    "vector_fields": {
+      "components": "named components or interfaces involved",
+      "requirements": "independently testable requirements in the frozen task",
+      "input_families": "distinct input families visible at launch",
+      "deliverable_kinds": "code, data, or report artifact kinds requested",
+      "coordination_burden": "0 one localized surface, 1 several named interfaces or artifacts, 2 cross-component or cross-source coordination"
+    },
+    "strata": {
+      "low": "components<=2, requirements<=3, input_families<=2, deliverable_kinds<=2, coordination_burden<=1",
+      "medium": "3<=components<=4, 4<=requirements<=6, 3<=input_families<=4, 1<=deliverable_kinds<=3, coordination_burden=1",
+      "high": "components>=5, requirements>=7, input_families>=5, deliverable_kinds>=2, coordination_burden=2"
+    }
+  },
+  "repeat_ids": [
+    "r1"
+  ],
+  "runtime": {
+    "platform": "windows",
+    "profile": "dsh-headless",
+    "base_profile": "headless",
+    "dsh_cli_version": "0.1.1-rc.2",
+    "headless_integration_version": "0.5.0",
+    "batch_protocol_version": 2,
+    "dsh_components": {
+      "@deepseek-ai/dsh-agent": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-agent-presets": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-agent-loop": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-headless": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm-deepseek": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm-retry": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-checkpoint-policy": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-persistence": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-persistence-jsonl": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-token-meter": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-tools": "0.1.1-rc.2"
+    },
+    "session_persistence": {
+      "compression": "zstd",
+      "pack_chunks": true,
+      "one_live_writer_per_session": true,
+      "write_batch_max_delay_ms": 200
+    },
+    "preset_roster": {
+      "owner": "experiment",
+      "trust": "system",
+      "include_user_root": false
+    },
+    "profile_policy": {
+      "bundle_hmr": false,
+      "user_patch_hot_reload": true,
+      "tools_mode": "native",
+      "bundled_skills": false,
+      "settings_hot_reload": false,
+      "model_title": false,
+      "compaction": false,
+      "web": false,
+      "delegation_workflow": false,
+      "telemetry": false
+    },
+    "hosted_provider": {
+      "provider": "deepseek-official",
+      "exclusive": true,
+      "base_url": "https://api.deepseek.com",
+      "max_tokens": 256000,
+      "default_context_window": 1000000,
+      "stream_idle_timeout_ms": 300000,
+      "models": [
+        {
+          "id": "deepseek-v4-flash",
+          "name": "DeepSeek-V4-Flash",
+          "context_window": 1000000,
+          "max_tokens": 256000,
+          "input_modalities": [
+            "text"
+          ]
+        },
+        {
+          "id": "deepseek-v4-pro",
+          "name": "DeepSeek-V4-Pro",
+          "context_window": 1000000,
+          "max_tokens": 256000,
+          "input_modalities": [
+            "text"
+          ]
+        }
+      ],
+      "native_reasoning_mapping": {
+        "off": {
+          "thinking": "disabled"
+        },
+        "high": {
+          "thinking": "enabled",
+          "reasoning_effort": "high"
+        }
+      },
+      "retry": {
+        "mode": "normal",
+        "max_retries": 0,
+        "retryable_codes": [
+          "EMPTY_RESPONSE",
+          "RATE_LIMIT",
+          "SERVER",
+          "TIMEOUT",
+          "TRANSPORT"
+        ],
+        "initial_delay_ms": 500,
+        "max_delay_ms": 10000,
+        "jitter_ratio": 0
+      }
+    },
+    "max_parallel_tool_calls": 10,
+    "attempt_boundary_contract": "llm-stream-one-provider-attempt-v1",
+    "single_attempt_boundary": true,
+    "composed_profile_preflight_required": true,
+    "boundary_proof_policy_id": "composed-profile-single-send-preflight-v1",
+    "opaque_provider_retry_allowed": false,
+    "max_attempts_per_logical_call": 1
+  },
+  "actor": {
+    "agent_id": "deepseek-harness",
+    "agent_version": "0.1.1-rc.2",
+    "preset_id": "router-standard",
+    "permission_preset": "unrestricted",
+    "sandbox_mode": "danger-full-access",
+    "approval_policy": "never",
+    "tool_surface_id": "router-standard-windows-no-delegation-v1",
+    "allowed_tool_names": [
+      "edit",
+      "glob",
+      "grep",
+      "job_kill",
+      "job_list",
+      "job_output",
+      "pwsh",
+      "read",
+      "skill",
+      "str_replace_editor",
+      "todo_write",
+      "write"
+    ],
+    "system_prompt_policy_id": "router-standard-p0-filtered-v1",
+    "subagents_enabled": false,
+    "turns_per_run": 1
+  },
+  "router": {
+    "router_id": "dsh-router-standard",
+    "router_version": "0.3.0",
+    "mode": "auto",
+    "fallback_allowed": false,
+    "resolved_route_must_equal_configured_route": true,
+    "resolution_recording": [
+      "continuous_mode",
+      "band",
+      "persona_text",
+      "first_request_tool_names",
+      "promoted_tool_names"
+    ]
+  },
+  "observer": {
+    "plugin_id": "@token-prediction/dsh-token-observer",
+    "plugin_version": "0.4.0",
+    "durability_contract_id": "observer-jsonl-fsync-on-session-flush-v1",
+    "checkpoint_interval_bytes": 128,
+    "checkpoint_policy_id": "dsh-text-chunk-at-least-128-utf8-bytes-v1",
+    "observer_unit_contract_id": "observer:utf8-bytes-v1",
+    "observer_tokenizer_id": "utf8-byte-256",
+    "observer_normalization_id": "utf16-to-well-formed-v1",
+    "observer_carry_policy_id": "utf16-high-surrogate-carry-v1",
+    "observer_boundary_policy_id": "dsh-text-delta-chunk-v1",
+    "request_content_ledger": true
+  },
+  "run_policy": {
+    "run_policy_id": "case-study-no-token-call-budget-v1",
+    "fresh_session_per_run": true,
+    "workspace_reset": "fresh_copy",
+    "ledger_write_boundary": "before_workspace_reset",
+    "zero_attempt": "retain_sample_flow_exclude_supervision",
+    "terminal_resume": "validate_and_skip",
+    "pre_provider_interruption_resume": "resume_same_run_preserve_incident_history",
+    "post_provider_interruption_resume": "complete_runner_interrupted_and_continue",
+    "provider_entry_started_recorded": true,
+    "implicit_rerun": false,
+    "parallel_runner_supported": false,
+    "oracle_execution": "after_actor_terminal_under_runner_identity",
+    "target_status_policy_id": "operational-recorded-terminal-v1",
+    "missing_attempt_usage": "terminate_before_next_logical_call",
+    "cap_hit_and_overshoot_recorded": true
+  },
+  "condition_policy": {
+    "requested_effective_match_required": true,
+    "verify_each_logical_call": [
+      "provider",
+      "model",
+      "reasoning_effort",
+      "temperature",
+      "max_tokens",
+      "stop"
+    ],
+    "hosted_provenance_fields": [
+      "collection_started_at",
+      "collection_ended_at"
+    ],
+    "unavailable_hosted_provenance_fields": {
+      "provider_response_model": "unavailable_in_dsh_success_stream",
+      "provider_request_id": "unavailable_in_dsh_success_stream"
+    }
+  },
+  "schedule": {
+    "policy_id": "task-block-rotating-condition-v1",
+    "task_order": [
+      "p0v1-repo-repair-low-catalog-key"
+    ],
+    "condition_order": [
+      "case-claude-haiku-off"
+    ]
+  },
+  "cap_profiles": {
+    "low": {
+      "max_wall_seconds": 3600,
+      "max_logical_calls": null,
+      "max_provider_attempts": null,
+      "max_attempt_output_tokens": 8192,
+      "max_provider_accounted_tokens": null,
+      "token_cap_enforcement": "before_next_logical_call",
+      "max_attempts_per_logical_call": 1
+    },
+    "medium": {
+      "max_wall_seconds": 3600,
+      "max_logical_calls": null,
+      "max_provider_attempts": null,
+      "max_attempt_output_tokens": 8192,
+      "max_provider_accounted_tokens": null,
+      "token_cap_enforcement": "before_next_logical_call",
+      "max_attempts_per_logical_call": 1
+    },
+    "high": {
+      "max_wall_seconds": 3600,
+      "max_logical_calls": null,
+      "max_provider_attempts": null,
+      "max_attempt_output_tokens": 8192,
+      "max_provider_accounted_tokens": null,
+      "token_cap_enforcement": "before_next_logical_call",
+      "max_attempts_per_logical_call": 1
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "p0v1-repo-repair-low-catalog-key",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_vector": {
+        "components": 1,
+        "requirements": 3,
+        "input_families": 2,
+        "deliverable_kinds": 1,
+        "coordination_burden": 0
+      },
+      "task_family_id": "canonical-identity",
+      "title": "Repair canonical catalog lookup",
+      "requirements": [
+        "trim surrounding query whitespace",
+        "match keys with Unicode casefold semantics",
+        "raise DuplicateItemError for canonical-key collisions"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/low_catalog_key",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    }
+  ],
+  "model_conditions": [
+    {
+      "condition_id": "case-claude-haiku-off",
+      "actor_model_id": "claude-4.5-haiku",
+      "model_family_id": "claude-4-5",
+      "access_mode": "hosted_api_blackbox",
+      "configured_provider": "qwen-compatible",
+      "configured_model": "claude-4.5-haiku",
+      "model_revision": null,
+      "precision": "provider_managed",
+      "reasoning_effort": "off",
+      "decoding": {
+        "temperature": 0.0,
+        "seed": null,
+        "stop": [],
+        "max_output_tokens": "task_cap_profile"
+      },
+      "credential_source": "environment-api-key",
+      "readiness": "no-token-call-budget-offline-preflight"
+    }
+  ],
+  "launch_blockers": [
+    "provider-backed-execution-requires-explicit-launch-authorization"
+  ],
+  "validation_scope": {
+    "purpose": "One authored low-difficulty case study; no benchmark aggregate claim.",
+    "planned_run_count": 1,
+    "gateway": "https://openai.sufy.com/v1",
+    "budget_policy": "No cumulative logical-call, provider-attempt or provider-token budget; each is explicitly null. Provider retries remain disabled.",
+    "token_cap_note": "Single response output technical limit: 8192 tokens. Wall-clock hang protection: 3600 seconds; network and stream idle timeouts remain enabled.",
+    "price_verified": false
+  }
+}

@@ -1,0 +1,6 @@
+{"event_time":"2026-01-01T00:02:20Z","order_id":"ORD-100","record_id":"R-FORWARD","reversal_of":"A-LATE","sequence":1,"type":"reversal"}
+{"event_time":"2026-01-01T00:02:40Z","order_id":"ORD-100","record_id":"R100","reversal_of":"A100","sequence":1,"type":"reversal"}
+{"amount":"1.00000000000000000000","event_time":"2026-01-01T00:02:50Z","order_id":"ORD-100","record_id":"A-LATE","sequence":1,"type":"adjustment"}
+{"event_time":"2026-01-01T00:06:10Z","order_id":"ORD-200","record_id":"R-CROSS","reversal_of":"A101","sequence":1,"type":"reversal"}
+{"event_time":"2026-01-01T00:06:20Z","order_id":"ORD-100","record_id":"R-MISSING","reversal_of":"A-MISSING","sequence":1,"type":"reversal"}
+{"event_time":"2026-01-01T00:06:30Z","order_id":"ORD-100","record_id":"R-SECOND","reversal_of":"A100","sequence":1,"type":"reversal"}

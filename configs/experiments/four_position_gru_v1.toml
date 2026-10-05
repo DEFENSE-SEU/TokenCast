@@ -1,0 +1,99 @@
+config_id = "four-position-gru-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+
+[feature_sets.six_full]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+
+[[candidates]]
+id = "empirical"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "sequence_gru"
+estimator = "sequence_gru"
+feature_set = "six_full"
+role = "baseline"
+
+[candidates.params]
+hidden_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+max_epochs = 300
+patience = 20
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "sequence_gru"]
+required_features = [
+  "task_text",
+  "task_char_count",
+  "task_issue_char_count",
+  "task_difficulty_ordinal",
+]
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "sequence_gru"]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "in_call_visible"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+token_unit_contract_id = "observer:utf8-bytes-v1"
+candidates = ["empirical", "sequence_gru"]
+required_features = ["observer_committed_tokens"]
+
+[[experiments]]
+id = "in_call_billed"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "sequence_gru"]
+required_features = ["observer_committed_tokens"]
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "sequence_gru"]

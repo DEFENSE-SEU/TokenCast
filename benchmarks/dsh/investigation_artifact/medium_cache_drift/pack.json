@@ -1,0 +1,108 @@
+{
+  "schema_version": 2,
+  "task_pack_id": "dsh-p0-v1-investigation-artifact-medium-cache-drift",
+  "version": 1,
+  "task_id": "p0v1-investigation-medium-cache-drift",
+  "task_type": "investigation_artifact",
+  "difficulty_stratum": "medium",
+  "task_statement": "task.md",
+  "seed_workspace": "seed",
+  "runtime": {
+    "python": "3.12",
+    "dependencies": []
+  },
+  "commands": {
+    "public_tests": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "oracle": [
+      "python",
+      ".dsh_oracle/evaluate.py"
+    ]
+  },
+  "runner_bundle": "_runner/investigation_artifact/medium_cache_drift",
+  "difficulty_evidence": {
+    "components": [
+      "strict parsing of four cache-evidence families",
+      "pair-level temporal incident reconstruction",
+      "deployment coverage and exact citation selection",
+      "independent reconciliation and canonical artifact emission"
+    ],
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "derive the stale-cache time interval"
+      },
+      {
+        "id": "R2",
+        "text": "identify every impacted key and region"
+      },
+      {
+        "id": "R3",
+        "text": "link the drift to the causal deployment event"
+      },
+      {
+        "id": "R4",
+        "text": "reconcile request and record totals"
+      },
+      {
+        "id": "R5",
+        "text": "emit reproducible JSON and CSV evidence artifacts"
+      }
+    ],
+    "input_families": [
+      "request aggregate JSON Lines evidence",
+      "cache and origin checksum CSV evidence",
+      "deployment coverage JSON Lines evidence",
+      "cache invalidation JSON Lines evidence"
+    ],
+    "deliverable_kinds": [
+      "reusable Python investigation API",
+      "canonical incident JSON artifact",
+      "canonical reconciliation CSV artifact"
+    ],
+    "coordination_burden": 1,
+    "coordination_evidence": "The API and command-line entry point coordinate four evidence parsers, pair-level temporal reconstruction, causal deployment selection, independent totals, exact citations, and two deterministic artifacts."
+  },
+  "oracle": {
+    "oracle_id": "dsh-p0-v1-investigation-artifact-medium-cache-drift-oracle-v1",
+    "requirement_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5"
+    ]
+  },
+  "licenses": {
+    "code": "MIT",
+    "fixture_data_and_task_text": "CC0-1.0"
+  },
+  "verification": {
+    "seed_public_tests": "expected_fail",
+    "seed_oracle": "expected_fail",
+    "reference_public_tests": "pass",
+    "reference_oracle": "pass",
+    "oracle_repetitions": 3
+  },
+  "budget": {
+    "max_task_statement_bytes": 8192,
+    "max_seed_files": 28,
+    "max_seed_bytes": 131072,
+    "max_public_test_output_bytes": 32768,
+    "max_oracle_seconds": 30
+  },
+  "asset_receipt": {
+    "task_statement_bytes": 3048,
+    "seed_file_count": 11,
+    "seed_total_bytes": 12567,
+    "seed_python_lines": 160,
+    "fixture_bytes": 1387
+  }
+}

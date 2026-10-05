@@ -1,0 +1,2 @@
+{"event_id":"adj-rev","kind":"adjustment","logical_clock":1,"source":"main","sequence":1,"sku":"REV","quantity":"2.50"}
+{"event_id":"rev-same","kind":"reversal","logical_clock":2,"source":"main","sequence":2,"reversal_of":"adj-rev"}

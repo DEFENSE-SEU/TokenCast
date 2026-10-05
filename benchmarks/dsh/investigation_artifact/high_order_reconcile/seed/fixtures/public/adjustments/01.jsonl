@@ -1,0 +1,4 @@
+{"amount":"0.1","event_time":"2026-01-01T00:01:30Z","order_id":"ORD-100","record_id":"A100","sequence":1,"type":"adjustment"}
+{"amount":"0.2","event_time":"2026-01-01T00:01:40Z","order_id":"ORD-100","record_id":"A101","sequence":1,"type":"adjustment"}
+{"amount":"5.000","event_time":"2026-01-01T00:01:50Z","order_id":"ORD-200","record_id":"A200","sequence":1,"type":"adjustment"}
+{"amount":"7","event_time":"2026-01-01T00:02:00Z","order_id":"ORD-404","record_id":"A404","sequence":1,"type":"adjustment"}

@@ -1,0 +1,2 @@
+name: "Router Standard"
+description: "Task-aware classify-first persona with a restricted first-request surface, a fixed DSH actor surface after the first tool call, and near-field guides in weak mode."

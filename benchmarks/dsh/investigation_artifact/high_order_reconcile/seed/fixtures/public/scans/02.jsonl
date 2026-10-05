@@ -1,0 +1,7 @@
+{"event_time":"2026-01-01T00:02:00Z","order_id":"ORD-100","record_id":"S100-DUP","sequence":1,"state":"packed","type":"scan"}
+{"event_time":"2026-01-01T00:05:00Z","order_id":"ORD-100","record_id":"S100-S","sequence":1,"state":"shipped","type":"scan"}
+{"event_time":"2026-01-01T00:06:00Z","order_id":"ORD-100","record_id":"S100-D","sequence":1,"state":"delivered","type":"scan"}
+{"event_time":"2026-01-01T00:04:10Z","order_id":"ORD-200","record_id":"S200-S","sequence":1,"state":"shipped","type":"scan"}
+{"event_time":"2026-01-01T00:05:10Z","order_id":"ORD-200","record_id":"S200-D","sequence":1,"state":"delivered","type":"scan"}
+{"event_time":"2026-01-01T00:02:30Z","order_id":"ORD-200","record_id":"S200-SKIP","sequence":1,"state":"delivered","type":"scan"}
+{"event_time":"2026-01-01T00:02:10Z","order_id":"ORD-300","record_id":"S-CONFLICT","sequence":1,"state":"shipped","type":"scan"}

@@ -1,0 +1,106 @@
+{
+  "schema_version": 2,
+  "task_pack_id": "dsh-p0-v1-repo-change-medium-config-includes",
+  "version": 1,
+  "task_id": "p0v1-repo-change-medium-config-includes",
+  "task_type": "repo_change",
+  "difficulty_stratum": "medium",
+  "task_statement": "task.md",
+  "seed_workspace": "seed",
+  "runtime": {
+    "python": "3.12",
+    "dependencies": []
+  },
+  "commands": {
+    "public_tests": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "oracle": [
+      "python",
+      ".dsh_oracle/evaluate.py"
+    ]
+  },
+  "runner_bundle": "_runner/repo_change/medium_config_includes",
+  "difficulty_evidence": {
+    "components": [
+      "JSON object parsing and include-list validation",
+      "resolved root-boundary enforcement",
+      "recursive include traversal and cycle reporting",
+      "deterministic recursive dictionary composition"
+    ],
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "resolve include paths relative to the including file"
+      },
+      {
+        "id": "R2",
+        "text": "merge recursive dictionaries from left to right"
+      },
+      {
+        "id": "R3",
+        "text": "apply local values after included values"
+      },
+      {
+        "id": "R4",
+        "text": "report the complete include cycle chain"
+      },
+      {
+        "id": "R5",
+        "text": "reject includes outside the configured root"
+      }
+    ],
+    "input_families": [
+      "direct and nested relative include paths",
+      "overlapping object and replacement values",
+      "cyclic and diamond-shaped include graphs",
+      "absolute, traversal, sibling-prefix, and symbolic-link boundary attempts"
+    ],
+    "deliverable_kinds": [
+      "Python source change"
+    ],
+    "coordination_burden": 1,
+    "coordination_evidence": "The change coordinates parsing, path containment, recursive graph traversal, and merge precedence across the public package modules."
+  },
+  "oracle": {
+    "oracle_id": "dsh-p0-v1-repo-change-medium-config-includes-oracle-v1",
+    "requirement_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5"
+    ]
+  },
+  "licenses": {
+    "code": "MIT",
+    "fixture_data_and_task_text": "CC0-1.0"
+  },
+  "verification": {
+    "seed_public_tests": "expected_fail",
+    "seed_oracle": "expected_fail",
+    "reference_public_tests": "pass",
+    "reference_oracle": "pass",
+    "oracle_repetitions": 3
+  },
+  "budget": {
+    "max_task_statement_bytes": 8192,
+    "max_seed_files": 24,
+    "max_seed_bytes": 65536,
+    "max_public_test_output_bytes": 32768,
+    "max_oracle_seconds": 30
+  },
+  "asset_receipt": {
+    "task_statement_bytes": 3063,
+    "seed_file_count": 14,
+    "seed_total_bytes": 7684,
+    "seed_python_lines": 149,
+    "fixture_bytes": 976
+  }
+}

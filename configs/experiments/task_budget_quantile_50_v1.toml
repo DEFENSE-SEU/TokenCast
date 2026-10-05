@@ -1,0 +1,541 @@
+config_id = "task-budget-quantile-50-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.5
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.task_text]
+include_all = false
+include_features = ["task_text"]
+
+[feature_sets.task_length]
+include_all = false
+include_features = ["task_char_count"]
+
+[feature_sets.issue_length]
+include_all = false
+include_features = ["task_issue_char_count"]
+
+[feature_sets.difficulty]
+include_all = false
+include_features = ["task_difficulty_ordinal"]
+
+[feature_sets.request_messages]
+include_all = false
+include_features = ["request_message_count"]
+
+[feature_sets.call_index]
+include_all = false
+include_features = ["completed_call_count"]
+
+[feature_sets.previous_output]
+include_all = false
+include_features = ["last_call_output_tokens"]
+
+[feature_sets.recent_output_5]
+include_all = false
+include_features = ["mean_output_tokens_5"]
+
+[feature_sets.recent_output_10]
+include_all = false
+include_features = ["mean_output_tokens_10"]
+
+[feature_sets.prefix_tokens]
+include_all = false
+include_features = ["observer_committed_tokens"]
+
+[feature_sets.generation_accounting]
+include_all = false
+include_features = [
+  "attempt_accounting_prior_q05",
+  "attempt_accounting_prior_q50",
+  "attempt_accounting_prior_q95",
+]
+
+
+[feature_sets.six_full]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+
+[feature_sets.call_start_ours]
+include_all = false
+include_subgroups = ["current_progress", "token_history", "progress_change"]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+
+[feature_sets.in_call_prefix]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_ours]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "prefix_closure",
+  "session_recall",
+]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_ours_clock]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "prefix_closure",
+  "session_recall",
+  "stream_clock",
+]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.task_update_ours]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[[candidates]]
+id = "empirical"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.5
+
+[[candidates]]
+id = "empirical_hazard"
+estimator = "empirical_hazard"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+n_bins = 32
+alpha = 0.5
+
+[[candidates]]
+id = "task_length_linear"
+estimator = "length_only"
+feature_set = "task_length"
+role = "baseline"
+
+[candidates.params]
+feature_name = "task_char_count"
+alpha = 0.5
+
+[[candidates]]
+id = "task_retrieval"
+estimator = "retrieval_knn"
+feature_set = "task_text"
+role = "baseline"
+
+[candidates.params]
+k = 5
+max_features = 4096
+alpha = 0.5
+
+[[candidates]]
+id = "issue_length_scaling"
+estimator = "scaling_power_law"
+feature_set = "issue_length"
+role = "baseline"
+
+[candidates.params]
+feature_name = "task_issue_char_count"
+alpha = 0.5
+
+[[candidates]]
+id = "issue_length_bucket"
+estimator = "bucket_quantile"
+feature_set = "issue_length"
+role = "baseline"
+
+[candidates.params]
+feature_name = "task_issue_char_count"
+n_buckets = 5
+min_bucket_tasks = 5
+alpha = 0.5
+
+[[candidates]]
+id = "difficulty_bucket"
+estimator = "bucket_quantile"
+feature_set = "difficulty"
+role = "baseline"
+
+[candidates.params]
+feature_name = "task_difficulty_ordinal"
+n_buckets = 3
+min_bucket_tasks = 5
+alpha = 0.5
+
+[[candidates]]
+id = "request_messages_linear"
+estimator = "length_only"
+feature_set = "request_messages"
+role = "baseline"
+
+[candidates.params]
+feature_name = "request_message_count"
+alpha = 0.5
+
+[[candidates]]
+id = "request_messages_bucket"
+estimator = "bucket_quantile"
+feature_set = "request_messages"
+role = "baseline"
+
+[candidates.params]
+feature_name = "request_message_count"
+n_buckets = 8
+min_bucket_tasks = 3
+alpha = 0.5
+
+[[candidates]]
+id = "call_index_bucket"
+estimator = "bucket_quantile"
+feature_set = "call_index"
+role = "baseline"
+
+[candidates.params]
+feature_name = "completed_call_count"
+n_buckets = 8
+min_bucket_tasks = 3
+alpha = 0.5
+
+[[candidates]]
+id = "previous_call_output"
+estimator = "history_value"
+feature_set = "previous_output"
+role = "baseline"
+
+[candidates.params]
+feature_name = "last_call_output_tokens"
+alpha = 0.5
+
+[[candidates]]
+id = "recent_output_mean_5"
+estimator = "history_value"
+feature_set = "recent_output_5"
+role = "baseline"
+
+[candidates.params]
+feature_name = "mean_output_tokens_5"
+alpha = 0.5
+
+[[candidates]]
+id = "recent_output_mean_10"
+estimator = "history_value"
+feature_set = "recent_output_10"
+role = "baseline"
+
+[candidates.params]
+feature_name = "mean_output_tokens_10"
+alpha = 0.5
+
+[[candidates]]
+id = "prefix_length_linear"
+estimator = "length_only"
+feature_set = "prefix_tokens"
+role = "baseline"
+
+[candidates.params]
+feature_name = "observer_committed_tokens"
+alpha = 0.5
+
+[[candidates]]
+id = "prefix_length_bucket"
+estimator = "bucket_quantile"
+feature_set = "prefix_tokens"
+role = "baseline"
+
+[candidates.params]
+feature_name = "observer_committed_tokens"
+n_buckets = 8
+min_bucket_tasks = 3
+alpha = 0.5
+
+[[candidates]]
+id = "generation_accounting_prior"
+estimator = "quantile_features"
+feature_set = "generation_accounting"
+role = "baseline"
+
+[candidates.params]
+lower_feature = "attempt_accounting_prior_q05"
+point_feature = "attempt_accounting_prior_q50"
+upper_feature = "attempt_accounting_prior_q95"
+
+[candidates.initializer_params]
+alpha = 0.5
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "quantile_features"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[candidates]]
+id = "generation_proportional_hazard"
+estimator = "proportional_hazard"
+feature_set = "prefix_tokens"
+role = "baseline"
+
+[candidates.params]
+n_bins = 32
+iterations = 60
+learning_rate = 0.10
+l2 = 0.001
+alpha = 0.5
+
+[candidates.initializer_params]
+alpha = 0.5
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "proportional_hazard"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[candidates]]
+id = "deduct_only"
+estimator = "deduct_only"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.5
+
+[[candidates]]
+id = "task_deduct"
+estimator = "cross_position_deduct"
+feature_set = "task_update_ours"
+role = "baseline"
+
+[candidates.initializer_params]
+alpha = 0.5
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "cross_position_deduct"
+lifecycle_schema = "task_lifecycle_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[candidates]]
+id = "call_clock_compound"
+estimator = "call_clock_compound"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+cost_atoms = 32
+cost_buckets = 1
+alpha = 0.5
+
+[[candidates]]
+id = "lightgbm_generic"
+estimator = "lightgbm_quantile"
+feature_set = "six_full"
+role = "baseline"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "call_start_ours"
+estimator = "lightgbm_quantile"
+feature_set = "call_start_ours"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "in_call_prefix"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_prefix"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "in_call_ours"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_ours"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "in_call_ours_clock"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_ours_clock"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "task_update_ours"
+estimator = "lightgbm_quantile"
+feature_set = "task_update_ours"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = [
+  "empirical",
+  "empirical_hazard",
+  "task_length_linear",
+  "task_retrieval",
+  "issue_length_scaling",
+  "issue_length_bucket",
+  "difficulty_bucket",
+  "lightgbm_generic",
+]
+required_features = [
+  "task_text",
+  "task_char_count",
+  "task_issue_char_count",
+  "task_difficulty_ordinal",
+]
+
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = [
+  "empirical",
+  "call_index_bucket",
+  "recent_output_mean_5",
+  "recent_output_mean_10",
+  "deduct_only",
+  "task_deduct",
+  "call_clock_compound",
+  "lightgbm_generic",
+  "task_update_ours",
+]

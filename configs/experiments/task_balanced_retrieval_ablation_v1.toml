@@ -1,0 +1,526 @@
+config_id = "task-balanced-retrieval-ablation-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+authority_path = "configs/splits/dsh_historical_development_v1.json"
+
+[interval]
+alpha = 0.10
+calibrator = "task_hierarchical_point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.ic_selected]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_task_text]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall"]
+include_features = ["generation_prefix_embedding", "task_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.tu_selected]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "failure_stall", "token_history", "progress_change"]
+
+[feature_sets.tu_task_text]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "failure_stall", "token_history", "progress_change"]
+include_features = ["task_embedding"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "ic_selected"
+estimator = "lightgbm_quantile"
+feature_set = "ic_selected"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "ic_task_raw"
+estimator = "lightgbm_quantile"
+feature_set = "ic_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_selected"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "ic_task_knn"
+estimator = "lightgbm_quantile"
+feature_set = "ic_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "task"
+
+[candidates.ablation]
+reference_candidate_id = "ic_selected"
+axis = "method"
+allowed_config_paths = [
+  "feature_set",
+  "params.retrieval_neighbors",
+  "params.retrieval_feature",
+  "params.retrieval_drop_source",
+  "params.retrieval_reference_unit",
+]
+
+[[candidates]]
+id = "ic_row_knn_20"
+estimator = "lightgbm_quantile"
+feature_set = "ic_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "point"
+
+[candidates.ablation]
+reference_candidate_id = "ic_task_knn"
+axis = "method"
+allowed_config_paths = ["params.retrieval_reference_unit"]
+
+[[candidates]]
+id = "ic_row_knn_40"
+estimator = "lightgbm_quantile"
+feature_set = "ic_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "point"
+
+[candidates.ablation]
+reference_candidate_id = "ic_row_knn_20"
+axis = "method"
+allowed_config_paths = ["params.retrieval_neighbors"]
+
+[[candidates]]
+id = "ic_task_knn_weighted"
+estimator = "lightgbm_quantile"
+feature_set = "ic_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "task"
+retrieval_summary_weighting = "nonnegative_cosine"
+
+[candidates.ablation]
+reference_candidate_id = "ic_task_knn"
+axis = "method"
+allowed_config_paths = ["params.retrieval_summary_weighting"]
+
+[[candidates]]
+id = "ic_task_knn_label_shuffle"
+estimator = "lightgbm_quantile"
+feature_set = "ic_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "task"
+retrieval_label_policy = "shuffled"
+
+[candidates.ablation]
+reference_candidate_id = "ic_task_knn"
+axis = "method"
+allowed_config_paths = ["params.retrieval_label_policy"]
+
+[[candidates]]
+id = "ic_task_knn_neighbor_shuffle"
+estimator = "lightgbm_quantile"
+feature_set = "ic_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "task"
+retrieval_neighbor_policy = "shuffled"
+
+[candidates.ablation]
+reference_candidate_id = "ic_task_knn"
+axis = "method"
+allowed_config_paths = ["params.retrieval_neighbor_policy"]
+
+[[candidates]]
+id = "tu_selected"
+estimator = "lightgbm_quantile"
+feature_set = "tu_selected"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "tu_task_raw"
+estimator = "lightgbm_quantile"
+feature_set = "tu_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "tu_selected"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "tu_task_knn"
+estimator = "lightgbm_quantile"
+feature_set = "tu_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "task"
+
+[candidates.ablation]
+reference_candidate_id = "tu_selected"
+axis = "method"
+allowed_config_paths = [
+  "feature_set",
+  "params.retrieval_neighbors",
+  "params.retrieval_feature",
+  "params.retrieval_drop_source",
+  "params.retrieval_reference_unit",
+]
+
+[[candidates]]
+id = "tu_row_knn_20"
+estimator = "lightgbm_quantile"
+feature_set = "tu_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "point"
+
+[candidates.ablation]
+reference_candidate_id = "tu_task_knn"
+axis = "method"
+allowed_config_paths = ["params.retrieval_reference_unit"]
+
+[[candidates]]
+id = "tu_row_knn_40"
+estimator = "lightgbm_quantile"
+feature_set = "tu_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "point"
+
+[candidates.ablation]
+reference_candidate_id = "tu_row_knn_20"
+axis = "method"
+allowed_config_paths = ["params.retrieval_neighbors"]
+
+[[candidates]]
+id = "tu_task_knn_weighted"
+estimator = "lightgbm_quantile"
+feature_set = "tu_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "task"
+retrieval_summary_weighting = "nonnegative_cosine"
+
+[candidates.ablation]
+reference_candidate_id = "tu_task_knn"
+axis = "method"
+allowed_config_paths = ["params.retrieval_summary_weighting"]
+
+[[candidates]]
+id = "tu_task_knn_label_shuffle"
+estimator = "lightgbm_quantile"
+feature_set = "tu_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "task"
+retrieval_label_policy = "shuffled"
+
+[candidates.ablation]
+reference_candidate_id = "tu_task_knn"
+axis = "method"
+allowed_config_paths = ["params.retrieval_label_policy"]
+
+[[candidates]]
+id = "tu_task_knn_neighbor_shuffle"
+estimator = "lightgbm_quantile"
+feature_set = "tu_task_text"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 20
+retrieval_feature = ["task_embedding"]
+retrieval_drop_source = ["task_embedding"]
+retrieval_reference_unit = "task"
+retrieval_neighbor_policy = "shuffled"
+
+[candidates.ablation]
+reference_candidate_id = "tu_task_knn"
+axis = "method"
+allowed_config_paths = ["params.retrieval_neighbor_policy"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "ic_selected",
+  "ic_task_raw",
+  "ic_task_knn",
+  "ic_row_knn_20",
+  "ic_row_knn_40",
+  "ic_task_knn_weighted",
+  "ic_task_knn_label_shuffle",
+  "ic_task_knn_neighbor_shuffle",
+]
+required_features = ["task_char_count", "task_embedding"]
+token_unit_contract_id = "observer:utf8-bytes-v1"
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+
+target = "task_provider_accounted_remaining_tokens"
+candidates = [
+  "empirical_quantile",
+  "tu_selected",
+  "tu_task_raw",
+  "tu_task_knn",
+  "tu_row_knn_20",
+  "tu_row_knn_40",
+  "tu_task_knn_weighted",
+  "tu_task_knn_label_shuffle",
+  "tu_task_knn_neighbor_shuffle",
+]
+required_features = ["task_char_count", "task_embedding"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+
+[[sweeps]]
+id = "ic-neighbors"
+experiment = "in_call_update"
+base_candidate = "ic_task_knn"
+param = "retrieval_neighbors"
+values = [5, 10, 20, 999]
+
+[[sweeps]]
+id = "tu-neighbors"
+experiment = "task_update"
+base_candidate = "tu_task_knn"
+param = "retrieval_neighbors"
+values = [5, 10, 20, 999]

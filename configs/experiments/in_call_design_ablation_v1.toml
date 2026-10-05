@@ -1,0 +1,356 @@
+config_id = "in-call-design-ablation-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.in_call_update_selected]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_closure]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_recall]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "session_recall"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_closure_recall]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_closure_recall_delta]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall"]
+include_features = ["generation_prefix_embedding", "generation_delta_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_recall_delta]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "session_recall"]
+include_features = ["generation_prefix_embedding", "generation_delta_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_closure_delta]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure"]
+include_features = ["generation_prefix_embedding", "generation_delta_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "in_call_update_selected"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_update_selected"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "in_call_r"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_update_selected"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["params.retrieval_neighbors"]
+
+[[candidates]]
+id = "in_call_c"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "in_call_s"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_recall"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "in_call_rc"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["feature_set", "params.retrieval_neighbors"]
+
+[[candidates]]
+id = "in_call_rs"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_recall"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["feature_set", "params.retrieval_neighbors"]
+
+[[candidates]]
+id = "in_call_rcs"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure_recall"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["feature_set", "params.retrieval_neighbors"]
+
+[[candidates]]
+id = "in_call_rcsd"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure_recall_delta"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+retrieval_feature = ["generation_prefix_embedding", "generation_delta_embedding"]
+retrieval_drop_source = ["generation_delta_embedding"]
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["feature_set", "params.retrieval_neighbors", "params.retrieval_feature", "params.retrieval_drop_source"]
+
+[[candidates]]
+id = "in_call_csd"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure_recall_delta"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+retrieval_feature = ["generation_delta_embedding"]
+retrieval_drop_source = ["generation_delta_embedding"]
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["feature_set", "params.retrieval_neighbors", "params.retrieval_feature", "params.retrieval_drop_source"]
+
+[[candidates]]
+id = "in_call_rsd"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_recall_delta"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+retrieval_feature = ["generation_prefix_embedding", "generation_delta_embedding"]
+retrieval_drop_source = ["generation_delta_embedding"]
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["feature_set", "params.retrieval_neighbors", "params.retrieval_feature", "params.retrieval_drop_source"]
+
+[[candidates]]
+id = "in_call_rcd"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure_delta"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+retrieval_neighbors = 40
+retrieval_feature = ["generation_prefix_embedding", "generation_delta_embedding"]
+retrieval_drop_source = ["generation_delta_embedding"]
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["feature_set", "params.retrieval_neighbors", "params.retrieval_feature", "params.retrieval_drop_source"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "in_call_update_selected",
+  "in_call_r",
+  "in_call_c",
+  "in_call_s",
+  "in_call_rc",
+  "in_call_rs",
+  "in_call_rcs",
+  "in_call_rcsd",
+  "in_call_csd",
+  "in_call_rsd",
+  "in_call_rcd",
+]
+required_features = ["task_char_count"]

@@ -1,0 +1,274 @@
+config_id = "four-position-text-representation-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+
+[feature_sets.tl_text_current]
+include_all = false
+include_subgroups = ["task_text", "task_metadata", "agent_config"]
+
+[feature_sets.tl_text_bge]
+include_all = false
+include_subgroups = ["task_text", "task_metadata", "agent_config"]
+include_features = ["task_text"]
+exclude_features = ["task_embedding"]
+
+[feature_sets.tl_text_tfidf_svd]
+include_all = false
+include_subgroups = ["task_text", "task_metadata", "agent_config"]
+include_features = ["task_text"]
+exclude_features = ["task_embedding"]
+
+[feature_sets.tl_text_none]
+include_all = false
+include_subgroups = ["task_metadata", "agent_config"]
+
+
+[feature_sets.ic_text_current]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "prefix_closure",
+  "session_recall",
+  "stream_clock",
+]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_text_bge]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "prefix_closure",
+  "session_recall",
+  "stream_clock",
+]
+include_features = ["visible_text_prefix"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_text_none]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "prefix_closure",
+  "session_recall",
+  "stream_clock",
+]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[[candidates]]
+id = "empirical"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+
+[[candidates]]
+id = "tl_text_current"
+estimator = "lightgbm_quantile"
+feature_set = "tl_text_current"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "tl_text_bge"
+estimator = "lightgbm_quantile"
+feature_set = "tl_text_bge"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+text_embedding_method = "bge"
+text_embedding_source = "task_text"
+
+[candidates.ablation]
+reference_candidate_id = "tl_text_current"
+axis = "method"
+allowed_config_paths = ["feature_set", "params.text_embedding_method", "params.text_embedding_source"]
+
+[[candidates]]
+id = "tl_text_tfidf_svd"
+estimator = "lightgbm_quantile"
+feature_set = "tl_text_tfidf_svd"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+text_embedding_method = "tfidf_svd"
+text_embedding_source = "task_text"
+text_embedding_dim = 256
+
+[candidates.ablation]
+reference_candidate_id = "tl_text_current"
+axis = "method"
+allowed_config_paths = [
+  "feature_set",
+  "params.text_embedding_method",
+  "params.text_embedding_source",
+  "params.text_embedding_dim",
+]
+
+[[candidates]]
+id = "tl_text_none"
+estimator = "lightgbm_quantile"
+feature_set = "tl_text_none"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "tl_text_current"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "ic_text_current"
+estimator = "lightgbm_quantile"
+feature_set = "ic_text_current"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "ic_text_bge"
+estimator = "lightgbm_quantile"
+feature_set = "ic_text_bge"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+text_embedding_method = "bge"
+text_embedding_source = "visible_text_prefix"
+
+[candidates.ablation]
+reference_candidate_id = "ic_text_current"
+axis = "method"
+allowed_config_paths = ["feature_set", "params.text_embedding_method", "params.text_embedding_source"]
+
+[[candidates]]
+id = "ic_text_none"
+estimator = "lightgbm_quantile"
+feature_set = "ic_text_none"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_text_current"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "tl_text_current", "tl_text_bge", "tl_text_tfidf_svd", "tl_text_none"]
+required_features = ["task_text", "task_char_count", "task_difficulty_ordinal"]
+
+[[experiments]]
+id = "in_call_billed"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "ic_text_current", "ic_text_bge", "ic_text_none"]
+required_features = ["observer_committed_tokens"]

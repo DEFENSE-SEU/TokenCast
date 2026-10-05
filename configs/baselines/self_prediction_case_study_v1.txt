@@ -1,0 +1,103 @@
+Estimate the token consumption of the agent execution described below. Base your prediction on the task requirements, the specified model and agent configuration, and the evidence available at the supplied prediction point. Your estimate should describe the consumption of the agent operating under its existing workflow and execution limits. Your deliverable is a token-cost estimate. Do not implement a solution, modify task files, or submit an answer to the underlying task.
+
+Prediction target
+
+First, determine which part of the execution the estimate must cover. At Task Start, estimate all input and output tokens that a complete run would consume from the original task state until termination. The estimate includes the exploration, solution development, and verification that the run would require. Any inspection performed specifically to prepare this estimate belongs to the estimation session and is excluded from the predicted consumption. This inspection may improve your understanding of the task; however, the predicted run still begins from its original state.
+
+At Task Update, estimate the input and output tokens that will be consumed after the latest completed call until the task ends. Completed calls provide evidence of progress and consumption, but their recorded usage is outside of this remaining-task target. Their messages and tool results may still appear in later requests; reading that retained content in a later request contributes new input usage within the prediction scope.
+
+At Call Start, estimate the complete input and output consumption of the current call, including retries of its request. At In-call Update, estimate the same complete-call quantity using the generation observed so far. This includes the input, supplied output prefix, continuation, and any usage attributable to retries within the call. A call comprises one model request and its retries. A subsequent request made after receiving tool feedback belongs to a later call and is outside the call-level estimate.
+
+A task ends when the agent finishes, fails, or reaches an execution limit. Account for the termination behavior supported by the available evidence. Successful completion is one possible outcome, and repeated failures or exhausted limits may end the run earlier. Execution limits constrain the forecast, but they are not estimates of how much work the agent will perform.
+
+Understanding the task and execution evidence
+
+The task statement was read together with the agent instructions and completion conditions. Determine what the agent must establish, produce, or verify before it can complete the task. Consider how the available tools and workflows organize the work into model calls. Distinguish the number of tool actions from the number of model calls: several actions may be issued in one response, and a single unresolved issue may require multiple responses.
+
+At Task Start, use the available inspection tools to understand the initial environment while leaving task files unchanged. For a coding task, inspect the relevant source files, their dependencies, and the tests associated with the requested behavior. Assess whether the work appears localized or spans several components, whether the expected behavior is clearly specified, and how much investigation is likely to precede a change. For retrieval or document-based tasks, examine the supplied materials and resource descriptions to assess what evidence is already available and what additional information the agent would need to obtain. Focus the inspection on uncertainties that materially affect the expected workload.
+
+At the other prediction points, use the supplied execution record without advancing the task or obtaining additional tool results. Read the actions together with their observed outcomes. A proposed edit, a completed edit, and a successful test provide different evidence of progress. Identify what has been established, what remains unresolved, and which results are still pending. Treat unavailable information as unknown; the absence of a recorded failure does not establish success.
+
+For a task-level forecast, form a plausible continuation from the current state. A coding run may still need to investigate a failure, revise an implementation, run relevant checks, and prepare its submission. A retrieval task may require further searches because the current evidence covers only part of the question. A reasoning task with sufficient information may complete in one response. Use phases that fit the actual task and the observed state. At Task Update, include only phases or portions of phases that remain.
+
+Use the execution history to assess both progress and the cost of further work. Recent calls can indicate typical response lengths, request growth, and the amount of work the agent accomplishes per interaction. Compare calls with similar roles where possible. Repeated searches, recurring test failures, or several calls without resolving an outstanding issue may indicate additional investigation or revision. A sequence of completed checks may indicate that only final verification or submission remains. Relate these observations to the work still required before estimating the remaining call count.
+
+For a call-level forecast, focus on what the current request asks the model to generate. Determine whether the response is likely to contain a short tool invocation, several tool-call arguments, a substantial code fragment, an explanation, or a final answer. At the In-call Update, examine how much of that response has already been produced and what remains unfinished. The supplied timing information was used as supporting evidence when it was informative, while keeping the elapsed time distinct from the token counts.
+
+Constructing the token estimate
+
+For task-level predictions, the forecast execution is divided into a small number of non-overlapping phases. For each phase, the likely number of model calls, the input those calls will receive, and the output they will generate should be assessed. Let the phase estimates reflect the actual continuation you expect. A final submission may require only one approval. For the call-level prediction, a single current_call phase is sufficient.
+
+Estimate the input consumption from the content submitted for each model request. This can include system and agent instructions, task statements, tool definitions, retained conversation history, content generated from earlier calls, and tool results. An exact supplied input token count was used when available. When later requests have not yet been assembled, estimate their size from the current context, expected additions, and specified context retention behavior.
+
+Account for retained content each time it is submitted. A tool result added early in a run may appear in several subsequent requests; therefore, its contribution depends on both its size and the number of later calls that retain it. Likewise, additional investigation can increase the call count and enlarge the context of those calls. Reflect both effects in the phase estimates. Apply context pruning, summarization, or compaction only when supported by the supplied workflow or observations.
+
+Estimate output consumption from the responses expected within each phase. Include generated text, code, tool-call arguments, and reasoning tokens according to the supplied accounting convention. The final answer may be short, even when intermediate responses consume substantial tokens. When reasoning tokens are already included in the reported output total, count them only once. Tool-generated search results, file contents, and test logs contribute model input when submitted to a later request; their production by a tool is not itself an LLM output.
+
+Use confirmed usage as an accounting anchor. Within the selected scope, include each confirmed input or output count exactly once. At In-call Update, the visible prefix is already part of the complete output being predicted; add only the expected continuation to its counted contribution. Do not add the prefix again when a supplied cumulative output count already includes it. Character and byte counts are observations about text length, not exact token counts; use the supplied token measurements or accounting information where available.
+
+Account for retries within the call according to the request history, observed failures, and the configured retry policy. The recorded usage from retries that have already occurred within the prediction scope is included. Estimate further retry consumption only to the extent supported by the current conditions. The maximum retry allowance defines a limit and does not imply that every retry will occur.
+
+These estimates were combined into the best-supported forecast. Consider whether the evidence supports a straightforward continuation, additional revision cycles, or early termination, and let this assessment inform the predicted workload. Avoid adding unexplained safety margins to each phase. The confidence field is used to express how strongly the available evidence supports the estimate, considering the uncertainty regarding the remaining work, future context size, response length, and retries.
+
+Preparing the final output
+
+A non-negative integer is returned for each token estimate. The phase input estimates must sum to predicted_input_tokens, and the phase output estimates must sum to predicted_output_tokens. Their combined sum must equal the predicted_total_tokens. Check that the result covers the requested scope and includes its confirmed usage without duplication. A complete call estimate must not fall below the confirmed consumption of that call. A Task Update estimate excludes completed call usage and is zero when termination is confirmed and no further model calls remain.
+
+Set confidence to a number between 0 and 1 representing your self-assessed confidence in this point estimate. This is not a calibrated probability or prediction interval. Return no ranges. Use one breakdown_by_phase entry for each phase included in the forecast, with names that describe the expected work. For either call-level prediction point, use current_call when no further decomposition is needed.
+
+Submit a JSON object with the following fields:
+
+{
+  "predicted_input_tokens": <integer>,
+  "predicted_output_tokens": <integer>,
+  "predicted_total_tokens": <integer>,
+  "confidence": <number from 0 to 1>,
+  "breakdown_by_phase": [
+    {
+      "phase": "<phase name>",
+      "input_tokens": <integer>,
+      "output_tokens": <integer>
+    }
+  ]
+}
+
+Use the completion interface specified below. Submit the JSON estimate without a task solution or additional explanatory text. Fields marked not available provide no additional evidence and must not be treated as zero-valued observations.
+
+Prediction point:
+{{prediction_point}}
+
+Task:
+{{task_description}}
+
+Difficulty, when provided:
+{{task_difficulty}}
+
+Model and agent configuration:
+{{model_and_agent_configuration}}
+
+Agent workflow and available tools:
+{{agent_instructions_and_tool_descriptions}}
+
+Execution limits and token accounting:
+{{execution_limits_and_token_accounting}}
+
+Initial environment:
+{{initial_environment}}
+
+Observed execution history and tool feedback:
+{{execution_history_and_tool_feedback}}
+
+Current request:
+{{current_request}}
+
+Generated prefix and stream timing:
+{{generated_prefix_and_stream_timing}}
+
+Confirmed usage within the prediction scope:
+{{confirmed_usage_in_scope}}
+
+Completion instruction:
+{{completion_instruction}}
+
+Estimate the consumption for the specified prediction point and submit the JSON estimate.

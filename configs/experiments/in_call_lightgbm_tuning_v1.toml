@@ -1,0 +1,253 @@
+config_id = "in-call-lightgbm-tuning-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.in_call_tail_word]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+]
+include_features = [
+  "generation_prefix_embedding",
+  "generation_prefix_tail_embedding",
+]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "in_call_tail_word"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_tail_word"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "tune_leaves31_r600"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_tail_word"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 600
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 31
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_tail_word"
+axis = "method"
+allowed_config_paths = ["params.num_leaves", "params.num_boost_round"]
+
+[[candidates]]
+id = "tune_leaves7"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_tail_word"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 7
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_tail_word"
+axis = "method"
+allowed_config_paths = ["params.num_leaves"]
+
+[[candidates]]
+id = "tune_colsample50"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_tail_word"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 0.5
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_tail_word"
+axis = "method"
+allowed_config_paths = ["params.feature_fraction"]
+
+[[candidates]]
+id = "tune_minleaf30"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_tail_word"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 30
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_tail_word"
+axis = "method"
+allowed_config_paths = ["params.min_data_in_leaf"]
+
+[[candidates]]
+id = "tune_l2_10"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_tail_word"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 10.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_tail_word"
+axis = "method"
+allowed_config_paths = ["params.lambda_l2"]
+
+[[candidates]]
+id = "tune_lr01_r1000"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_tail_word"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 1000
+early_stopping_rounds = 30
+learning_rate = 0.01
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_tail_word"
+axis = "method"
+allowed_config_paths = ["params.learning_rate", "params.num_boost_round"]
+
+[[candidates]]
+id = "tune_depth4"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_tail_word"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 4
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_tail_word"
+axis = "method"
+allowed_config_paths = ["params.max_depth"]
+
+[[candidates]]
+id = "tune_bagging"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_tail_word"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 0.8
+bagging_freq = 1
+
+[candidates.ablation]
+reference_candidate_id = "in_call_tail_word"
+axis = "method"
+allowed_config_paths = ["params.bagging_fraction", "params.bagging_freq"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_tail_word", "tune_leaves31_r600", "tune_leaves7", "tune_colsample50", "tune_minleaf30", "tune_l2_10", "tune_lr01_r1000", "tune_depth4", "tune_bagging"]
+required_features = ["task_char_count"]

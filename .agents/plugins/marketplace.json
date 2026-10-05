@@ -1,0 +1,20 @@
+{
+  "name": "tokencast-local",
+  "interface": {
+    "displayName": "TokenCast"
+  },
+  "plugins": [
+    {
+      "name": "token-prediction",
+      "source": {
+        "source": "local",
+        "path": "./plugin/token-prediction"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

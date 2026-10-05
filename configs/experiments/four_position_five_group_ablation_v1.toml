@@ -1,0 +1,282 @@
+config_id = "four-position-five-group-ablation-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.five_full]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+
+[feature_sets.without_initial_info]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+
+[feature_sets.without_cumulative_history]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+
+[feature_sets.without_execution_progress]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "failure_stall",
+  "token_history",
+]
+
+[feature_sets.without_failure_stall]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "token_history",
+]
+
+[feature_sets.without_token_history]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "lightgbm_five_full"
+estimator = "lightgbm_quantile"
+feature_set = "five_full"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "lightgbm_without_initial_info"
+estimator = "lightgbm_quantile"
+feature_set = "without_initial_info"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_five_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "lightgbm_without_cumulative_history"
+estimator = "lightgbm_quantile"
+feature_set = "without_cumulative_history"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_five_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "lightgbm_without_execution_progress"
+estimator = "lightgbm_quantile"
+feature_set = "without_execution_progress"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_five_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "lightgbm_without_failure_stall"
+estimator = "lightgbm_quantile"
+feature_set = "without_failure_stall"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_five_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "lightgbm_without_token_history"
+estimator = "lightgbm_quantile"
+feature_set = "without_token_history"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_five_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = [
+  "empirical_quantile",
+  "lightgbm_five_full",
+  "lightgbm_without_initial_info",
+  "lightgbm_without_cumulative_history",
+  "lightgbm_without_execution_progress",
+  "lightgbm_without_failure_stall",
+  "lightgbm_without_token_history",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "lightgbm_five_full",
+  "lightgbm_without_initial_info",
+  "lightgbm_without_cumulative_history",
+  "lightgbm_without_execution_progress",
+  "lightgbm_without_failure_stall",
+  "lightgbm_without_token_history",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "lightgbm_five_full",
+  "lightgbm_without_initial_info",
+  "lightgbm_without_cumulative_history",
+  "lightgbm_without_execution_progress",
+  "lightgbm_without_failure_stall",
+  "lightgbm_without_token_history",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = [
+  "empirical_quantile",
+  "lightgbm_five_full",
+  "lightgbm_without_initial_info",
+  "lightgbm_without_cumulative_history",
+  "lightgbm_without_execution_progress",
+  "lightgbm_without_failure_stall",
+  "lightgbm_without_token_history",
+]
+required_features = ["task_char_count"]

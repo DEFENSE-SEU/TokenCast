@@ -1,0 +1,125 @@
+{
+  "schema_version": 2,
+  "task_pack_id": "dsh-p0-v1-greenfield-build-high-capacity-planner",
+  "version": 1,
+  "task_id": "p0v1-greenfield-high-capacity-planner",
+  "task_type": "greenfield_build",
+  "difficulty_stratum": "high",
+  "task_statement": "task.md",
+  "seed_workspace": "seed",
+  "runtime": {
+    "python": "3.12",
+    "dependencies": []
+  },
+  "commands": {
+    "public_tests": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "oracle": [
+      "python",
+      ".dsh_oracle/evaluate.py"
+    ]
+  },
+  "runner_bundle": "_runner/greenfield_build/high_capacity_planner",
+  "difficulty_evidence": {
+    "components": [
+      "strict JSON plan decoding and schema validation",
+      "dependency graph validation and traversal",
+      "renewable multi-resource accounting",
+      "deterministic event-driven scheduling",
+      "dependency-only critical-path analysis",
+      "reusable API and canonical command-line reporting"
+    ],
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "parse the declared JSON planning schema"
+      },
+      {
+        "id": "R2",
+        "text": "reject cycles and unknown dependencies"
+      },
+      {
+        "id": "R3",
+        "text": "respect renewable capacity constraints"
+      },
+      {
+        "id": "R4",
+        "text": "process simultaneous completions as one transition"
+      },
+      {
+        "id": "R5",
+        "text": "apply the frozen lexical tie breaker"
+      },
+      {
+        "id": "R6",
+        "text": "advance safely when no new task is ready"
+      },
+      {
+        "id": "R7",
+        "text": "emit a critical-path report"
+      },
+      {
+        "id": "R8",
+        "text": "expose matching reusable API and CLI results"
+      }
+    ],
+    "input_families": [
+      "strict valid and malformed JSON planning documents",
+      "acyclic, unknown, self-dependent, and cyclic dependency graphs",
+      "single-resource and multi-resource capacity combinations",
+      "simultaneous, blocked, and sparse event-time transitions",
+      "critical-path ties and Unicode API or CLI reports"
+    ],
+    "deliverable_kinds": [
+      "Python planning library and CLI",
+      "canonical JSON schedule and critical-path report"
+    ],
+    "coordination_burden": 2,
+    "coordination_evidence": "The build coordinates strict decoding, graph validity, renewable capacity accounting, simultaneous event transitions, deterministic selection, critical-path analysis, and byte-identical API or CLI reporting."
+  },
+  "oracle": {
+    "oracle_id": "dsh-p0-v1-greenfield-build-high-capacity-planner-oracle-v1",
+    "requirement_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6",
+      "R7",
+      "R8"
+    ]
+  },
+  "licenses": {
+    "code": "MIT",
+    "fixture_data_and_task_text": "CC0-1.0"
+  },
+  "verification": {
+    "seed_public_tests": "expected_fail",
+    "seed_oracle": "expected_fail",
+    "reference_public_tests": "pass",
+    "reference_oracle": "pass",
+    "oracle_repetitions": 3
+  },
+  "budget": {
+    "max_task_statement_bytes": 12000,
+    "max_seed_files": 32,
+    "max_seed_bytes": 160000,
+    "max_public_test_output_bytes": 32768,
+    "max_oracle_seconds": 20
+  },
+  "asset_receipt": {
+    "task_statement_bytes": 3185,
+    "seed_file_count": 9,
+    "seed_total_bytes": 12026,
+    "seed_python_lines": 245,
+    "fixture_bytes": 240
+  }
+}

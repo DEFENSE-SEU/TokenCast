@@ -1,0 +1,162 @@
+{
+  "schema_version": 1,
+  "policy_id": "dsh-p1-rollout-v1",
+  "matrix_id": "dsh-dataset-matrix-v2",
+  "allocation_id": "p1",
+  "status": "schedule_frozen_rosters_pending",
+  "collection_authorized": false,
+  "preflight": {
+    "required_before_actor_runs": [
+      "observer_flush_durability",
+      "provider_entry_durability",
+      "torn_observer_tail_recovery",
+      "torn_session_tail_recovery",
+      "route_and_reasoning_match",
+      "model_bundle_pair_parity",
+      "hidden_adapter_retry_zero",
+      "auxiliary_model_call_zero",
+      "terminal_usage_join"
+    ],
+    "actor_runs_allowed_before_pass": 0
+  },
+  "ordering": {
+    "task_types": [
+      "repo_repair",
+      "repo_change",
+      "greenfield_build",
+      "investigation_artifact"
+    ],
+    "difficulty_strata": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "partition_order": [
+      "train",
+      "calibration",
+      "pilot_test"
+    ],
+    "family_order": "task_family_id",
+    "sibling_order": "task_id",
+    "model_order": "access_mode_then_base_model_id",
+    "access_mode_order": [
+      "open_weight",
+      "hosted_blackbox"
+    ],
+    "base_wave_rule": "2*((partition_index+cell_index+condition_index)%3)+((sibling_index+repeat_index+cell_index+condition_index)%2)",
+    "anchor_partition": "pilot_test",
+    "anchor_sibling_rule": "cell_index%2"
+  },
+  "stress": {
+    "suite_id": "dsh-p1-stress-v1",
+    "scenario_ids": [
+      "retry_then_success",
+      "retry_wait_cancel",
+      "parallel_safe_tools",
+      "tool_and_wall_timeout",
+      "output_spill"
+    ],
+    "conditions_per_scenario": 4,
+    "provider_entry_required": true,
+    "analysis_eligible": false
+  },
+  "gates": [
+    {
+      "gate_id": "g100",
+      "base_runs": 96,
+      "anchor_runs": 0,
+      "analysis_runs": 96,
+      "stress_runs": 4,
+      "physical_runs": 100,
+      "required_stress_slot_ids": [
+        "retry_then_success/c0",
+        "retry_wait_cancel/c1",
+        "parallel_safe_tools/c2",
+        "output_spill/c3"
+      ],
+      "minimum_analysis_provider_entered": 96,
+      "minimum_analysis_actor_successful": 90,
+      "minimum_analysis_trainable": 90,
+      "maximum_analysis_quarantined": 0,
+      "required_stress_scenario_successful": 4
+    },
+    {
+      "gate_id": "g500",
+      "base_runs": 480,
+      "anchor_runs": 0,
+      "analysis_runs": 480,
+      "stress_runs": 20,
+      "physical_runs": 500,
+      "required_stress_slot_ids": [
+        "retry_then_success/c0",
+        "retry_then_success/c1",
+        "retry_then_success/c2",
+        "retry_then_success/c3",
+        "retry_wait_cancel/c0",
+        "retry_wait_cancel/c1",
+        "retry_wait_cancel/c2",
+        "retry_wait_cancel/c3",
+        "parallel_safe_tools/c0",
+        "parallel_safe_tools/c1",
+        "parallel_safe_tools/c2",
+        "parallel_safe_tools/c3",
+        "tool_and_wall_timeout/c0",
+        "tool_and_wall_timeout/c1",
+        "tool_and_wall_timeout/c2",
+        "tool_and_wall_timeout/c3",
+        "output_spill/c0",
+        "output_spill/c1",
+        "output_spill/c2",
+        "output_spill/c3"
+      ],
+      "minimum_analysis_provider_entered": 480,
+      "minimum_analysis_actor_successful": 456,
+      "minimum_analysis_trainable": 456,
+      "maximum_analysis_quarantined": 4,
+      "required_stress_scenario_successful": 20
+    },
+    {
+      "gate_id": "g768",
+      "base_runs": 576,
+      "anchor_runs": 192,
+      "analysis_runs": 768,
+      "stress_runs": 20,
+      "physical_runs": 788,
+      "required_stress_slot_ids": [
+        "retry_then_success/c0",
+        "retry_then_success/c1",
+        "retry_then_success/c2",
+        "retry_then_success/c3",
+        "retry_wait_cancel/c0",
+        "retry_wait_cancel/c1",
+        "retry_wait_cancel/c2",
+        "retry_wait_cancel/c3",
+        "parallel_safe_tools/c0",
+        "parallel_safe_tools/c1",
+        "parallel_safe_tools/c2",
+        "parallel_safe_tools/c3",
+        "tool_and_wall_timeout/c0",
+        "tool_and_wall_timeout/c1",
+        "tool_and_wall_timeout/c2",
+        "tool_and_wall_timeout/c3",
+        "output_spill/c0",
+        "output_spill/c1",
+        "output_spill/c2",
+        "output_spill/c3"
+      ],
+      "minimum_analysis_provider_entered": 768,
+      "minimum_analysis_actor_successful": 730,
+      "minimum_analysis_trainable": 730,
+      "maximum_analysis_quarantined": 7,
+      "required_stress_scenario_successful": 20
+    }
+  ],
+  "task_success_role": "reported_only_no_selection",
+  "declared_counts": {
+    "base_runs": 576,
+    "anchor_runs": 192,
+    "statistical_matrix_runs": 768,
+    "stress_runs": 20,
+    "physical_pilot_runs": 788
+  }
+}

@@ -1,0 +1,4 @@
+{"event_time":"2026-02-01T00:01:00Z","order_id":"ORD-X","record_id":"SX-P","sequence":1,"state":"picked","type":"scan"}
+{"event_time":"2026-02-01T00:03:00Z","order_id":"ORD-X","record_id":"SX-DUP","sequence":1,"state":"shipped","type":"scan"}
+{"event_time":"2026-02-01T00:01:10Z","order_id":"ORD-Y","record_id":"SY-P","sequence":1,"state":"picked","type":"scan"}
+{"event_time":"2026-02-01T00:02:00Z","order_id":"ORD-Y","record_id":"SY-CONFLICT","sequence":1,"state":"packed","type":"scan"}

@@ -1,0 +1,21 @@
+{
+  "features": {
+    "audit": true,
+    "cache": true
+  },
+  "items": [
+    1,
+    2
+  ],
+  "optional": "common",
+  "retries": 4,
+  "selected_shared": "root",
+  "service": {
+    "host": "common.internal",
+    "port": 8000,
+    "tls": {
+      "ca": "common.pem",
+      "enabled": true
+    }
+  }
+}

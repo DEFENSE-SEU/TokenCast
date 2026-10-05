@@ -1,0 +1,94 @@
+config_id = "four-position-text-representation-e5-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "point_conformal"
+
+[feature_sets.tl_text_e5]
+include_all = false
+include_subgroups = ["task_text", "task_metadata", "agent_config"]
+include_features = ["task_text"]
+exclude_features = ["task_embedding"]
+
+[feature_sets.ic_text_e5]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "prefix_closure",
+  "session_recall",
+  "stream_clock",
+]
+include_features = ["visible_text_prefix"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[[candidates]]
+id = "tl_text_e5"
+estimator = "lightgbm_quantile"
+feature_set = "tl_text_e5"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+text_embedding_method = "e5"
+text_embedding_source = "task_text"
+
+[[candidates]]
+id = "ic_text_e5"
+estimator = "lightgbm_quantile"
+feature_set = "ic_text_e5"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+text_embedding_method = "e5"
+text_embedding_source = "visible_text_prefix"
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["tl_text_e5"]
+required_features = ["task_text", "task_char_count", "task_difficulty_ordinal"]
+
+[[experiments]]
+id = "in_call_billed"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+required_features = ["observer_committed_tokens"]
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["ic_text_e5"]

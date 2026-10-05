@@ -1,0 +1,3 @@
+{"event_id":"precise-a","kind":"adjustment","logical_clock":1,"source":"decimal","sequence":1,"sku":"PRECISE","quantity":"12345678901234567890.1234567890123456789"}
+{"event_id":"precise-b","kind":"adjustment","logical_clock":2,"source":"decimal","sequence":2,"sku":"PRECISE","quantity":"0.0000000000000000001"}
+{"event_id":"precise-zero","kind":"adjustment","logical_clock":3,"source":"decimal","sequence":3,"sku":"ZERO","quantity":"-0.000"}

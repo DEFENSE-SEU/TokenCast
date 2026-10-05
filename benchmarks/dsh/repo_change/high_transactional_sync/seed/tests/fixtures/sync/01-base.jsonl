@@ -1,0 +1,4 @@
+{"key":"alpha","value":"from first"}
+{"key":"new-key","value":"inserted, with comma"}
+{"key":"obsolete","value":"temporary"}
+{"key":"stable","value":"same"}

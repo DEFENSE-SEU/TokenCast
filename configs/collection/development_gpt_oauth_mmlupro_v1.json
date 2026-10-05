@@ -1,0 +1,3205 @@
+{
+  "schema_version": 1,
+  "manifest_id": "mmlupro-gpt-oauth-development-v1",
+  "protocol_id": "mmlupro-gpt-oauth-collection-v1",
+  "source_id": "dsh_session_observer_v2",
+  "status": "design_frozen",
+  "collection_authorized": false,
+  "data_role": "protocol_development",
+  "split": "development",
+  "taxonomy": {
+    "task_types": [
+      "repo_repair"
+    ],
+    "difficulty_strata": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "difficulty_policy_id": "source-benchmark-annotation-v1"
+  },
+  "repeat_ids": [
+    "r1"
+  ],
+  "runtime": {
+    "platform": "windows",
+    "profile": "dsh-headless",
+    "base_profile": "headless",
+    "dsh_cli_version": "0.1.1-rc.2",
+    "headless_integration_version": "0.5.0",
+    "batch_protocol_version": 2,
+    "dsh_components": {
+      "@deepseek-ai/dsh-agent": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-agent-presets": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-agent-loop": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-headless": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm-deepseek": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm-retry": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-checkpoint-policy": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-persistence": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-persistence-jsonl": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-token-meter": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-tools": "0.1.1-rc.2"
+    },
+    "session_persistence": {
+      "compression": "zstd",
+      "pack_chunks": true,
+      "one_live_writer_per_session": true,
+      "write_batch_max_delay_ms": 200
+    },
+    "preset_roster": {
+      "owner": "experiment",
+      "trust": "system",
+      "include_user_root": false
+    },
+    "profile_policy": {
+      "bundle_hmr": false,
+      "user_patch_hot_reload": true,
+      "tools_mode": "native",
+      "bundled_skills": false,
+      "settings_hot_reload": false,
+      "model_title": false,
+      "compaction": false,
+      "web": false,
+      "delegation_workflow": false,
+      "telemetry": false
+    },
+    "hosted_provider": {
+      "provider": "deepseek-official",
+      "exclusive": true,
+      "base_url": "https://api.deepseek.com",
+      "max_tokens": 256000,
+      "default_context_window": 1000000,
+      "stream_idle_timeout_ms": 300000,
+      "models": [
+        {
+          "id": "deepseek-v4-flash",
+          "name": "DeepSeek-V4-Flash",
+          "context_window": 1000000,
+          "max_tokens": 256000,
+          "input_modalities": [
+            "text"
+          ]
+        },
+        {
+          "id": "deepseek-v4-pro",
+          "name": "DeepSeek-V4-Pro",
+          "context_window": 1000000,
+          "max_tokens": 256000,
+          "input_modalities": [
+            "text"
+          ]
+        }
+      ],
+      "native_reasoning_mapping": {
+        "off": {
+          "thinking": "disabled"
+        },
+        "high": {
+          "thinking": "enabled",
+          "reasoning_effort": "high"
+        }
+      },
+      "retry": {
+        "mode": "normal",
+        "max_retries": 4,
+        "retryable_codes": [
+          "EMPTY_RESPONSE",
+          "RATE_LIMIT",
+          "SERVER",
+          "TIMEOUT",
+          "TRANSPORT"
+        ],
+        "initial_delay_ms": 500,
+        "max_delay_ms": 10000,
+        "jitter_ratio": 0
+      }
+    },
+    "max_parallel_tool_calls": 10,
+    "attempt_boundary_contract": "llm-stream-one-provider-attempt-v1",
+    "single_attempt_boundary": true,
+    "composed_profile_preflight_required": true,
+    "boundary_proof_policy_id": "composed-profile-single-send-preflight-v1",
+    "opaque_provider_retry_allowed": false,
+    "max_attempts_per_logical_call": 5
+  },
+  "actor": {
+    "agent_id": "deepseek-harness",
+    "agent_version": "0.1.1-rc.2",
+    "preset_id": "router-standard",
+    "permission_preset": "unrestricted",
+    "sandbox_mode": "danger-full-access",
+    "approval_policy": "never",
+    "tool_surface_id": "router-standard-windows-no-delegation-v1",
+    "allowed_tool_names": [
+      "edit",
+      "glob",
+      "grep",
+      "job_kill",
+      "job_list",
+      "job_output",
+      "pwsh",
+      "read",
+      "skill",
+      "str_replace_editor",
+      "todo_write",
+      "write"
+    ],
+    "system_prompt_policy_id": "swebench-source-patch-submit-v4",
+    "subagents_enabled": false,
+    "turns_per_run": 1
+  },
+  "router": {
+    "router_id": "dsh-router-standard",
+    "router_version": "0.3.0",
+    "mode": "auto",
+    "fallback_allowed": false,
+    "resolved_route_must_equal_configured_route": true,
+    "resolution_recording": [
+      "continuous_mode",
+      "band",
+      "persona_text",
+      "first_request_tool_names",
+      "promoted_tool_names"
+    ]
+  },
+  "observer": {
+    "plugin_id": "@token-prediction/dsh-token-observer",
+    "plugin_version": "0.4.0",
+    "durability_contract_id": "observer-jsonl-fsync-on-session-flush-v1",
+    "checkpoint_interval_bytes": 128,
+    "checkpoint_policy_id": "dsh-text-chunk-at-least-128-utf8-bytes-v1",
+    "observer_unit_contract_id": "observer:utf8-bytes-v1",
+    "observer_tokenizer_id": "utf8-byte-256",
+    "observer_normalization_id": "utf16-to-well-formed-v1",
+    "observer_carry_policy_id": "utf16-high-surrogate-carry-v1",
+    "observer_boundary_policy_id": "dsh-text-delta-chunk-v1"
+  },
+  "run_policy": {
+    "run_policy_id": "dsh-run-v2",
+    "fresh_session_per_run": true,
+    "workspace_reset": "fresh_copy",
+    "ledger_write_boundary": "before_workspace_reset",
+    "zero_attempt": "retain_sample_flow_exclude_supervision",
+    "terminal_resume": "validate_and_skip",
+    "pre_provider_interruption_resume": "resume_same_run_preserve_incident_history",
+    "post_provider_interruption_resume": "complete_runner_interrupted_and_continue",
+    "provider_entry_started_recorded": true,
+    "implicit_rerun": false,
+    "parallel_runner_supported": false,
+    "oracle_execution": "after_actor_terminal_under_runner_identity",
+    "target_status_policy_id": "external-source-patch-terminal-v6",
+    "supervision_eligibility": "validated_task_finished_capture_only",
+    "missing_attempt_usage": "terminate_before_next_logical_call",
+    "cap_hit_and_overshoot_recorded": true
+  },
+  "condition_policy": {
+    "requested_effective_match_required": true,
+    "verify_each_logical_call": [
+      "provider",
+      "model",
+      "reasoning_effort",
+      "temperature",
+      "max_tokens",
+      "stop"
+    ],
+    "hosted_provenance_fields": [
+      "collection_started_at",
+      "collection_ended_at"
+    ],
+    "unavailable_hosted_provenance_fields": {
+      "provider_response_model": "unavailable_in_dsh_success_stream",
+      "provider_request_id": "unavailable_in_dsh_success_stream"
+    }
+  },
+  "schedule": {
+    "policy_id": "task-block-rotating-condition-v1",
+    "task_order": [
+      "mmlupro-10090",
+      "mmlupro-10103",
+      "mmlupro-10112",
+      "mmlupro-10165",
+      "mmlupro-10170",
+      "mmlupro-10215",
+      "mmlupro-10337",
+      "mmlupro-10448",
+      "mmlupro-10720",
+      "mmlupro-10902",
+      "mmlupro-10912",
+      "mmlupro-11130",
+      "mmlupro-11209",
+      "mmlupro-11349",
+      "mmlupro-11393",
+      "mmlupro-11438",
+      "mmlupro-11442",
+      "mmlupro-1156",
+      "mmlupro-11561",
+      "mmlupro-11615",
+      "mmlupro-11652",
+      "mmlupro-11676",
+      "mmlupro-11727",
+      "mmlupro-11853",
+      "mmlupro-11864",
+      "mmlupro-11929",
+      "mmlupro-11951",
+      "mmlupro-11987",
+      "mmlupro-12012",
+      "mmlupro-12071",
+      "mmlupro-12149",
+      "mmlupro-1268",
+      "mmlupro-1387",
+      "mmlupro-1496",
+      "mmlupro-1623",
+      "mmlupro-167",
+      "mmlupro-1776",
+      "mmlupro-1785",
+      "mmlupro-1796",
+      "mmlupro-1825",
+      "mmlupro-1847",
+      "mmlupro-1959",
+      "mmlupro-1997",
+      "mmlupro-2030",
+      "mmlupro-2078",
+      "mmlupro-2130",
+      "mmlupro-217",
+      "mmlupro-2175",
+      "mmlupro-2209",
+      "mmlupro-2241",
+      "mmlupro-2254",
+      "mmlupro-2292",
+      "mmlupro-2383",
+      "mmlupro-2465",
+      "mmlupro-2504",
+      "mmlupro-2549",
+      "mmlupro-2662",
+      "mmlupro-2806",
+      "mmlupro-2855",
+      "mmlupro-2861",
+      "mmlupro-2875",
+      "mmlupro-2882",
+      "mmlupro-2901",
+      "mmlupro-3023",
+      "mmlupro-3076",
+      "mmlupro-3152",
+      "mmlupro-3187",
+      "mmlupro-3378",
+      "mmlupro-3490",
+      "mmlupro-3560",
+      "mmlupro-361",
+      "mmlupro-3878",
+      "mmlupro-3916",
+      "mmlupro-4058",
+      "mmlupro-406",
+      "mmlupro-4060",
+      "mmlupro-4205",
+      "mmlupro-426",
+      "mmlupro-4300",
+      "mmlupro-4347",
+      "mmlupro-4448",
+      "mmlupro-4522",
+      "mmlupro-4557",
+      "mmlupro-4845",
+      "mmlupro-4961",
+      "mmlupro-5005",
+      "mmlupro-5179",
+      "mmlupro-5251",
+      "mmlupro-5285",
+      "mmlupro-5343",
+      "mmlupro-5407",
+      "mmlupro-5531",
+      "mmlupro-5622",
+      "mmlupro-5635",
+      "mmlupro-5715",
+      "mmlupro-5717",
+      "mmlupro-5805",
+      "mmlupro-5811",
+      "mmlupro-5862",
+      "mmlupro-5885",
+      "mmlupro-6011",
+      "mmlupro-6041",
+      "mmlupro-6137",
+      "mmlupro-6201",
+      "mmlupro-6264",
+      "mmlupro-6316",
+      "mmlupro-6317",
+      "mmlupro-6344",
+      "mmlupro-6398",
+      "mmlupro-6651",
+      "mmlupro-666",
+      "mmlupro-6677",
+      "mmlupro-6700",
+      "mmlupro-6768",
+      "mmlupro-6826",
+      "mmlupro-6856",
+      "mmlupro-7019",
+      "mmlupro-7280",
+      "mmlupro-7522",
+      "mmlupro-7617",
+      "mmlupro-7618",
+      "mmlupro-7683",
+      "mmlupro-7863",
+      "mmlupro-7873",
+      "mmlupro-7965",
+      "mmlupro-8202",
+      "mmlupro-823",
+      "mmlupro-8326",
+      "mmlupro-8393",
+      "mmlupro-8430",
+      "mmlupro-8468",
+      "mmlupro-8508",
+      "mmlupro-8600",
+      "mmlupro-8603",
+      "mmlupro-8713",
+      "mmlupro-8732",
+      "mmlupro-8795",
+      "mmlupro-8843",
+      "mmlupro-8911",
+      "mmlupro-8954",
+      "mmlupro-8988",
+      "mmlupro-899",
+      "mmlupro-9006",
+      "mmlupro-9010",
+      "mmlupro-9094",
+      "mmlupro-9181",
+      "mmlupro-9271",
+      "mmlupro-9443",
+      "mmlupro-9553",
+      "mmlupro-958",
+      "mmlupro-9757",
+      "mmlupro-9771",
+      "mmlupro-9789"
+    ],
+    "condition_order": [
+      "swebench-gpt-5-4-low"
+    ]
+  },
+  "cap_profiles": {
+    "low": {
+      "max_wall_seconds": 7200,
+      "max_logical_calls": 500,
+      "max_provider_attempts": 2500,
+      "max_attempt_output_tokens": 65536,
+      "max_provider_accounted_tokens": 30000000,
+      "token_cap_enforcement": "before_next_logical_call"
+    },
+    "medium": {
+      "max_wall_seconds": 7200,
+      "max_logical_calls": 500,
+      "max_provider_attempts": 2500,
+      "max_attempt_output_tokens": 65536,
+      "max_provider_accounted_tokens": 30000000,
+      "token_cap_enforcement": "before_next_logical_call"
+    },
+    "high": {
+      "max_wall_seconds": 7200,
+      "max_logical_calls": 500,
+      "max_provider_attempts": 2500,
+      "max_attempt_output_tokens": 65536,
+      "max_provider_accounted_tokens": 30000000,
+      "token_cap_enforcement": "before_next_logical_call"
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "mmlupro-10090",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-10090",
+      "title": "mmlupro mmlupro-10090 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10090",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10103",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-10103",
+      "title": "mmlupro mmlupro-10103 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10103",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10112",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-10112",
+      "title": "mmlupro mmlupro-10112 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10112",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10165",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-10165",
+      "title": "mmlupro mmlupro-10165 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10165",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10170",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-10170",
+      "title": "mmlupro mmlupro-10170 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10170",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10215",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-10215",
+      "title": "mmlupro mmlupro-10215 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10215",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10337",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-10337",
+      "title": "mmlupro mmlupro-10337 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10337",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10448",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-10448",
+      "title": "mmlupro mmlupro-10448 (computer science)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10448",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10720",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-10720",
+      "title": "mmlupro mmlupro-10720 (computer science)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10720",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10902",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-10902",
+      "title": "mmlupro mmlupro-10902 (philosophy)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10902",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-10912",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-10912",
+      "title": "mmlupro mmlupro-10912 (philosophy)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_10912",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11130",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-11130",
+      "title": "mmlupro mmlupro-11130 (philosophy)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11130",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11209",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-11209",
+      "title": "mmlupro mmlupro-11209 (philosophy)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11209",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11349",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-11349",
+      "title": "mmlupro mmlupro-11349 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11349",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11393",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-11393",
+      "title": "mmlupro mmlupro-11393 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11393",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11438",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-11438",
+      "title": "mmlupro mmlupro-11438 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11438",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11442",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-11442",
+      "title": "mmlupro mmlupro-11442 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11442",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1156",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1156",
+      "title": "mmlupro mmlupro-1156 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1156",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11561",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-11561",
+      "title": "mmlupro mmlupro-11561 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11561",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11615",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-11615",
+      "title": "mmlupro mmlupro-11615 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11615",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11652",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-11652",
+      "title": "mmlupro mmlupro-11652 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11652",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11676",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-11676",
+      "title": "mmlupro mmlupro-11676 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11676",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11727",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-11727",
+      "title": "mmlupro mmlupro-11727 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11727",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11853",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-11853",
+      "title": "mmlupro mmlupro-11853 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11853",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11864",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-11864",
+      "title": "mmlupro mmlupro-11864 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11864",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11929",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-11929",
+      "title": "mmlupro mmlupro-11929 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11929",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11951",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-11951",
+      "title": "mmlupro mmlupro-11951 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11951",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-11987",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-11987",
+      "title": "mmlupro mmlupro-11987 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_11987",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-12012",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-12012",
+      "title": "mmlupro mmlupro-12012 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_12012",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-12071",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-12071",
+      "title": "mmlupro mmlupro-12071 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_12071",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-12149",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-12149",
+      "title": "mmlupro mmlupro-12149 (engineering)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_12149",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1268",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1268",
+      "title": "mmlupro mmlupro-1268 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1268",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1387",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1387",
+      "title": "mmlupro mmlupro-1387 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1387",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1496",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1496",
+      "title": "mmlupro mmlupro-1496 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1496",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1623",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1623",
+      "title": "mmlupro mmlupro-1623 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1623",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-167",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-167",
+      "title": "mmlupro mmlupro-167 (business)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_167",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1776",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1776",
+      "title": "mmlupro mmlupro-1776 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1776",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1785",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1785",
+      "title": "mmlupro mmlupro-1785 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1785",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1796",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1796",
+      "title": "mmlupro mmlupro-1796 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1796",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1825",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1825",
+      "title": "mmlupro mmlupro-1825 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1825",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1847",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1847",
+      "title": "mmlupro mmlupro-1847 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1847",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1959",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-1959",
+      "title": "mmlupro mmlupro-1959 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1959",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-1997",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-1997",
+      "title": "mmlupro mmlupro-1997 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_1997",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2030",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-2030",
+      "title": "mmlupro mmlupro-2030 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2030",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2078",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-2078",
+      "title": "mmlupro mmlupro-2078 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2078",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2130",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-2130",
+      "title": "mmlupro mmlupro-2130 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2130",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-217",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-217",
+      "title": "mmlupro mmlupro-217 (business)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_217",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2175",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-2175",
+      "title": "mmlupro mmlupro-2175 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2175",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2209",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-2209",
+      "title": "mmlupro mmlupro-2209 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2209",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2241",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-2241",
+      "title": "mmlupro mmlupro-2241 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2241",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2254",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-2254",
+      "title": "mmlupro mmlupro-2254 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2254",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2292",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-2292",
+      "title": "mmlupro mmlupro-2292 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2292",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2383",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-2383",
+      "title": "mmlupro mmlupro-2383 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2383",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2465",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-2465",
+      "title": "mmlupro mmlupro-2465 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2465",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2504",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-2504",
+      "title": "mmlupro mmlupro-2504 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2504",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2549",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-2549",
+      "title": "mmlupro mmlupro-2549 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2549",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2662",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-2662",
+      "title": "mmlupro mmlupro-2662 (psychology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2662",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2806",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-2806",
+      "title": "mmlupro mmlupro-2806 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2806",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2855",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-2855",
+      "title": "mmlupro mmlupro-2855 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2855",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2861",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-2861",
+      "title": "mmlupro mmlupro-2861 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2861",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2875",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-2875",
+      "title": "mmlupro mmlupro-2875 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2875",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2882",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-2882",
+      "title": "mmlupro mmlupro-2882 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2882",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-2901",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-2901",
+      "title": "mmlupro mmlupro-2901 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_2901",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-3023",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-3023",
+      "title": "mmlupro mmlupro-3023 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_3023",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-3076",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-3076",
+      "title": "mmlupro mmlupro-3076 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_3076",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-3152",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-3152",
+      "title": "mmlupro mmlupro-3152 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_3152",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-3187",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-3187",
+      "title": "mmlupro mmlupro-3187 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_3187",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-3378",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-3378",
+      "title": "mmlupro mmlupro-3378 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_3378",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-3490",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-3490",
+      "title": "mmlupro mmlupro-3490 (biology)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_3490",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-3560",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-3560",
+      "title": "mmlupro mmlupro-3560 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_3560",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-361",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-361",
+      "title": "mmlupro mmlupro-361 (business)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_361",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-3878",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-3878",
+      "title": "mmlupro mmlupro-3878 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_3878",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-3916",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-3916",
+      "title": "mmlupro mmlupro-3916 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_3916",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4058",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-4058",
+      "title": "mmlupro mmlupro-4058 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4058",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-406",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-406",
+      "title": "mmlupro mmlupro-406 (business)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_406",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4060",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-4060",
+      "title": "mmlupro mmlupro-4060 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4060",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4205",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-4205",
+      "title": "mmlupro mmlupro-4205 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4205",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-426",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-426",
+      "title": "mmlupro mmlupro-426 (business)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_426",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4300",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-4300",
+      "title": "mmlupro mmlupro-4300 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4300",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4347",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-4347",
+      "title": "mmlupro mmlupro-4347 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4347",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4448",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-4448",
+      "title": "mmlupro mmlupro-4448 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4448",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4522",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-4522",
+      "title": "mmlupro mmlupro-4522 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4522",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4557",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-4557",
+      "title": "mmlupro mmlupro-4557 (chemistry)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4557",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4845",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-4845",
+      "title": "mmlupro mmlupro-4845 (history)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4845",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-4961",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-4961",
+      "title": "mmlupro mmlupro-4961 (history)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_4961",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5005",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-5005",
+      "title": "mmlupro mmlupro-5005 (history)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5005",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5179",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-5179",
+      "title": "mmlupro mmlupro-5179 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5179",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5251",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-5251",
+      "title": "mmlupro mmlupro-5251 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5251",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5285",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-5285",
+      "title": "mmlupro mmlupro-5285 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5285",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5343",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-5343",
+      "title": "mmlupro mmlupro-5343 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5343",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5407",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-5407",
+      "title": "mmlupro mmlupro-5407 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5407",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5531",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-5531",
+      "title": "mmlupro mmlupro-5531 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5531",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5622",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-5622",
+      "title": "mmlupro mmlupro-5622 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5622",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5635",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-5635",
+      "title": "mmlupro mmlupro-5635 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5635",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5715",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-5715",
+      "title": "mmlupro mmlupro-5715 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5715",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5717",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-5717",
+      "title": "mmlupro mmlupro-5717 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5717",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5805",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-5805",
+      "title": "mmlupro mmlupro-5805 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5805",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5811",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-5811",
+      "title": "mmlupro mmlupro-5811 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5811",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5862",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-5862",
+      "title": "mmlupro mmlupro-5862 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5862",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-5885",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-5885",
+      "title": "mmlupro mmlupro-5885 (other)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_5885",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6011",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-6011",
+      "title": "mmlupro mmlupro-6011 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6011",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6041",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-6041",
+      "title": "mmlupro mmlupro-6041 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6041",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6137",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-6137",
+      "title": "mmlupro mmlupro-6137 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6137",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6201",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-6201",
+      "title": "mmlupro mmlupro-6201 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6201",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6264",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-6264",
+      "title": "mmlupro mmlupro-6264 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6264",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6316",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-6316",
+      "title": "mmlupro mmlupro-6316 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6316",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6317",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-6317",
+      "title": "mmlupro mmlupro-6317 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6317",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6344",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-6344",
+      "title": "mmlupro mmlupro-6344 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6344",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6398",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-6398",
+      "title": "mmlupro mmlupro-6398 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6398",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6651",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-6651",
+      "title": "mmlupro mmlupro-6651 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6651",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-666",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-666",
+      "title": "mmlupro mmlupro-666 (business)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_666",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6677",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-6677",
+      "title": "mmlupro mmlupro-6677 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6677",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6700",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-6700",
+      "title": "mmlupro mmlupro-6700 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6700",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6768",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-6768",
+      "title": "mmlupro mmlupro-6768 (health)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6768",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6826",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-6826",
+      "title": "mmlupro mmlupro-6826 (economics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6826",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-6856",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-6856",
+      "title": "mmlupro mmlupro-6856 (economics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_6856",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-7019",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-7019",
+      "title": "mmlupro mmlupro-7019 (economics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_7019",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-7280",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-7280",
+      "title": "mmlupro mmlupro-7280 (economics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_7280",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-7522",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-7522",
+      "title": "mmlupro mmlupro-7522 (economics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_7522",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-7617",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-7617",
+      "title": "mmlupro mmlupro-7617 (economics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_7617",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-7618",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-7618",
+      "title": "mmlupro mmlupro-7618 (economics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_7618",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-7683",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-7683",
+      "title": "mmlupro mmlupro-7683 (economics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_7683",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-7863",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-7863",
+      "title": "mmlupro mmlupro-7863 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_7863",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-7873",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-7873",
+      "title": "mmlupro mmlupro-7873 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_7873",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-7965",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-7965",
+      "title": "mmlupro mmlupro-7965 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_7965",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8202",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8202",
+      "title": "mmlupro mmlupro-8202 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8202",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-823",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-823",
+      "title": "mmlupro mmlupro-823 (business)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_823",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8326",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-8326",
+      "title": "mmlupro mmlupro-8326 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8326",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8393",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8393",
+      "title": "mmlupro mmlupro-8393 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8393",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8430",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8430",
+      "title": "mmlupro mmlupro-8430 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8430",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8468",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-8468",
+      "title": "mmlupro mmlupro-8468 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8468",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8508",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8508",
+      "title": "mmlupro mmlupro-8508 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8508",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8600",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-8600",
+      "title": "mmlupro mmlupro-8600 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8600",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8603",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8603",
+      "title": "mmlupro mmlupro-8603 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8603",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8713",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8713",
+      "title": "mmlupro mmlupro-8713 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8713",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8732",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-8732",
+      "title": "mmlupro mmlupro-8732 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8732",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8795",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8795",
+      "title": "mmlupro mmlupro-8795 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8795",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8843",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8843",
+      "title": "mmlupro mmlupro-8843 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8843",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8911",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8911",
+      "title": "mmlupro mmlupro-8911 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8911",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8954",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8954",
+      "title": "mmlupro mmlupro-8954 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8954",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-8988",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-8988",
+      "title": "mmlupro mmlupro-8988 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_8988",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-899",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-899",
+      "title": "mmlupro mmlupro-899 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_899",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9006",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-9006",
+      "title": "mmlupro mmlupro-9006 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9006",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9010",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-9010",
+      "title": "mmlupro mmlupro-9010 (math)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9010",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9094",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-9094",
+      "title": "mmlupro mmlupro-9094 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9094",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9181",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-9181",
+      "title": "mmlupro mmlupro-9181 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9181",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9271",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-9271",
+      "title": "mmlupro mmlupro-9271 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9271",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9443",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-9443",
+      "title": "mmlupro mmlupro-9443 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9443",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9553",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-9553",
+      "title": "mmlupro mmlupro-9553 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9553",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-958",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-958",
+      "title": "mmlupro mmlupro-958 (law)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_958",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9757",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "mmlupro-9757",
+      "title": "mmlupro mmlupro-9757 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9757",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9771",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "mmlupro-9771",
+      "title": "mmlupro mmlupro-9771 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9771",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "mmlupro-9789",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "mmlupro-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "mmlupro-9789",
+      "title": "mmlupro mmlupro-9789 (physics)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/mmlupro_9789",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    }
+  ],
+  "model_conditions": [
+    {
+      "condition_id": "swebench-gpt-5-4-low",
+      "actor_model_id": "gpt-5.4",
+      "model_family_id": "gpt-5",
+      "access_mode": "hosted_api_blackbox",
+      "configured_provider": "openai-codex",
+      "configured_model": "gpt-5.4",
+      "model_revision": null,
+      "precision": "provider_managed",
+      "reasoning_effort": "low",
+      "decoding": {
+        "temperature": 0,
+        "seed": null,
+        "stop": [],
+        "max_output_tokens": "task_cap_profile"
+      },
+      "credential_source": "codex-auth-file-read-only",
+      "readiness": "provider-entitlement-confirmed"
+    }
+  ],
+  "launch_blockers": [
+    "provider-backed-collection-requires-explicit-authorization",
+    "final-held-out-test-remains-closed"
+  ],
+  "development_selection": {
+    "policy_id": "domain-pack-cohort-all-v1",
+    "benchmark": "mmlupro",
+    "selection_seed": null,
+    "available_pack_count": 153,
+    "selection_count": 153,
+    "per_stratum_count": {
+      "medium": 51,
+      "low": 51,
+      "high": 51
+    },
+    "repeat_count": 1,
+    "execution_count": 153,
+    "instance_ids": [
+      "mmlupro-10090",
+      "mmlupro-10103",
+      "mmlupro-10112",
+      "mmlupro-10165",
+      "mmlupro-10170",
+      "mmlupro-10215",
+      "mmlupro-10337",
+      "mmlupro-10448",
+      "mmlupro-10720",
+      "mmlupro-10902",
+      "mmlupro-10912",
+      "mmlupro-11130",
+      "mmlupro-11209",
+      "mmlupro-11349",
+      "mmlupro-11393",
+      "mmlupro-11438",
+      "mmlupro-11442",
+      "mmlupro-1156",
+      "mmlupro-11561",
+      "mmlupro-11615",
+      "mmlupro-11652",
+      "mmlupro-11676",
+      "mmlupro-11727",
+      "mmlupro-11853",
+      "mmlupro-11864",
+      "mmlupro-11929",
+      "mmlupro-11951",
+      "mmlupro-11987",
+      "mmlupro-12012",
+      "mmlupro-12071",
+      "mmlupro-12149",
+      "mmlupro-1268",
+      "mmlupro-1387",
+      "mmlupro-1496",
+      "mmlupro-1623",
+      "mmlupro-167",
+      "mmlupro-1776",
+      "mmlupro-1785",
+      "mmlupro-1796",
+      "mmlupro-1825",
+      "mmlupro-1847",
+      "mmlupro-1959",
+      "mmlupro-1997",
+      "mmlupro-2030",
+      "mmlupro-2078",
+      "mmlupro-2130",
+      "mmlupro-217",
+      "mmlupro-2175",
+      "mmlupro-2209",
+      "mmlupro-2241",
+      "mmlupro-2254",
+      "mmlupro-2292",
+      "mmlupro-2383",
+      "mmlupro-2465",
+      "mmlupro-2504",
+      "mmlupro-2549",
+      "mmlupro-2662",
+      "mmlupro-2806",
+      "mmlupro-2855",
+      "mmlupro-2861",
+      "mmlupro-2875",
+      "mmlupro-2882",
+      "mmlupro-2901",
+      "mmlupro-3023",
+      "mmlupro-3076",
+      "mmlupro-3152",
+      "mmlupro-3187",
+      "mmlupro-3378",
+      "mmlupro-3490",
+      "mmlupro-3560",
+      "mmlupro-361",
+      "mmlupro-3878",
+      "mmlupro-3916",
+      "mmlupro-4058",
+      "mmlupro-406",
+      "mmlupro-4060",
+      "mmlupro-4205",
+      "mmlupro-426",
+      "mmlupro-4300",
+      "mmlupro-4347",
+      "mmlupro-4448",
+      "mmlupro-4522",
+      "mmlupro-4557",
+      "mmlupro-4845",
+      "mmlupro-4961",
+      "mmlupro-5005",
+      "mmlupro-5179",
+      "mmlupro-5251",
+      "mmlupro-5285",
+      "mmlupro-5343",
+      "mmlupro-5407",
+      "mmlupro-5531",
+      "mmlupro-5622",
+      "mmlupro-5635",
+      "mmlupro-5715",
+      "mmlupro-5717",
+      "mmlupro-5805",
+      "mmlupro-5811",
+      "mmlupro-5862",
+      "mmlupro-5885",
+      "mmlupro-6011",
+      "mmlupro-6041",
+      "mmlupro-6137",
+      "mmlupro-6201",
+      "mmlupro-6264",
+      "mmlupro-6316",
+      "mmlupro-6317",
+      "mmlupro-6344",
+      "mmlupro-6398",
+      "mmlupro-6651",
+      "mmlupro-666",
+      "mmlupro-6677",
+      "mmlupro-6700",
+      "mmlupro-6768",
+      "mmlupro-6826",
+      "mmlupro-6856",
+      "mmlupro-7019",
+      "mmlupro-7280",
+      "mmlupro-7522",
+      "mmlupro-7617",
+      "mmlupro-7618",
+      "mmlupro-7683",
+      "mmlupro-7863",
+      "mmlupro-7873",
+      "mmlupro-7965",
+      "mmlupro-8202",
+      "mmlupro-823",
+      "mmlupro-8326",
+      "mmlupro-8393",
+      "mmlupro-8430",
+      "mmlupro-8468",
+      "mmlupro-8508",
+      "mmlupro-8600",
+      "mmlupro-8603",
+      "mmlupro-8713",
+      "mmlupro-8732",
+      "mmlupro-8795",
+      "mmlupro-8843",
+      "mmlupro-8911",
+      "mmlupro-8954",
+      "mmlupro-8988",
+      "mmlupro-899",
+      "mmlupro-9006",
+      "mmlupro-9010",
+      "mmlupro-9094",
+      "mmlupro-9181",
+      "mmlupro-9271",
+      "mmlupro-9443",
+      "mmlupro-9553",
+      "mmlupro-958",
+      "mmlupro-9757",
+      "mmlupro-9771",
+      "mmlupro-9789"
+    ],
+    "label_fields_used": [
+      "difficulty_stratum (input length)"
+    ]
+  },
+  "condition_digest": "8fccb5afdeb2389fe541abb600e841762c474859e34e52b9e1d8c0475a1479b8"
+}

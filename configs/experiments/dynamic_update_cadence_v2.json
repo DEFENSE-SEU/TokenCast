@@ -1,0 +1,58 @@
+{
+  "protocol_id": "dynamic-update-cadence-development-v2",
+  "evaluation_scope": "development_only",
+  "partition_authority": "configs/splits/dsh_historical_development_v1.json",
+  "split_seeds": [
+    20260719,
+    20260720,
+    20260721
+  ],
+  "fit_seed": 20260719,
+  "bootstrap_seed": 20260908,
+  "alpha": 0.1,
+  "byte_bins": [
+    0,
+    256,
+    1024,
+    4096,
+    16384
+  ],
+  "call_bins": [
+    0,
+    4,
+    8,
+    16,
+    32
+  ],
+  "byte_cadences": [
+    128,
+    256,
+    384,
+    512,
+    768,
+    1024,
+    2048
+  ],
+  "call_cadences": [
+    1,
+    2,
+    3,
+    4,
+    6,
+    8
+  ],
+  "panels": [
+    {
+      "grid": "mt-v18",
+      "kind": "independent"
+    },
+    {
+      "grid": "mt-v21",
+      "kind": "independent"
+    },
+    {
+      "grid": "mt-v19",
+      "kind": "independent"
+    }
+  ]
+}

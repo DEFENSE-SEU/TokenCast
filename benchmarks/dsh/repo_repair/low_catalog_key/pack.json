@@ -1,0 +1,91 @@
+{
+  "schema_version": 2,
+  "task_pack_id": "dsh-p0-v1-repo-repair-low-catalog-key",
+  "version": 1,
+  "task_id": "p0v1-repo-repair-low-catalog-key",
+  "task_type": "repo_repair",
+  "difficulty_stratum": "low",
+  "task_statement": "task.md",
+  "seed_workspace": "seed",
+  "runtime": {
+    "python": "3.12",
+    "dependencies": []
+  },
+  "commands": {
+    "public_tests": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "oracle": [
+      "python",
+      ".dsh_oracle/evaluate.py"
+    ]
+  },
+  "runner_bundle": "_runner/repo_repair/low_catalog_key",
+  "difficulty_evidence": {
+    "components": [
+      "catalog construction and lookup API"
+    ],
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "trim surrounding query whitespace"
+      },
+      {
+        "id": "R2",
+        "text": "match keys with Unicode casefold semantics"
+      },
+      {
+        "id": "R3",
+        "text": "raise DuplicateItemError for canonical-key collisions"
+      }
+    ],
+    "input_families": [
+      "catalog key and value pairs",
+      "lookup query strings"
+    ],
+    "deliverable_kinds": [
+      "Python source repair"
+    ],
+    "coordination_burden": 0,
+    "coordination_evidence": "one localized catalog implementation surface"
+  },
+  "oracle": {
+    "oracle_id": "dsh-p0-v1-repo-repair-low-catalog-key-oracle-v1",
+    "requirement_coverage": [
+      "R1",
+      "R2",
+      "R3"
+    ]
+  },
+  "licenses": {
+    "code": "MIT",
+    "fixture_data_and_task_text": "CC0-1.0"
+  },
+  "verification": {
+    "seed_public_tests": "expected_fail",
+    "seed_oracle": "expected_fail",
+    "reference_public_tests": "pass",
+    "reference_oracle": "pass",
+    "oracle_repetitions": 3
+  },
+  "budget": {
+    "max_task_statement_bytes": 8192,
+    "max_seed_files": 12,
+    "max_seed_bytes": 32768,
+    "max_public_test_output_bytes": 16384,
+    "max_oracle_seconds": 30
+  },
+  "asset_receipt": {
+    "task_statement_bytes": 1863,
+    "seed_file_count": 5,
+    "seed_total_bytes": 2171,
+    "seed_python_lines": 67,
+    "fixture_bytes": 0
+  }
+}

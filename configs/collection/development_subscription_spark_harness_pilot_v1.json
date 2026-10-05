@@ -1,0 +1,404 @@
+{
+ "schema_version": 1,
+ "manifest_id": "swebench-subscription-spark-harness-pilot-v1",
+ "protocol_id": "swebench-subscription-spark-harness-pilot-collection-v1",
+ "source_id": "dsh_session_observer_v2",
+ "status": "design_frozen",
+ "collection_authorized": false,
+ "data_role": "protocol_development",
+ "split": "development",
+ "taxonomy": {
+  "task_types": [
+   "repo_repair"
+  ],
+  "difficulty_strata": [
+   "low",
+   "medium",
+   "high"
+  ],
+  "difficulty_policy_id": "source-benchmark-annotation-v1"
+ },
+ "repeat_ids": [
+  "r1"
+ ],
+ "runtime": {
+  "platform": "windows",
+  "profile": "dsh-headless",
+  "base_profile": "headless",
+  "dsh_cli_version": "0.1.1-rc.2",
+  "headless_integration_version": "0.5.0",
+  "batch_protocol_version": 2,
+  "dsh_components": {
+   "@deepseek-ai/dsh-agent": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-agent-presets": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-agent-loop": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-headless": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-llm": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-llm-deepseek": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-llm-retry": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-session": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-session-checkpoint-policy": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-session-persistence": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-session-persistence-jsonl": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-token-meter": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-tools": "0.1.1-rc.2"
+  },
+  "session_persistence": {
+   "compression": "zstd",
+   "pack_chunks": true,
+   "one_live_writer_per_session": true,
+   "write_batch_max_delay_ms": 200
+  },
+  "preset_roster": {
+   "owner": "experiment",
+   "trust": "system",
+   "include_user_root": false
+  },
+  "profile_policy": {
+   "bundle_hmr": false,
+   "user_patch_hot_reload": true,
+   "tools_mode": "native",
+   "bundled_skills": false,
+   "settings_hot_reload": false,
+   "model_title": false,
+   "compaction": false,
+   "web": false,
+   "delegation_workflow": false,
+   "telemetry": false
+  },
+  "hosted_provider": {
+   "provider": "deepseek-official",
+   "exclusive": true,
+   "base_url": "https://api.deepseek.com",
+   "max_tokens": 256000,
+   "default_context_window": 1000000,
+   "stream_idle_timeout_ms": 300000,
+   "models": [
+    {
+     "id": "deepseek-v4-flash",
+     "name": "DeepSeek-V4-Flash",
+     "context_window": 1000000,
+     "max_tokens": 256000,
+     "input_modalities": [
+      "text"
+     ]
+    },
+    {
+     "id": "deepseek-v4-pro",
+     "name": "DeepSeek-V4-Pro",
+     "context_window": 1000000,
+     "max_tokens": 256000,
+     "input_modalities": [
+      "text"
+     ]
+    }
+   ],
+   "native_reasoning_mapping": {
+    "off": {
+     "thinking": "disabled"
+    },
+    "high": {
+     "thinking": "enabled",
+     "reasoning_effort": "high"
+    }
+   },
+   "retry": {
+    "mode": "normal",
+    "max_retries": 4,
+    "retryable_codes": [
+     "EMPTY_RESPONSE",
+     "RATE_LIMIT",
+     "SERVER",
+     "TIMEOUT",
+     "TRANSPORT"
+    ],
+    "initial_delay_ms": 500,
+    "max_delay_ms": 10000,
+    "jitter_ratio": 0
+   }
+  },
+  "max_parallel_tool_calls": 10,
+  "attempt_boundary_contract": "llm-stream-one-provider-attempt-v1",
+  "single_attempt_boundary": true,
+  "composed_profile_preflight_required": true,
+  "boundary_proof_policy_id": "composed-profile-single-send-preflight-v1",
+  "opaque_provider_retry_allowed": false,
+  "max_attempts_per_logical_call": 5
+ },
+ "actor": {
+  "agent_id": "deepseek-harness",
+  "agent_version": "0.1.1-rc.2",
+  "preset_id": "router-standard",
+  "permission_preset": "unrestricted",
+  "sandbox_mode": "danger-full-access",
+  "approval_policy": "never",
+  "tool_surface_id": "router-standard-windows-no-delegation-v1",
+  "allowed_tool_names": [
+   "edit",
+   "glob",
+   "grep",
+   "job_kill",
+   "job_list",
+   "job_output",
+   "pwsh",
+   "read",
+   "skill",
+   "str_replace_editor",
+   "todo_write",
+   "write"
+  ],
+  "system_prompt_policy_id": "swebench-source-patch-submit-v4",
+  "subagents_enabled": false,
+  "turns_per_run": 1
+ },
+ "router": {
+  "router_id": "dsh-router-standard",
+  "router_version": "0.3.0",
+  "mode": "auto",
+  "fallback_allowed": false,
+  "resolved_route_must_equal_configured_route": true,
+  "resolution_recording": [
+   "continuous_mode",
+   "band",
+   "persona_text",
+   "first_request_tool_names",
+   "promoted_tool_names"
+  ]
+ },
+ "observer": {
+  "plugin_id": "@token-prediction/dsh-token-observer",
+  "plugin_version": "0.4.0",
+  "durability_contract_id": "observer-jsonl-fsync-on-session-flush-v1",
+  "checkpoint_interval_bytes": 128,
+  "checkpoint_policy_id": "dsh-text-chunk-at-least-128-utf8-bytes-v1",
+  "observer_unit_contract_id": "observer:utf8-bytes-v1",
+  "observer_tokenizer_id": "utf8-byte-256",
+  "observer_normalization_id": "utf16-to-well-formed-v1",
+  "observer_carry_policy_id": "utf16-high-surrogate-carry-v1",
+  "observer_boundary_policy_id": "dsh-text-delta-chunk-v1"
+ },
+ "run_policy": {
+  "run_policy_id": "dsh-run-v2",
+  "fresh_session_per_run": true,
+  "workspace_reset": "fresh_copy",
+  "ledger_write_boundary": "before_workspace_reset",
+  "zero_attempt": "retain_sample_flow_exclude_supervision",
+  "terminal_resume": "validate_and_skip",
+  "pre_provider_interruption_resume": "resume_same_run_preserve_incident_history",
+  "post_provider_interruption_resume": "complete_runner_interrupted_and_continue",
+  "provider_entry_started_recorded": true,
+  "implicit_rerun": false,
+  "parallel_runner_supported": false,
+  "oracle_execution": "after_actor_terminal_under_runner_identity",
+  "target_status_policy_id": "external-source-patch-terminal-v6",
+  "supervision_eligibility": "validated_task_finished_capture_only",
+  "missing_attempt_usage": "terminate_before_next_logical_call",
+  "cap_hit_and_overshoot_recorded": true
+ },
+ "condition_policy": {
+  "requested_effective_match_required": true,
+  "verify_each_logical_call": [
+   "provider",
+   "model",
+   "reasoning_effort",
+   "temperature",
+   "max_tokens",
+   "stop"
+  ],
+  "hosted_provenance_fields": [
+   "collection_started_at",
+   "collection_ended_at"
+  ],
+  "unavailable_hosted_provenance_fields": {
+   "provider_response_model": "unavailable_in_dsh_success_stream",
+   "provider_request_id": "unavailable_in_dsh_success_stream"
+  }
+ },
+ "schedule": {
+  "policy_id": "task-block-rotating-condition-v1",
+  "task_order": [
+   "swebench-astropy-astropy-14096",
+   "swebench-psf-requests-2931",
+   "swebench-matplotlib-matplotlib-24570",
+   "swebench-astropy-astropy-14539",
+   "swebench-sympy-sympy-15976",
+   "swebench-pydata-xarray-7229"
+  ],
+  "condition_order": [
+   "swebench-gpt-5-3-spark-low"
+  ]
+ },
+ "cap_profiles": {
+  "low": {
+   "max_wall_seconds": 7200,
+   "max_logical_calls": 500,
+   "max_provider_attempts": 2500,
+   "max_attempt_output_tokens": 65536,
+   "max_provider_accounted_tokens": 30000000,
+   "token_cap_enforcement": "before_next_logical_call"
+  },
+  "medium": {
+   "max_wall_seconds": 7200,
+   "max_logical_calls": 500,
+   "max_provider_attempts": 2500,
+   "max_attempt_output_tokens": 65536,
+   "max_provider_accounted_tokens": 30000000,
+   "token_cap_enforcement": "before_next_logical_call"
+  },
+  "high": {
+   "max_wall_seconds": 7200,
+   "max_logical_calls": 500,
+   "max_provider_attempts": 2500,
+   "max_attempt_output_tokens": 65536,
+   "max_provider_accounted_tokens": 30000000,
+   "token_cap_enforcement": "before_next_logical_call"
+  }
+ },
+ "tasks": [
+  {
+   "task_id": "swebench-astropy-astropy-14096",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-astropy-astropy-14096",
+   "title": "SWE-bench Verified astropy__astropy-14096",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_14096",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-psf-requests-2931",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-psf-requests-2931",
+   "title": "SWE-bench Verified psf__requests-2931",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_psf_requests_2931",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-matplotlib-matplotlib-24570",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-matplotlib-matplotlib-24570",
+   "title": "SWE-bench Verified matplotlib__matplotlib-24570",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_matplotlib_matplotlib_24570",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-astropy-astropy-14539",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-astropy-astropy-14539",
+   "title": "SWE-bench Verified astropy__astropy-14539",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_14539",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sympy-sympy-15976",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-sympy-sympy-15976",
+   "title": "SWE-bench Verified sympy__sympy-15976",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sympy_sympy_15976",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pydata-xarray-7229",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-pydata-xarray-7229",
+   "title": "SWE-bench Verified pydata__xarray-7229",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pydata_xarray_7229",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  }
+ ],
+ "model_conditions": [
+  {
+   "condition_id": "swebench-gpt-5-3-spark-low",
+   "actor_model_id": "gpt-5.3-codex-spark",
+   "model_family_id": "gpt-5",
+   "access_mode": "hosted_api_blackbox",
+   "configured_provider": "openai-codex",
+   "configured_model": "gpt-5.3-codex-spark",
+   "model_revision": null,
+   "precision": "provider_managed",
+   "reasoning_effort": "low",
+   "decoding": {
+    "temperature": 0,
+    "seed": null,
+    "stop": [],
+    "max_output_tokens": "task_cap_profile"
+   },
+   "credential_source": "codex-auth-file-read-only",
+   "readiness": "provider-entitlement-confirmed"
+  }
+ ],
+ "launch_blockers": [
+  "provider-backed-collection-requires-explicit-authorization",
+  "final-held-out-test-remains-closed"
+ ],
+ "development_selection": {
+  "policy_id": "harness-pilot-two-per-stratum-seeded-packs-v1",
+  "benchmark": "swe-bench-verified",
+  "selection_seed": 20260914,
+  "source_manifest_id": "swebench-gpt-oauth-development-v19",
+  "selection_count": 6,
+  "per_stratum_count": 2,
+  "repeat_count": 1,
+  "execution_count": 6,
+  "instance_ids": [
+   "astropy__astropy-14096",
+   "psf__requests-2931",
+   "matplotlib__matplotlib-24570",
+   "astropy__astropy-14539",
+   "sympy__sympy-15976",
+   "pydata__xarray-7229"
+  ]
+ }
+}

@@ -1,0 +1,6 @@
+[project]
+name = "snapshot-index"
+version = "0.1.0"
+description = "Deterministic indexes for JSON Lines snapshots."
+requires-python = ">=3.12"
+dependencies = []

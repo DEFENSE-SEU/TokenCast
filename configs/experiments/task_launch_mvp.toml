@@ -1,0 +1,48 @@
+config_id = "task-launch-baselines-v2"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "canonical_jsonl"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.task_length_only]
+include_all = false
+include_features = ["task_tokens"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "task_length_only"
+estimator = "length_only"
+feature_set = "task_length_only"
+role = "baseline"
+
+[candidates.params]
+feature_name = "task_tokens"
+alpha = 0.10
+
+[[experiments]]
+id = "task_launch_total"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = ["empirical_quantile", "task_length_only"]
+required_features = ["task_tokens"]

@@ -1,0 +1,14 @@
+exception_id,code,order_id,record_id,message,source,line
+X0001,unknown_order,ORD-404,A404,record precedes its order creation,adjustments/01.jsonl,4
+X0002,forward_reversal,ORD-100,R-FORWARD,reversal target follows the reversal,adjustments/02.jsonl,1
+X0003,cross_order_reversal,ORD-200,R-CROSS,reversal target belongs to another order,adjustments/02.jsonl,4
+X0004,missing_reversal_target,ORD-100,R-MISSING,reversal target is unavailable,adjustments/02.jsonl,5
+X0005,second_reversal,ORD-100,R-SECOND,adjustment was already reversed,adjustments/02.jsonl,6
+X0006,correction_state_mismatch,ORD-300,C300-BAD,correction source state differs from current state,corrections/01.jsonl,2
+X0007,incomplete_lifecycle,ORD-300,S300-P,order did not reach delivered,scans/01.jsonl,5
+X0008,conflicting_duplicate,ORD-300,S-CONFLICT,excluded conflicting record identity,scans/01.jsonl,6
+X0009,regressing_transition,ORD-100,S100-REGRESS,scan did not advance lifecycle state,scans/01.jsonl,7
+X0010,identical_duplicate,ORD-100,S100-DUP,collapsed byte-identical duplicate,scans/02.jsonl,1
+X0011,regressing_transition,ORD-100,S100-S,scan did not advance lifecycle state,scans/02.jsonl,2
+X0012,missing_transition,ORD-200,S200-SKIP,scan skipped a required lifecycle state,scans/02.jsonl,6
+X0013,conflicting_duplicate,ORD-300,S-CONFLICT,excluded conflicting record identity,scans/02.jsonl,7

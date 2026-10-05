@@ -1,0 +1,44 @@
+{
+  "protocol_id": "update-overhead-cadence-development-v2",
+  "grid": "mt-v18",
+  "split_seed": 20260719,
+  "fit_seed": 20260719,
+  "sample_size": 18,
+  "sample_policy": "evenly spaced capture-size quantiles among retained evaluation runs",
+  "repeats": 3,
+  "warmup_replays": 1,
+  "policies": [
+    {
+      "name": "full",
+      "bytes": 0,
+      "calls": 0
+    },
+    {
+      "name": "256_bytes_2_calls",
+      "bytes": 256,
+      "calls": 2
+    },
+    {
+      "name": "384_bytes_3_calls",
+      "bytes": 384,
+      "calls": 3
+    },
+    {
+      "name": "512_bytes_4_calls",
+      "bytes": 512,
+      "calls": 4
+    },
+    {
+      "name": "1024_bytes_6_calls",
+      "bytes": 1024,
+      "calls": 6
+    },
+    {
+      "name": "2048_bytes_8_calls",
+      "bytes": 2048,
+      "calls": 8
+    }
+  ],
+  "quantile_prediction_threads": 1,
+  "memory_measurement": "separate tracemalloc replay after timing"
+}

@@ -1,0 +1,1611 @@
+{
+ "schema_version": 1,
+ "manifest_id": "swebench-gpt-oauth-development-v18",
+ "protocol_id": "swebench-gpt-oauth-collection-v18",
+ "source_id": "dsh_session_observer_v2",
+ "status": "design_frozen",
+ "collection_authorized": false,
+ "data_role": "protocol_development",
+ "split": "development",
+ "taxonomy": {
+  "task_types": [
+   "repo_repair"
+  ],
+  "difficulty_strata": [
+   "low",
+   "medium",
+   "high"
+  ],
+  "difficulty_policy_id": "source-benchmark-annotation-v1"
+ },
+ "repeat_ids": [
+  "r0"
+ ],
+ "runtime": {
+  "platform": "windows",
+  "profile": "dsh-headless",
+  "base_profile": "headless",
+  "dsh_cli_version": "0.1.1-rc.2",
+  "headless_integration_version": "0.5.0",
+  "batch_protocol_version": 2,
+  "dsh_components": {
+   "@deepseek-ai/dsh-agent": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-agent-presets": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-agent-loop": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-headless": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-llm": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-llm-deepseek": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-llm-retry": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-session": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-session-checkpoint-policy": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-session-persistence": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-session-persistence-jsonl": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-token-meter": "0.1.1-rc.2",
+   "@deepseek-ai/dsh-tools": "0.1.1-rc.2"
+  },
+  "session_persistence": {
+   "compression": "zstd",
+   "pack_chunks": true,
+   "one_live_writer_per_session": true,
+   "write_batch_max_delay_ms": 200
+  },
+  "preset_roster": {
+   "owner": "experiment",
+   "trust": "system",
+   "include_user_root": false
+  },
+  "profile_policy": {
+   "bundle_hmr": false,
+   "user_patch_hot_reload": true,
+   "tools_mode": "native",
+   "bundled_skills": false,
+   "settings_hot_reload": false,
+   "model_title": false,
+   "compaction": false,
+   "web": false,
+   "delegation_workflow": false,
+   "telemetry": false
+  },
+  "hosted_provider": {
+   "provider": "deepseek-official",
+   "exclusive": true,
+   "base_url": "https://api.deepseek.com",
+   "max_tokens": 256000,
+   "default_context_window": 1000000,
+   "stream_idle_timeout_ms": 300000,
+   "models": [
+    {
+     "id": "deepseek-v4-flash",
+     "name": "DeepSeek-V4-Flash",
+     "context_window": 1000000,
+     "max_tokens": 256000,
+     "input_modalities": [
+      "text"
+     ]
+    },
+    {
+     "id": "deepseek-v4-pro",
+     "name": "DeepSeek-V4-Pro",
+     "context_window": 1000000,
+     "max_tokens": 256000,
+     "input_modalities": [
+      "text"
+     ]
+    }
+   ],
+   "native_reasoning_mapping": {
+    "off": {
+     "thinking": "disabled"
+    },
+    "high": {
+     "thinking": "enabled",
+     "reasoning_effort": "high"
+    }
+   },
+   "retry": {
+    "mode": "normal",
+    "max_retries": 4,
+    "retryable_codes": [
+     "EMPTY_RESPONSE",
+     "RATE_LIMIT",
+     "SERVER",
+     "TIMEOUT",
+     "TRANSPORT"
+    ],
+    "initial_delay_ms": 500,
+    "max_delay_ms": 10000,
+    "jitter_ratio": 0
+   }
+  },
+  "max_parallel_tool_calls": 10,
+  "attempt_boundary_contract": "llm-stream-one-provider-attempt-v1",
+  "single_attempt_boundary": true,
+  "composed_profile_preflight_required": true,
+  "boundary_proof_policy_id": "composed-profile-single-send-preflight-v1",
+  "opaque_provider_retry_allowed": false,
+  "max_attempts_per_logical_call": 5
+ },
+ "actor": {
+  "agent_id": "deepseek-harness",
+  "agent_version": "0.1.1-rc.2",
+  "preset_id": "router-standard",
+  "permission_preset": "unrestricted",
+  "sandbox_mode": "danger-full-access",
+  "approval_policy": "never",
+  "tool_surface_id": "router-standard-windows-no-delegation-v1",
+  "allowed_tool_names": [
+   "edit",
+   "glob",
+   "grep",
+   "job_kill",
+   "job_list",
+   "job_output",
+   "pwsh",
+   "read",
+   "skill",
+   "str_replace_editor",
+   "todo_write",
+   "write"
+  ],
+  "system_prompt_policy_id": "swebench-source-patch-submit-v4",
+  "subagents_enabled": false,
+  "turns_per_run": 1
+ },
+ "router": {
+  "router_id": "dsh-router-standard",
+  "router_version": "0.3.0",
+  "mode": "auto",
+  "fallback_allowed": false,
+  "resolved_route_must_equal_configured_route": true,
+  "resolution_recording": [
+   "continuous_mode",
+   "band",
+   "persona_text",
+   "first_request_tool_names",
+   "promoted_tool_names"
+  ]
+ },
+ "observer": {
+  "plugin_id": "@token-prediction/dsh-token-observer",
+  "plugin_version": "0.4.0",
+  "durability_contract_id": "observer-jsonl-fsync-on-session-flush-v1",
+  "checkpoint_interval_bytes": 128,
+  "checkpoint_policy_id": "dsh-text-chunk-at-least-128-utf8-bytes-v1",
+  "observer_unit_contract_id": "observer:utf8-bytes-v1",
+  "observer_tokenizer_id": "utf8-byte-256",
+  "observer_normalization_id": "utf16-to-well-formed-v1",
+  "observer_carry_policy_id": "utf16-high-surrogate-carry-v1",
+  "observer_boundary_policy_id": "dsh-text-delta-chunk-v1"
+ },
+ "run_policy": {
+  "run_policy_id": "dsh-run-v2",
+  "fresh_session_per_run": true,
+  "workspace_reset": "fresh_copy",
+  "ledger_write_boundary": "before_workspace_reset",
+  "zero_attempt": "retain_sample_flow_exclude_supervision",
+  "terminal_resume": "validate_and_skip",
+  "pre_provider_interruption_resume": "resume_same_run_preserve_incident_history",
+  "post_provider_interruption_resume": "complete_runner_interrupted_and_continue",
+  "provider_entry_started_recorded": true,
+  "implicit_rerun": false,
+  "parallel_runner_supported": false,
+  "oracle_execution": "after_actor_terminal_under_runner_identity",
+  "target_status_policy_id": "external-source-patch-terminal-v6",
+  "supervision_eligibility": "validated_task_finished_capture_only",
+  "missing_attempt_usage": "terminate_before_next_logical_call",
+  "cap_hit_and_overshoot_recorded": true
+ },
+ "condition_policy": {
+  "requested_effective_match_required": true,
+  "verify_each_logical_call": [
+   "provider",
+   "model",
+   "reasoning_effort",
+   "temperature",
+   "max_tokens",
+   "stop"
+  ],
+  "hosted_provenance_fields": [
+   "collection_started_at",
+   "collection_ended_at"
+  ],
+  "unavailable_hosted_provenance_fields": {
+   "provider_response_model": "unavailable_in_dsh_success_stream",
+   "provider_request_id": "unavailable_in_dsh_success_stream"
+  }
+ },
+ "schedule": {
+  "policy_id": "task-block-rotating-condition-v1",
+  "task_order": [
+   "swebench-astropy-astropy-12907",
+   "swebench-astropy-astropy-13033",
+   "swebench-astropy-astropy-14096",
+   "swebench-astropy-astropy-14182",
+   "swebench-astropy-astropy-14508",
+   "swebench-astropy-astropy-14539",
+   "swebench-astropy-astropy-14598",
+   "swebench-astropy-astropy-8707",
+   "swebench-astropy-astropy-8872",
+   "swebench-django-django-10097",
+   "swebench-django-django-10554",
+   "swebench-django-django-10973",
+   "swebench-django-django-14089",
+   "swebench-django-django-15315",
+   "swebench-django-django-15375",
+   "swebench-django-django-15930",
+   "swebench-django-django-16333",
+   "swebench-django-django-16454",
+   "swebench-matplotlib-matplotlib-13989",
+   "swebench-matplotlib-matplotlib-14623",
+   "swebench-matplotlib-matplotlib-24026",
+   "swebench-matplotlib-matplotlib-24149",
+   "swebench-matplotlib-matplotlib-24570",
+   "swebench-matplotlib-matplotlib-24970",
+   "swebench-matplotlib-matplotlib-25332",
+   "swebench-matplotlib-matplotlib-25775",
+   "swebench-mwaskom-seaborn-3069",
+   "swebench-mwaskom-seaborn-3187",
+   "swebench-pallets-flask-5014",
+   "swebench-psf-requests-1921",
+   "swebench-psf-requests-2931",
+   "swebench-psf-requests-6028",
+   "swebench-pydata-xarray-3305",
+   "swebench-pydata-xarray-4075",
+   "swebench-pydata-xarray-4356",
+   "swebench-pydata-xarray-4695",
+   "swebench-pydata-xarray-6461",
+   "swebench-pydata-xarray-7229",
+   "swebench-pylint-dev-pylint-4661",
+   "swebench-pylint-dev-pylint-4970",
+   "swebench-pylint-dev-pylint-6528",
+   "swebench-pylint-dev-pylint-7277",
+   "swebench-pylint-dev-pylint-8898",
+   "swebench-pytest-dev-pytest-10051",
+   "swebench-pytest-dev-pytest-10081",
+   "swebench-pytest-dev-pytest-5631",
+   "swebench-pytest-dev-pytest-5840",
+   "swebench-pytest-dev-pytest-7205",
+   "swebench-pytest-dev-pytest-7571",
+   "swebench-scikit-learn-scikit-learn-13328",
+   "swebench-scikit-learn-scikit-learn-13779",
+   "swebench-scikit-learn-scikit-learn-14053",
+   "swebench-scikit-learn-scikit-learn-14983",
+   "swebench-scikit-learn-scikit-learn-15100",
+   "swebench-scikit-learn-scikit-learn-25973",
+   "swebench-sphinx-doc-sphinx-10673",
+   "swebench-sphinx-doc-sphinx-11445",
+   "swebench-sphinx-doc-sphinx-7462",
+   "swebench-sphinx-doc-sphinx-8548",
+   "swebench-sphinx-doc-sphinx-8593",
+   "swebench-sphinx-doc-sphinx-9461",
+   "swebench-sphinx-doc-sphinx-9591",
+   "swebench-sympy-sympy-12481",
+   "swebench-sympy-sympy-13091",
+   "swebench-sympy-sympy-13551",
+   "swebench-sympy-sympy-15976",
+   "swebench-sympy-sympy-17655",
+   "swebench-sympy-sympy-18211",
+   "swebench-sympy-sympy-21930"
+  ],
+  "condition_order": [
+   "swebench-gpt-5-4-low"
+  ]
+ },
+ "cap_profiles": {
+  "low": {
+   "max_wall_seconds": 7200,
+   "max_logical_calls": 500,
+   "max_provider_attempts": 2500,
+   "max_attempt_output_tokens": 65536,
+   "max_provider_accounted_tokens": 30000000,
+   "token_cap_enforcement": "before_next_logical_call"
+  },
+  "medium": {
+   "max_wall_seconds": 7200,
+   "max_logical_calls": 500,
+   "max_provider_attempts": 2500,
+   "max_attempt_output_tokens": 65536,
+   "max_provider_accounted_tokens": 30000000,
+   "token_cap_enforcement": "before_next_logical_call"
+  },
+  "high": {
+   "max_wall_seconds": 7200,
+   "max_logical_calls": 500,
+   "max_provider_attempts": 2500,
+   "max_attempt_output_tokens": 65536,
+   "max_provider_accounted_tokens": 30000000,
+   "token_cap_enforcement": "before_next_logical_call"
+  }
+ },
+ "tasks": [
+  {
+   "task_id": "swebench-astropy-astropy-12907",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "15 min - 1 hour"
+   },
+   "task_family_id": "swebench-astropy-astropy-12907",
+   "title": "SWE-bench Verified astropy__astropy-12907",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_12907",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-astropy-astropy-13033",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-astropy-astropy-13033",
+   "title": "SWE-bench Verified astropy__astropy-13033",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_13033",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-astropy-astropy-14096",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-astropy-astropy-14096",
+   "title": "SWE-bench Verified astropy__astropy-14096",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_14096",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-astropy-astropy-14182",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-astropy-astropy-14182",
+   "title": "SWE-bench Verified astropy__astropy-14182",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_14182",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-astropy-astropy-14508",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-astropy-astropy-14508",
+   "title": "SWE-bench Verified astropy__astropy-14508",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_14508",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-astropy-astropy-14539",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-astropy-astropy-14539",
+   "title": "SWE-bench Verified astropy__astropy-14539",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_14539",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-astropy-astropy-14598",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-astropy-astropy-14598",
+   "title": "SWE-bench Verified astropy__astropy-14598",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_14598",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-astropy-astropy-8707",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-astropy-astropy-8707",
+   "title": "SWE-bench Verified astropy__astropy-8707",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_8707",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-astropy-astropy-8872",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-astropy-astropy-8872",
+   "title": "SWE-bench Verified astropy__astropy-8872",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_astropy_astropy_8872",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-django-django-10097",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "<15 min fix"
+   },
+   "task_family_id": "swebench-django-django-10097",
+   "title": "SWE-bench Verified django__django-10097",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_django_django_10097",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-django-django-10554",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "1-4 hours"
+   },
+   "task_family_id": "swebench-django-django-10554",
+   "title": "SWE-bench Verified django__django-10554",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_django_django_10554",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-django-django-10973",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "15 min - 1 hour"
+   },
+   "task_family_id": "swebench-django-django-10973",
+   "title": "SWE-bench Verified django__django-10973",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_django_django_10973",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-django-django-14089",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-django-django-14089",
+   "title": "SWE-bench Verified django__django-14089",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_django_django_14089",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-django-django-15315",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-django-django-15315",
+   "title": "SWE-bench Verified django__django-15315",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_django_django_15315",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-django-django-15375",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-django-django-15375",
+   "title": "SWE-bench Verified django__django-15375",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_django_django_15375",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-django-django-15930",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-django-django-15930",
+   "title": "SWE-bench Verified django__django-15930",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_django_django_15930",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-django-django-16333",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-django-django-16333",
+   "title": "SWE-bench Verified django__django-16333",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_django_django_16333",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-django-django-16454",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-django-django-16454",
+   "title": "SWE-bench Verified django__django-16454",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_django_django_16454",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-matplotlib-matplotlib-13989",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "<15 min fix"
+   },
+   "task_family_id": "swebench-matplotlib-matplotlib-13989",
+   "title": "SWE-bench Verified matplotlib__matplotlib-13989",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_matplotlib_matplotlib_13989",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-matplotlib-matplotlib-14623",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "15 min - 1 hour"
+   },
+   "task_family_id": "swebench-matplotlib-matplotlib-14623",
+   "title": "SWE-bench Verified matplotlib__matplotlib-14623",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_matplotlib_matplotlib_14623",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-matplotlib-matplotlib-24026",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-matplotlib-matplotlib-24026",
+   "title": "SWE-bench Verified matplotlib__matplotlib-24026",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_matplotlib_matplotlib_24026",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-matplotlib-matplotlib-24149",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-matplotlib-matplotlib-24149",
+   "title": "SWE-bench Verified matplotlib__matplotlib-24149",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_matplotlib_matplotlib_24149",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-matplotlib-matplotlib-24570",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-matplotlib-matplotlib-24570",
+   "title": "SWE-bench Verified matplotlib__matplotlib-24570",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_matplotlib_matplotlib_24570",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-matplotlib-matplotlib-24970",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-matplotlib-matplotlib-24970",
+   "title": "SWE-bench Verified matplotlib__matplotlib-24970",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_matplotlib_matplotlib_24970",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-matplotlib-matplotlib-25332",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-matplotlib-matplotlib-25332",
+   "title": "SWE-bench Verified matplotlib__matplotlib-25332",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_matplotlib_matplotlib_25332",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-matplotlib-matplotlib-25775",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-matplotlib-matplotlib-25775",
+   "title": "SWE-bench Verified matplotlib__matplotlib-25775",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_matplotlib_matplotlib_25775",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-mwaskom-seaborn-3069",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-mwaskom-seaborn-3069",
+   "title": "SWE-bench Verified mwaskom__seaborn-3069",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_mwaskom_seaborn_3069",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-mwaskom-seaborn-3187",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-mwaskom-seaborn-3187",
+   "title": "SWE-bench Verified mwaskom__seaborn-3187",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_mwaskom_seaborn_3187",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pallets-flask-5014",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-pallets-flask-5014",
+   "title": "SWE-bench Verified pallets__flask-5014",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pallets_flask_5014",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-psf-requests-1921",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-psf-requests-1921",
+   "title": "SWE-bench Verified psf__requests-1921",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_psf_requests_1921",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-psf-requests-2931",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-psf-requests-2931",
+   "title": "SWE-bench Verified psf__requests-2931",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_psf_requests_2931",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-psf-requests-6028",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-psf-requests-6028",
+   "title": "SWE-bench Verified psf__requests-6028",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_psf_requests_6028",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pydata-xarray-3305",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-pydata-xarray-3305",
+   "title": "SWE-bench Verified pydata__xarray-3305",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pydata_xarray_3305",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pydata-xarray-4075",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-pydata-xarray-4075",
+   "title": "SWE-bench Verified pydata__xarray-4075",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pydata_xarray_4075",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pydata-xarray-4356",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-pydata-xarray-4356",
+   "title": "SWE-bench Verified pydata__xarray-4356",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pydata_xarray_4356",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pydata-xarray-4695",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-pydata-xarray-4695",
+   "title": "SWE-bench Verified pydata__xarray-4695",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pydata_xarray_4695",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pydata-xarray-6461",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-pydata-xarray-6461",
+   "title": "SWE-bench Verified pydata__xarray-6461",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pydata_xarray_6461",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pydata-xarray-7229",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-pydata-xarray-7229",
+   "title": "SWE-bench Verified pydata__xarray-7229",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pydata_xarray_7229",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pylint-dev-pylint-4661",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-pylint-dev-pylint-4661",
+   "title": "SWE-bench Verified pylint-dev__pylint-4661",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pylint_dev_pylint_4661",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pylint-dev-pylint-4970",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-pylint-dev-pylint-4970",
+   "title": "SWE-bench Verified pylint-dev__pylint-4970",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pylint_dev_pylint_4970",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pylint-dev-pylint-6528",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-pylint-dev-pylint-6528",
+   "title": "SWE-bench Verified pylint-dev__pylint-6528",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pylint_dev_pylint_6528",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pylint-dev-pylint-7277",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-pylint-dev-pylint-7277",
+   "title": "SWE-bench Verified pylint-dev__pylint-7277",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pylint_dev_pylint_7277",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pylint-dev-pylint-8898",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-pylint-dev-pylint-8898",
+   "title": "SWE-bench Verified pylint-dev__pylint-8898",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pylint_dev_pylint_8898",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pytest-dev-pytest-10051",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-pytest-dev-pytest-10051",
+   "title": "SWE-bench Verified pytest-dev__pytest-10051",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pytest_dev_pytest_10051",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pytest-dev-pytest-10081",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-pytest-dev-pytest-10081",
+   "title": "SWE-bench Verified pytest-dev__pytest-10081",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pytest_dev_pytest_10081",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pytest-dev-pytest-5631",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-pytest-dev-pytest-5631",
+   "title": "SWE-bench Verified pytest-dev__pytest-5631",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pytest_dev_pytest_5631",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pytest-dev-pytest-5840",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-pytest-dev-pytest-5840",
+   "title": "SWE-bench Verified pytest-dev__pytest-5840",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pytest_dev_pytest_5840",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pytest-dev-pytest-7205",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-pytest-dev-pytest-7205",
+   "title": "SWE-bench Verified pytest-dev__pytest-7205",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pytest_dev_pytest_7205",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-pytest-dev-pytest-7571",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-pytest-dev-pytest-7571",
+   "title": "SWE-bench Verified pytest-dev__pytest-7571",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_pytest_dev_pytest_7571",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-scikit-learn-scikit-learn-13328",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-scikit-learn-scikit-learn-13328",
+   "title": "SWE-bench Verified scikit-learn__scikit-learn-13328",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_scikit_learn_scikit_learn_13328",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-scikit-learn-scikit-learn-13779",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-scikit-learn-scikit-learn-13779",
+   "title": "SWE-bench Verified scikit-learn__scikit-learn-13779",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_scikit_learn_scikit_learn_13779",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-scikit-learn-scikit-learn-14053",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-scikit-learn-scikit-learn-14053",
+   "title": "SWE-bench Verified scikit-learn__scikit-learn-14053",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_scikit_learn_scikit_learn_14053",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-scikit-learn-scikit-learn-14983",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-scikit-learn-scikit-learn-14983",
+   "title": "SWE-bench Verified scikit-learn__scikit-learn-14983",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_scikit_learn_scikit_learn_14983",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-scikit-learn-scikit-learn-15100",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-scikit-learn-scikit-learn-15100",
+   "title": "SWE-bench Verified scikit-learn__scikit-learn-15100",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_scikit_learn_scikit_learn_15100",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-scikit-learn-scikit-learn-25973",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-scikit-learn-scikit-learn-25973",
+   "title": "SWE-bench Verified scikit-learn__scikit-learn-25973",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_scikit_learn_scikit_learn_25973",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sphinx-doc-sphinx-10673",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-sphinx-doc-sphinx-10673",
+   "title": "SWE-bench Verified sphinx-doc__sphinx-10673",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sphinx_doc_sphinx_10673",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sphinx-doc-sphinx-11445",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-sphinx-doc-sphinx-11445",
+   "title": "SWE-bench Verified sphinx-doc__sphinx-11445",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sphinx_doc_sphinx_11445",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sphinx-doc-sphinx-7462",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-sphinx-doc-sphinx-7462",
+   "title": "SWE-bench Verified sphinx-doc__sphinx-7462",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sphinx_doc_sphinx_7462",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sphinx-doc-sphinx-8548",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-sphinx-doc-sphinx-8548",
+   "title": "SWE-bench Verified sphinx-doc__sphinx-8548",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sphinx_doc_sphinx_8548",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sphinx-doc-sphinx-8593",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-sphinx-doc-sphinx-8593",
+   "title": "SWE-bench Verified sphinx-doc__sphinx-8593",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sphinx_doc_sphinx_8593",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sphinx-doc-sphinx-9461",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-sphinx-doc-sphinx-9461",
+   "title": "SWE-bench Verified sphinx-doc__sphinx-9461",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sphinx_doc_sphinx_9461",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sphinx-doc-sphinx-9591",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-sphinx-doc-sphinx-9591",
+   "title": "SWE-bench Verified sphinx-doc__sphinx-9591",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sphinx_doc_sphinx_9591",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sympy-sympy-12481",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-sympy-sympy-12481",
+   "title": "SWE-bench Verified sympy__sympy-12481",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sympy_sympy_12481",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sympy-sympy-13091",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-sympy-sympy-13091",
+   "title": "SWE-bench Verified sympy__sympy-13091",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sympy_sympy_13091",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sympy-sympy-13551",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "low",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:low"
+   },
+   "task_family_id": "swebench-sympy-sympy-13551",
+   "title": "SWE-bench Verified sympy__sympy-13551",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sympy_sympy_13551",
+   "cap_profile": "low",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sympy-sympy-15976",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-sympy-sympy-15976",
+   "title": "SWE-bench Verified sympy__sympy-15976",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sympy_sympy_15976",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sympy-sympy-17655",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "high",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:high"
+   },
+   "task_family_id": "swebench-sympy-sympy-17655",
+   "title": "SWE-bench Verified sympy__sympy-17655",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sympy_sympy_17655",
+   "cap_profile": "high",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sympy-sympy-18211",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-sympy-sympy-18211",
+   "title": "SWE-bench Verified sympy__sympy-18211",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sympy_sympy_18211",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  },
+  {
+   "task_id": "swebench-sympy-sympy-21930",
+   "task_type": "repo_repair",
+   "difficulty_stratum": "medium",
+   "difficulty_evidence": {
+    "source": "swe-bench-verified",
+    "label": "statement-length-stratified:medium"
+   },
+   "task_family_id": "swebench-sympy-sympy-21930",
+   "title": "SWE-bench Verified sympy__sympy-21930",
+   "requirements": [
+    "resolve the supplied benchmark issue in the pinned seed workspace"
+   ],
+   "pack_path": "benchmarks/dsh/repo_repair/swebench_sympy_sympy_21930",
+   "cap_profile": "medium",
+   "asset_status": "pack_verified"
+  }
+ ],
+ "model_conditions": [
+  {
+   "condition_id": "swebench-gpt-5-4-low",
+   "actor_model_id": "gpt-5.4",
+   "model_family_id": "gpt-5",
+   "access_mode": "hosted_api_blackbox",
+   "configured_provider": "openai-codex",
+   "configured_model": "gpt-5.4",
+   "model_revision": null,
+   "precision": "provider_managed",
+   "reasoning_effort": "low",
+   "decoding": {
+    "temperature": 0,
+    "seed": null,
+    "stop": [],
+    "max_output_tokens": "task_cap_profile"
+   },
+   "credential_source": "codex-auth-file-read-only",
+   "readiness": "provider-entitlement-confirmed"
+  }
+ ],
+ "launch_blockers": [
+  "provider-backed-collection-requires-explicit-authorization",
+  "final-held-out-test-remains-closed"
+ ],
+ "development_selection": {
+  "benchmark": "swe-bench-verified",
+  "available_pack_count": 122,
+  "prior_excluded_count": 30,
+  "selection_count": 69,
+  "selection_seed": 1730,
+  "policy_id": "remaining-repo-stratum-balanced-seeded-v1",
+  "per_stratum_count": 23,
+  "label_fields_used": [
+   "instance_id",
+   "repo",
+   "difficulty_stratum"
+  ],
+  "excluded_selection_fields": [
+   "gold_patch",
+   "test_patch",
+   "model_run_result"
+  ],
+  "instance_ids": [
+   "astropy__astropy-12907",
+   "astropy__astropy-13033",
+   "astropy__astropy-14096",
+   "astropy__astropy-14182",
+   "astropy__astropy-14508",
+   "astropy__astropy-14539",
+   "astropy__astropy-14598",
+   "astropy__astropy-8707",
+   "astropy__astropy-8872",
+   "django__django-10097",
+   "django__django-10554",
+   "django__django-10973",
+   "django__django-14089",
+   "django__django-15315",
+   "django__django-15375",
+   "django__django-15930",
+   "django__django-16333",
+   "django__django-16454",
+   "matplotlib__matplotlib-13989",
+   "matplotlib__matplotlib-14623",
+   "matplotlib__matplotlib-24026",
+   "matplotlib__matplotlib-24149",
+   "matplotlib__matplotlib-24570",
+   "matplotlib__matplotlib-24970",
+   "matplotlib__matplotlib-25332",
+   "matplotlib__matplotlib-25775",
+   "mwaskom__seaborn-3069",
+   "mwaskom__seaborn-3187",
+   "pallets__flask-5014",
+   "psf__requests-1921",
+   "psf__requests-2931",
+   "psf__requests-6028",
+   "pydata__xarray-3305",
+   "pydata__xarray-4075",
+   "pydata__xarray-4356",
+   "pydata__xarray-4695",
+   "pydata__xarray-6461",
+   "pydata__xarray-7229",
+   "pylint-dev__pylint-4661",
+   "pylint-dev__pylint-4970",
+   "pylint-dev__pylint-6528",
+   "pylint-dev__pylint-7277",
+   "pylint-dev__pylint-8898",
+   "pytest-dev__pytest-10051",
+   "pytest-dev__pytest-10081",
+   "pytest-dev__pytest-5631",
+   "pytest-dev__pytest-5840",
+   "pytest-dev__pytest-7205",
+   "pytest-dev__pytest-7571",
+   "scikit-learn__scikit-learn-13328",
+   "scikit-learn__scikit-learn-13779",
+   "scikit-learn__scikit-learn-14053",
+   "scikit-learn__scikit-learn-14983",
+   "scikit-learn__scikit-learn-15100",
+   "scikit-learn__scikit-learn-25973",
+   "sphinx-doc__sphinx-10673",
+   "sphinx-doc__sphinx-11445",
+   "sphinx-doc__sphinx-7462",
+   "sphinx-doc__sphinx-8548",
+   "sphinx-doc__sphinx-8593",
+   "sphinx-doc__sphinx-9461",
+   "sphinx-doc__sphinx-9591",
+   "sympy__sympy-12481",
+   "sympy__sympy-13091",
+   "sympy__sympy-13551",
+   "sympy__sympy-15976",
+   "sympy__sympy-17655",
+   "sympy__sympy-18211",
+   "sympy__sympy-21930"
+  ]
+ },
+ "condition_digest": "8fccb5afdeb2389fe541abb600e841762c474859e34e52b9e1d8c0475a1479b8"
+}

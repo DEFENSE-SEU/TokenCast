@@ -1,0 +1,12 @@
+{
+  "features": {
+    "cache": false
+  },
+  "selected_shared": "environment",
+  "service": {
+    "host": "environment.internal",
+    "tls": {
+      "ca": "environment.pem"
+    }
+  }
+}

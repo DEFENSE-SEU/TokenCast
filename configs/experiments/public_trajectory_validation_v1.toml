@@ -1,0 +1,70 @@
+config_id = "public-trajectory-validation-v1"
+
+[source]
+dataset = "netpreme/coding_agent_traces"
+revision = "d56ae0d0bc80f3663a7a61a38c4ee60c26ce7b67"
+subset = "opus-pro"
+split = "train"
+license = "MIT"
+url = "https://huggingface.co/datasets/netpreme/coding_agent_traces/resolve/d56ae0d0bc80f3663a7a61a38c4ee60c26ce7b67/opus-pro/train-00000-of-00001.parquet"
+local_path = "workspace/external/public_trajectory_validation/source.parquet"
+sha256 = "3071c2ea1b5a8104c0caa6378c9446b02c7c1d7335a00054a59b2ac21e58c0df"
+token_unit_contract_id = "provider-output-token-v1"
+
+[task_metadata]
+dataset = "ScaleAI/SWE-bench_Pro"
+revision = "7ab5114912baf22bb098818e604c02fe7ad2c11f"
+subset = "default"
+split = "test"
+url = "https://huggingface.co/datasets/ScaleAI/SWE-bench_Pro/resolve/7ab5114912baf22bb098818e604c02fe7ad2c11f/data/test-00000-of-00001.parquet"
+local_path = "workspace/external/public_trajectory_validation/task_metadata.parquet"
+sha256 = "c8cd7115496ad4e9a8b21d088cef576a65bf821bb542b24336f13f714cef13f8"
+visible_columns = ["repo", "repo_language", "problem_statement", "requirements", "interface"]
+
+[protocol]
+split_seed = 20260901
+bootstrap_seed = 20260902
+final_holdout_fraction = 0.20
+pilot_tasks = 300
+folds = 5
+alpha = 0.10
+bootstrap_iterations = 5000
+min_call_clock_tasks = 10
+
+[task_initialization]
+document_variant = "repo_problem"
+direct_candidate = "text_ridge"
+factorized_candidate = "count_cost_initializer"
+length_reference = "task_text_length"
+empirical_reference = "empirical_quantile"
+
+[task_initialization_refinement]
+candidate = "prompt_structure_text_fusion"
+prompt_fields = ["problem_statement", "requirements", "interface"]
+length_component = "full_prompt_length"
+text_component = "full_prompt_text_ridge"
+structure_component = "full_prompt_structure_gbr"
+text_ridge_alpha = 0.3
+structure_loss = "huber"
+structure_estimators = 100
+structure_learning_rate = 0.03
+structure_max_depth = 2
+structure_min_samples_leaf = 25
+residual_candidate = "full_prompt_length_text_residual"
+residual_text_ridge_alpha = 3.0
+hybrid_candidate = "full_prompt_residual_point_fusion_interval"
+confirmation_seed = 20260903
+confirmation_calibration_fold = 0
+
+[model]
+rounds = 240
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+threads = 4
+
+[output]
+directory = "workspace/experiments/public_trajectory_validation_v1"

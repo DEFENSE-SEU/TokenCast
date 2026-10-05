@@ -1,0 +1,7 @@
+[project]
+name = "text-tally"
+version = "0.1.0"
+description = "A deterministic Unicode text tally library and CLI."
+requires-python = ">=3.12"
+dependencies = []
+license = { text = "MIT" }

@@ -1,0 +1,7 @@
+[project]
+name = "delimited-export"
+version = "0.1.0"
+description = "A deterministic in-memory delimited text exporter."
+requires-python = ">=3.12"
+dependencies = []
+license = { text = "MIT" }

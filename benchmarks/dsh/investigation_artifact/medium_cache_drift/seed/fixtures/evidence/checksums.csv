@@ -1,0 +1,8 @@
+tick,region,key,cache_checksum,origin_checksum
+30,eu-central,stock-β,b2,b2
+10,"us,west","alpha""β",old-a,a1
+5,ap-south,other,c1,c1
+25,"us,west","alpha""β",a1,a1
+12,eu-central,stock-β,old-b,b2
+15,"us,west","alpha""β",older-a,a1
+20,eu-central,stock-β,older-b,b2

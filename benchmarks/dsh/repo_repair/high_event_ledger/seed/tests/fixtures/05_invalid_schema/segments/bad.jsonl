@@ -1,0 +1,1 @@
+{"event_id":"bad-quantity","kind":"adjustment","logical_clock":1,"source":"main","sequence":1,"sku":"BAD","quantity":1.25}

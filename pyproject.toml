@@ -1,0 +1,70 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "token-prediction"
+version = "0.1.3"
+description = "Causal, replayable token-consumption prediction for agent trajectories."
+readme = "README.md"
+license = "AGPL-3.0-only"
+license-files = ["LICENSE"]
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+runtime = [
+  "lightgbm>=4,<5",
+  "numpy>=1.26,<3",
+]
+mcp = [
+  "mcp>=2.2,<3",
+]
+data = [
+  "pyarrow>=16",
+  "zstandard>=0.23",
+]
+estimators = [
+  "lightgbm>=4",
+  "ngboost>=0.5,<0.6",
+  "numpy>=1.26",
+  "quantile-forest>=1.4,<2",
+  "scikit-learn>=1.5",
+  "scipy>=1.13",
+]
+neural = [
+  "numpy>=1.26",
+  "safetensors>=0.4",
+  "torch>=2.2",
+]
+qwen = [
+  "accelerate>=1.14,<1.15",
+  "bitsandbytes>=0.50,<0.51",
+  "safetensors>=0.8,<0.9",
+  "torch>=2.13,<2.14",
+  "transformers>=5.14,<5.15",
+]
+dev = [
+  "build>=1.2",
+  "pytest>=8",
+  "ruff>=0.6",
+]
+
+[project.scripts]
+tc = "token_prediction.cli:main"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/token_prediction"]
+
+[tool.hatch.build.targets.sdist]
+exclude = ["/workspace/**"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F"]

@@ -1,0 +1,1503 @@
+{
+  "schema_version": 1,
+  "manifest_id": "searchr1-gpt-oauth-development-v1",
+  "protocol_id": "searchr1-gpt-oauth-collection-v1",
+  "source_id": "dsh_session_observer_v2",
+  "status": "design_frozen",
+  "collection_authorized": false,
+  "data_role": "protocol_development",
+  "split": "development",
+  "taxonomy": {
+    "task_types": [
+      "repo_repair"
+    ],
+    "difficulty_strata": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "difficulty_policy_id": "source-benchmark-annotation-v1"
+  },
+  "repeat_ids": [
+    "r1"
+  ],
+  "runtime": {
+    "platform": "windows",
+    "profile": "dsh-headless",
+    "base_profile": "headless",
+    "dsh_cli_version": "0.1.1-rc.2",
+    "headless_integration_version": "0.5.0",
+    "batch_protocol_version": 2,
+    "dsh_components": {
+      "@deepseek-ai/dsh-agent": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-agent-presets": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-agent-loop": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-headless": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm-deepseek": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm-retry": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-checkpoint-policy": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-persistence": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-persistence-jsonl": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-token-meter": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-tools": "0.1.1-rc.2"
+    },
+    "session_persistence": {
+      "compression": "zstd",
+      "pack_chunks": true,
+      "one_live_writer_per_session": true,
+      "write_batch_max_delay_ms": 200
+    },
+    "preset_roster": {
+      "owner": "experiment",
+      "trust": "system",
+      "include_user_root": false
+    },
+    "profile_policy": {
+      "bundle_hmr": false,
+      "user_patch_hot_reload": true,
+      "tools_mode": "native",
+      "bundled_skills": false,
+      "settings_hot_reload": false,
+      "model_title": false,
+      "compaction": false,
+      "web": false,
+      "delegation_workflow": false,
+      "telemetry": false
+    },
+    "hosted_provider": {
+      "provider": "deepseek-official",
+      "exclusive": true,
+      "base_url": "https://api.deepseek.com",
+      "max_tokens": 256000,
+      "default_context_window": 1000000,
+      "stream_idle_timeout_ms": 300000,
+      "models": [
+        {
+          "id": "deepseek-v4-flash",
+          "name": "DeepSeek-V4-Flash",
+          "context_window": 1000000,
+          "max_tokens": 256000,
+          "input_modalities": [
+            "text"
+          ]
+        },
+        {
+          "id": "deepseek-v4-pro",
+          "name": "DeepSeek-V4-Pro",
+          "context_window": 1000000,
+          "max_tokens": 256000,
+          "input_modalities": [
+            "text"
+          ]
+        }
+      ],
+      "native_reasoning_mapping": {
+        "off": {
+          "thinking": "disabled"
+        },
+        "high": {
+          "thinking": "enabled",
+          "reasoning_effort": "high"
+        }
+      },
+      "retry": {
+        "mode": "normal",
+        "max_retries": 4,
+        "retryable_codes": [
+          "EMPTY_RESPONSE",
+          "RATE_LIMIT",
+          "SERVER",
+          "TIMEOUT",
+          "TRANSPORT"
+        ],
+        "initial_delay_ms": 500,
+        "max_delay_ms": 10000,
+        "jitter_ratio": 0
+      }
+    },
+    "max_parallel_tool_calls": 10,
+    "attempt_boundary_contract": "llm-stream-one-provider-attempt-v1",
+    "single_attempt_boundary": true,
+    "composed_profile_preflight_required": true,
+    "boundary_proof_policy_id": "composed-profile-single-send-preflight-v1",
+    "opaque_provider_retry_allowed": false,
+    "max_attempts_per_logical_call": 5
+  },
+  "actor": {
+    "agent_id": "deepseek-harness",
+    "agent_version": "0.1.1-rc.2",
+    "preset_id": "router-standard",
+    "permission_preset": "unrestricted",
+    "sandbox_mode": "danger-full-access",
+    "approval_policy": "never",
+    "tool_surface_id": "router-standard-windows-no-delegation-v1",
+    "allowed_tool_names": [
+      "edit",
+      "glob",
+      "grep",
+      "job_kill",
+      "job_list",
+      "job_output",
+      "pwsh",
+      "read",
+      "skill",
+      "str_replace_editor",
+      "todo_write",
+      "write"
+    ],
+    "system_prompt_policy_id": "swebench-source-patch-submit-v4",
+    "subagents_enabled": false,
+    "turns_per_run": 1
+  },
+  "router": {
+    "router_id": "dsh-router-standard",
+    "router_version": "0.3.0",
+    "mode": "auto",
+    "fallback_allowed": false,
+    "resolved_route_must_equal_configured_route": true,
+    "resolution_recording": [
+      "continuous_mode",
+      "band",
+      "persona_text",
+      "first_request_tool_names",
+      "promoted_tool_names"
+    ]
+  },
+  "observer": {
+    "plugin_id": "@token-prediction/dsh-token-observer",
+    "plugin_version": "0.4.0",
+    "durability_contract_id": "observer-jsonl-fsync-on-session-flush-v1",
+    "checkpoint_interval_bytes": 128,
+    "checkpoint_policy_id": "dsh-text-chunk-at-least-128-utf8-bytes-v1",
+    "observer_unit_contract_id": "observer:utf8-bytes-v1",
+    "observer_tokenizer_id": "utf8-byte-256",
+    "observer_normalization_id": "utf16-to-well-formed-v1",
+    "observer_carry_policy_id": "utf16-high-surrogate-carry-v1",
+    "observer_boundary_policy_id": "dsh-text-delta-chunk-v1"
+  },
+  "run_policy": {
+    "run_policy_id": "dsh-run-v2",
+    "fresh_session_per_run": true,
+    "workspace_reset": "fresh_copy",
+    "ledger_write_boundary": "before_workspace_reset",
+    "zero_attempt": "retain_sample_flow_exclude_supervision",
+    "terminal_resume": "validate_and_skip",
+    "pre_provider_interruption_resume": "resume_same_run_preserve_incident_history",
+    "post_provider_interruption_resume": "complete_runner_interrupted_and_continue",
+    "provider_entry_started_recorded": true,
+    "implicit_rerun": false,
+    "parallel_runner_supported": false,
+    "oracle_execution": "after_actor_terminal_under_runner_identity",
+    "target_status_policy_id": "external-source-patch-terminal-v6",
+    "supervision_eligibility": "validated_task_finished_capture_only",
+    "missing_attempt_usage": "terminate_before_next_logical_call",
+    "cap_hit_and_overshoot_recorded": true
+  },
+  "condition_policy": {
+    "requested_effective_match_required": true,
+    "verify_each_logical_call": [
+      "provider",
+      "model",
+      "reasoning_effort",
+      "temperature",
+      "max_tokens",
+      "stop"
+    ],
+    "hosted_provenance_fields": [
+      "collection_started_at",
+      "collection_ended_at"
+    ],
+    "unavailable_hosted_provenance_fields": {
+      "provider_response_model": "unavailable_in_dsh_success_stream",
+      "provider_request_id": "unavailable_in_dsh_success_stream"
+    }
+  },
+  "schedule": {
+    "policy_id": "task-block-rotating-condition-v1",
+    "task_order": [
+      "searchr1-nq-test-2136",
+      "searchr1-nq-test-3106",
+      "searchr1-nq-test-243",
+      "searchr1-nq-test-1328",
+      "searchr1-nq-test-2994",
+      "searchr1-nq-test-316",
+      "searchr1-nq-test-1971",
+      "searchr1-nq-test-1816",
+      "searchr1-nq-test-256",
+      "searchr1-triviaqa-test-8042",
+      "searchr1-triviaqa-test-5161",
+      "searchr1-triviaqa-test-6796",
+      "searchr1-triviaqa-test-6702",
+      "searchr1-triviaqa-test-5069",
+      "searchr1-triviaqa-test-2882",
+      "searchr1-triviaqa-test-9063",
+      "searchr1-triviaqa-test-478",
+      "searchr1-triviaqa-test-2466",
+      "searchr1-popqa-test-8910",
+      "searchr1-popqa-test-13614",
+      "searchr1-popqa-test-312",
+      "searchr1-popqa-test-9475",
+      "searchr1-popqa-test-3303",
+      "searchr1-popqa-test-9310",
+      "searchr1-popqa-test-13070",
+      "searchr1-popqa-test-3411",
+      "searchr1-popqa-test-9075",
+      "searchr1-bamboogle-test-118",
+      "searchr1-bamboogle-test-45",
+      "searchr1-bamboogle-test-109",
+      "searchr1-bamboogle-test-48",
+      "searchr1-bamboogle-test-34",
+      "searchr1-bamboogle-test-8",
+      "searchr1-bamboogle-test-86",
+      "searchr1-bamboogle-test-100",
+      "searchr1-bamboogle-test-6",
+      "searchr1-hotpotqa-dev-4101",
+      "searchr1-hotpotqa-dev-2489",
+      "searchr1-hotpotqa-dev-5229",
+      "searchr1-hotpotqa-dev-6543",
+      "searchr1-hotpotqa-dev-2306",
+      "searchr1-hotpotqa-dev-1871",
+      "searchr1-hotpotqa-dev-4181",
+      "searchr1-hotpotqa-dev-3781",
+      "searchr1-hotpotqa-dev-471",
+      "searchr1-2wikimultihopqa-dev-6120",
+      "searchr1-2wikimultihopqa-dev-8326",
+      "searchr1-2wikimultihopqa-dev-7682",
+      "searchr1-2wikimultihopqa-dev-640",
+      "searchr1-2wikimultihopqa-dev-6849",
+      "searchr1-2wikimultihopqa-dev-11095",
+      "searchr1-2wikimultihopqa-dev-6104",
+      "searchr1-2wikimultihopqa-dev-7669",
+      "searchr1-2wikimultihopqa-dev-11979",
+      "searchr1-musique-dev-2365",
+      "searchr1-musique-dev-197",
+      "searchr1-musique-dev-2248",
+      "searchr1-musique-dev-1497",
+      "searchr1-musique-dev-1780",
+      "searchr1-musique-dev-1225",
+      "searchr1-musique-dev-2414",
+      "searchr1-musique-dev-1718",
+      "searchr1-musique-dev-153"
+    ],
+    "condition_order": [
+      "searchr1-gpt-5-5-low"
+    ]
+  },
+  "cap_profiles": {
+    "low": {
+      "max_wall_seconds": 7200,
+      "max_logical_calls": 500,
+      "max_provider_attempts": 2500,
+      "max_attempt_output_tokens": 65536,
+      "max_provider_accounted_tokens": 30000000,
+      "token_cap_enforcement": "before_next_logical_call"
+    },
+    "medium": {
+      "max_wall_seconds": 7200,
+      "max_logical_calls": 500,
+      "max_provider_attempts": 2500,
+      "max_attempt_output_tokens": 65536,
+      "max_provider_accounted_tokens": 30000000,
+      "token_cap_enforcement": "before_next_logical_call"
+    },
+    "high": {
+      "max_wall_seconds": 7200,
+      "max_logical_calls": 500,
+      "max_provider_attempts": 2500,
+      "max_attempt_output_tokens": 65536,
+      "max_provider_accounted_tokens": 30000000,
+      "token_cap_enforcement": "before_next_logical_call"
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "searchr1-nq-test-2136",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-nq-test-2136",
+      "title": "searchr1 searchr1-nq-test-2136 (nq)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_nq-test-2136",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-nq-test-3106",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-nq-test-3106",
+      "title": "searchr1 searchr1-nq-test-3106 (nq)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_nq-test-3106",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-nq-test-243",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-nq-test-243",
+      "title": "searchr1 searchr1-nq-test-243 (nq)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_nq-test-243",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-nq-test-1328",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-nq-test-1328",
+      "title": "searchr1 searchr1-nq-test-1328 (nq)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_nq-test-1328",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-nq-test-2994",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-nq-test-2994",
+      "title": "searchr1 searchr1-nq-test-2994 (nq)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_nq-test-2994",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-nq-test-316",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-nq-test-316",
+      "title": "searchr1 searchr1-nq-test-316 (nq)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_nq-test-316",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-nq-test-1971",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-nq-test-1971",
+      "title": "searchr1 searchr1-nq-test-1971 (nq)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_nq-test-1971",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-nq-test-1816",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-nq-test-1816",
+      "title": "searchr1 searchr1-nq-test-1816 (nq)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_nq-test-1816",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-nq-test-256",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-nq-test-256",
+      "title": "searchr1 searchr1-nq-test-256 (nq)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_nq-test-256",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-triviaqa-test-8042",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-triviaqa-test-8042",
+      "title": "searchr1 searchr1-triviaqa-test-8042 (triviaqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_triviaqa-test-8042",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-triviaqa-test-5161",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-triviaqa-test-5161",
+      "title": "searchr1 searchr1-triviaqa-test-5161 (triviaqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_triviaqa-test-5161",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-triviaqa-test-6796",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-triviaqa-test-6796",
+      "title": "searchr1 searchr1-triviaqa-test-6796 (triviaqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_triviaqa-test-6796",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-triviaqa-test-6702",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-triviaqa-test-6702",
+      "title": "searchr1 searchr1-triviaqa-test-6702 (triviaqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_triviaqa-test-6702",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-triviaqa-test-5069",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-triviaqa-test-5069",
+      "title": "searchr1 searchr1-triviaqa-test-5069 (triviaqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_triviaqa-test-5069",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-triviaqa-test-2882",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-triviaqa-test-2882",
+      "title": "searchr1 searchr1-triviaqa-test-2882 (triviaqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_triviaqa-test-2882",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-triviaqa-test-9063",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-triviaqa-test-9063",
+      "title": "searchr1 searchr1-triviaqa-test-9063 (triviaqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_triviaqa-test-9063",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-triviaqa-test-478",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-triviaqa-test-478",
+      "title": "searchr1 searchr1-triviaqa-test-478 (triviaqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_triviaqa-test-478",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-triviaqa-test-2466",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-triviaqa-test-2466",
+      "title": "searchr1 searchr1-triviaqa-test-2466 (triviaqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_triviaqa-test-2466",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-popqa-test-8910",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-popqa-test-8910",
+      "title": "searchr1 searchr1-popqa-test-8910 (popqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_popqa-test-8910",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-popqa-test-13614",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-popqa-test-13614",
+      "title": "searchr1 searchr1-popqa-test-13614 (popqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_popqa-test-13614",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-popqa-test-312",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-popqa-test-312",
+      "title": "searchr1 searchr1-popqa-test-312 (popqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_popqa-test-312",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-popqa-test-9475",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-popqa-test-9475",
+      "title": "searchr1 searchr1-popqa-test-9475 (popqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_popqa-test-9475",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-popqa-test-3303",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-popqa-test-3303",
+      "title": "searchr1 searchr1-popqa-test-3303 (popqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_popqa-test-3303",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-popqa-test-9310",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-popqa-test-9310",
+      "title": "searchr1 searchr1-popqa-test-9310 (popqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_popqa-test-9310",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-popqa-test-13070",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-popqa-test-13070",
+      "title": "searchr1 searchr1-popqa-test-13070 (popqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_popqa-test-13070",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-popqa-test-3411",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-popqa-test-3411",
+      "title": "searchr1 searchr1-popqa-test-3411 (popqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_popqa-test-3411",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-popqa-test-9075",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-popqa-test-9075",
+      "title": "searchr1 searchr1-popqa-test-9075 (popqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_popqa-test-9075",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-bamboogle-test-118",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-bamboogle-test-118",
+      "title": "searchr1 searchr1-bamboogle-test-118 (bamboogle)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_bamboogle-test-118",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-bamboogle-test-45",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-bamboogle-test-45",
+      "title": "searchr1 searchr1-bamboogle-test-45 (bamboogle)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_bamboogle-test-45",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-bamboogle-test-109",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-bamboogle-test-109",
+      "title": "searchr1 searchr1-bamboogle-test-109 (bamboogle)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_bamboogle-test-109",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-bamboogle-test-48",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-bamboogle-test-48",
+      "title": "searchr1 searchr1-bamboogle-test-48 (bamboogle)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_bamboogle-test-48",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-bamboogle-test-34",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-bamboogle-test-34",
+      "title": "searchr1 searchr1-bamboogle-test-34 (bamboogle)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_bamboogle-test-34",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-bamboogle-test-8",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-bamboogle-test-8",
+      "title": "searchr1 searchr1-bamboogle-test-8 (bamboogle)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_bamboogle-test-8",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-bamboogle-test-86",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-bamboogle-test-86",
+      "title": "searchr1 searchr1-bamboogle-test-86 (bamboogle)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_bamboogle-test-86",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-bamboogle-test-100",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-bamboogle-test-100",
+      "title": "searchr1 searchr1-bamboogle-test-100 (bamboogle)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_bamboogle-test-100",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-bamboogle-test-6",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-bamboogle-test-6",
+      "title": "searchr1 searchr1-bamboogle-test-6 (bamboogle)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_bamboogle-test-6",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-hotpotqa-dev-4101",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-hotpotqa-dev-4101",
+      "title": "searchr1 searchr1-hotpotqa-dev-4101 (hotpotqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_hotpotqa-dev-4101",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-hotpotqa-dev-2489",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-hotpotqa-dev-2489",
+      "title": "searchr1 searchr1-hotpotqa-dev-2489 (hotpotqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_hotpotqa-dev-2489",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-hotpotqa-dev-5229",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-hotpotqa-dev-5229",
+      "title": "searchr1 searchr1-hotpotqa-dev-5229 (hotpotqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_hotpotqa-dev-5229",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-hotpotqa-dev-6543",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-hotpotqa-dev-6543",
+      "title": "searchr1 searchr1-hotpotqa-dev-6543 (hotpotqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_hotpotqa-dev-6543",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-hotpotqa-dev-2306",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-hotpotqa-dev-2306",
+      "title": "searchr1 searchr1-hotpotqa-dev-2306 (hotpotqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_hotpotqa-dev-2306",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-hotpotqa-dev-1871",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-hotpotqa-dev-1871",
+      "title": "searchr1 searchr1-hotpotqa-dev-1871 (hotpotqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_hotpotqa-dev-1871",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-hotpotqa-dev-4181",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-hotpotqa-dev-4181",
+      "title": "searchr1 searchr1-hotpotqa-dev-4181 (hotpotqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_hotpotqa-dev-4181",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-hotpotqa-dev-3781",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-hotpotqa-dev-3781",
+      "title": "searchr1 searchr1-hotpotqa-dev-3781 (hotpotqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_hotpotqa-dev-3781",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-hotpotqa-dev-471",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-hotpotqa-dev-471",
+      "title": "searchr1 searchr1-hotpotqa-dev-471 (hotpotqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_hotpotqa-dev-471",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-2wikimultihopqa-dev-6120",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-2wikimultihopqa-dev-6120",
+      "title": "searchr1 searchr1-2wikimultihopqa-dev-6120 (2wikimultihopqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_2wikimultihopqa-dev-6120",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-2wikimultihopqa-dev-8326",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-2wikimultihopqa-dev-8326",
+      "title": "searchr1 searchr1-2wikimultihopqa-dev-8326 (2wikimultihopqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_2wikimultihopqa-dev-8326",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-2wikimultihopqa-dev-7682",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-2wikimultihopqa-dev-7682",
+      "title": "searchr1 searchr1-2wikimultihopqa-dev-7682 (2wikimultihopqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_2wikimultihopqa-dev-7682",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-2wikimultihopqa-dev-640",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-2wikimultihopqa-dev-640",
+      "title": "searchr1 searchr1-2wikimultihopqa-dev-640 (2wikimultihopqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_2wikimultihopqa-dev-640",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-2wikimultihopqa-dev-6849",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-2wikimultihopqa-dev-6849",
+      "title": "searchr1 searchr1-2wikimultihopqa-dev-6849 (2wikimultihopqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_2wikimultihopqa-dev-6849",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-2wikimultihopqa-dev-11095",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-2wikimultihopqa-dev-11095",
+      "title": "searchr1 searchr1-2wikimultihopqa-dev-11095 (2wikimultihopqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_2wikimultihopqa-dev-11095",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-2wikimultihopqa-dev-6104",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-2wikimultihopqa-dev-6104",
+      "title": "searchr1 searchr1-2wikimultihopqa-dev-6104 (2wikimultihopqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_2wikimultihopqa-dev-6104",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-2wikimultihopqa-dev-7669",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-2wikimultihopqa-dev-7669",
+      "title": "searchr1 searchr1-2wikimultihopqa-dev-7669 (2wikimultihopqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_2wikimultihopqa-dev-7669",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-2wikimultihopqa-dev-11979",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-2wikimultihopqa-dev-11979",
+      "title": "searchr1 searchr1-2wikimultihopqa-dev-11979 (2wikimultihopqa)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_2wikimultihopqa-dev-11979",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-musique-dev-2365",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-musique-dev-2365",
+      "title": "searchr1 searchr1-musique-dev-2365 (musique)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_musique-dev-2365",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-musique-dev-197",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-musique-dev-197",
+      "title": "searchr1 searchr1-musique-dev-197 (musique)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_musique-dev-197",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-musique-dev-2248",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-musique-dev-2248",
+      "title": "searchr1 searchr1-musique-dev-2248 (musique)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_musique-dev-2248",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-musique-dev-1497",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-musique-dev-1497",
+      "title": "searchr1 searchr1-musique-dev-1497 (musique)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_musique-dev-1497",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-musique-dev-1780",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:medium"
+      },
+      "task_family_id": "searchr1-musique-dev-1780",
+      "title": "searchr1 searchr1-musique-dev-1780 (musique)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_musique-dev-1780",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-musique-dev-1225",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-musique-dev-1225",
+      "title": "searchr1 searchr1-musique-dev-1225 (musique)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_musique-dev-1225",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-musique-dev-2414",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-musique-dev-2414",
+      "title": "searchr1 searchr1-musique-dev-2414 (musique)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_musique-dev-2414",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-musique-dev-1718",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:low"
+      },
+      "task_family_id": "searchr1-musique-dev-1718",
+      "title": "searchr1 searchr1-musique-dev-1718 (musique)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_musique-dev-1718",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "searchr1-musique-dev-153",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "searchr1-cap-balance",
+        "label": "searchr1-cap-balance:high"
+      },
+      "task_family_id": "searchr1-musique-dev-153",
+      "title": "searchr1 searchr1-musique-dev-153 (musique)",
+      "requirements": [
+        "search the wiki-18 corpus and answer the supplied question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/searchr1_musique-dev-153",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    }
+  ],
+  "model_conditions": [
+    {
+      "condition_id": "searchr1-gpt-5-5-low",
+      "actor_model_id": "gpt-5.5",
+      "model_family_id": "gpt-5",
+      "access_mode": "hosted_api_blackbox",
+      "configured_provider": "openai-codex",
+      "configured_model": "gpt-5.5",
+      "model_revision": null,
+      "precision": "provider_managed",
+      "reasoning_effort": "low",
+      "decoding": {
+        "temperature": 0,
+        "seed": null,
+        "stop": [],
+        "max_output_tokens": "task_cap_profile"
+      },
+      "credential_source": "codex-auth-file-read-only",
+      "readiness": "provider-entitlement-confirmed"
+    }
+  ],
+  "launch_blockers": [
+    "provider-backed-collection-requires-explicit-authorization",
+    "final-held-out-test-remains-closed"
+  ],
+  "development_selection": {
+    "policy_id": "domain-pack-cohort-all-v1",
+    "benchmark": "searchr1",
+    "selection_seed": 20260913,
+    "available_pack_count": 63,
+    "selection_count": 63,
+    "per_stratum_count": {
+      "low": 21,
+      "medium": 21,
+      "high": 21
+    },
+    "per_dataset_count": {
+      "nq": 9,
+      "triviaqa": 9,
+      "popqa": 9,
+      "bamboogle": 9,
+      "hotpotqa": 9,
+      "2wikimultihopqa": 9,
+      "musique": 9
+    },
+    "repeat_count": 1,
+    "execution_count": 63,
+    "instance_ids": [
+      "searchr1-nq-test-2136",
+      "searchr1-nq-test-3106",
+      "searchr1-nq-test-243",
+      "searchr1-nq-test-1328",
+      "searchr1-nq-test-2994",
+      "searchr1-nq-test-316",
+      "searchr1-nq-test-1971",
+      "searchr1-nq-test-1816",
+      "searchr1-nq-test-256",
+      "searchr1-triviaqa-test-8042",
+      "searchr1-triviaqa-test-5161",
+      "searchr1-triviaqa-test-6796",
+      "searchr1-triviaqa-test-6702",
+      "searchr1-triviaqa-test-5069",
+      "searchr1-triviaqa-test-2882",
+      "searchr1-triviaqa-test-9063",
+      "searchr1-triviaqa-test-478",
+      "searchr1-triviaqa-test-2466",
+      "searchr1-popqa-test-8910",
+      "searchr1-popqa-test-13614",
+      "searchr1-popqa-test-312",
+      "searchr1-popqa-test-9475",
+      "searchr1-popqa-test-3303",
+      "searchr1-popqa-test-9310",
+      "searchr1-popqa-test-13070",
+      "searchr1-popqa-test-3411",
+      "searchr1-popqa-test-9075",
+      "searchr1-bamboogle-test-118",
+      "searchr1-bamboogle-test-45",
+      "searchr1-bamboogle-test-109",
+      "searchr1-bamboogle-test-48",
+      "searchr1-bamboogle-test-34",
+      "searchr1-bamboogle-test-8",
+      "searchr1-bamboogle-test-86",
+      "searchr1-bamboogle-test-100",
+      "searchr1-bamboogle-test-6",
+      "searchr1-hotpotqa-dev-4101",
+      "searchr1-hotpotqa-dev-2489",
+      "searchr1-hotpotqa-dev-5229",
+      "searchr1-hotpotqa-dev-6543",
+      "searchr1-hotpotqa-dev-2306",
+      "searchr1-hotpotqa-dev-1871",
+      "searchr1-hotpotqa-dev-4181",
+      "searchr1-hotpotqa-dev-3781",
+      "searchr1-hotpotqa-dev-471",
+      "searchr1-2wikimultihopqa-dev-6120",
+      "searchr1-2wikimultihopqa-dev-8326",
+      "searchr1-2wikimultihopqa-dev-7682",
+      "searchr1-2wikimultihopqa-dev-640",
+      "searchr1-2wikimultihopqa-dev-6849",
+      "searchr1-2wikimultihopqa-dev-11095",
+      "searchr1-2wikimultihopqa-dev-6104",
+      "searchr1-2wikimultihopqa-dev-7669",
+      "searchr1-2wikimultihopqa-dev-11979",
+      "searchr1-musique-dev-2365",
+      "searchr1-musique-dev-197",
+      "searchr1-musique-dev-2248",
+      "searchr1-musique-dev-1497",
+      "searchr1-musique-dev-1780",
+      "searchr1-musique-dev-1225",
+      "searchr1-musique-dev-2414",
+      "searchr1-musique-dev-1718",
+      "searchr1-musique-dev-153"
+    ],
+    "label_fields_used": [
+      "difficulty_stratum (cap-profile balance, round-robin)"
+    ]
+  }
+}

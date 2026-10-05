@@ -1,0 +1,6 @@
+{
+  "$include": [
+    "sub/b.json"
+  ],
+  "name": "a"
+}

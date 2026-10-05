@@ -1,0 +1,93 @@
+{
+  "schema_version": 2,
+  "task_pack_id": "dsh-p0-v1-investigation-artifact-low-job-failure",
+  "version": 1,
+  "task_id": "p0v1-investigation-low-job-failure",
+  "task_type": "investigation_artifact",
+  "difficulty_stratum": "low",
+  "task_statement": "task.md",
+  "seed_workspace": "seed",
+  "runtime": {
+    "python": "3.12",
+    "dependencies": []
+  },
+  "commands": {
+    "public_tests": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "oracle": [
+      "python",
+      ".dsh_oracle/evaluate.py"
+    ]
+  },
+  "runner_bundle": "_runner/investigation_artifact/low_job_failure",
+  "difficulty_evidence": {
+    "components": [
+      "causal job-failure evidence analysis",
+      "canonical report library and command-line artifact"
+    ],
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "identify the initiating error code and first evidence line"
+      },
+      {
+        "id": "R2",
+        "text": "enumerate affected job identities and counts"
+      },
+      {
+        "id": "R3",
+        "text": "produce reproducible analysis code and canonical JSON"
+      }
+    ],
+    "input_families": [
+      "controller and worker JSON Lines joined by causal event identifiers",
+      "failed, blocked, retried, and succeeded job attempts"
+    ],
+    "deliverable_kinds": [
+      "reusable Python incident-analysis library",
+      "canonical JSON command-line report"
+    ],
+    "coordination_burden": 1,
+    "coordination_evidence": "The library and command-line entry point share causal traversal, final-attempt job selection, source citation, and canonical report bytes."
+  },
+  "oracle": {
+    "oracle_id": "dsh-p0-v1-investigation-artifact-low-job-failure-oracle-v1",
+    "requirement_coverage": [
+      "R1",
+      "R2",
+      "R3"
+    ]
+  },
+  "licenses": {
+    "code": "MIT",
+    "fixture_data_and_task_text": "CC0-1.0"
+  },
+  "verification": {
+    "seed_public_tests": "expected_fail",
+    "seed_oracle": "expected_fail",
+    "reference_public_tests": "pass",
+    "reference_oracle": "pass",
+    "oracle_repetitions": 3
+  },
+  "budget": {
+    "max_task_statement_bytes": 4096,
+    "max_seed_files": 18,
+    "max_seed_bytes": 65536,
+    "max_public_test_output_bytes": 16384,
+    "max_oracle_seconds": 30
+  },
+  "asset_receipt": {
+    "task_statement_bytes": 1917,
+    "seed_file_count": 10,
+    "seed_total_bytes": 8409,
+    "seed_python_lines": 149,
+    "fixture_bytes": 962
+  }
+}

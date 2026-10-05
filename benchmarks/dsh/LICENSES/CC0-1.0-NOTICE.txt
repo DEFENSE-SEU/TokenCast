@@ -1,0 +1,10 @@
+CC0 1.0 Universal notice
+
+SPDX-License-Identifier: CC0-1.0
+
+To the extent possible under law, the authors have waived all copyright and
+related or neighboring rights to the benchmark task statements, test
+data, and expected data artifacts covered by this directory's README.
+
+The complete CC0 1.0 Universal legal code is maintained by Creative Commons:
+https://creativecommons.org/publicdomain/zero/1.0/legalcode

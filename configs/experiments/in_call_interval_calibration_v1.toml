@@ -1,0 +1,117 @@
+config_id = "in-call-interval-calibration-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.in_call_closure_recall]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "in_call_cs"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure_recall"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[experiments]]
+id = "in_call_task_max"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_cs"]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "in_call_task_max_width_scaled"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_cs"]
+required_features = ["task_char_count"]
+calibrator = "task_max_width_scaled_conformal"
+
+[[experiments]]
+id = "in_call_task_quantile"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_cs"]
+required_features = ["task_char_count"]
+calibrator = "task_quantile_conformal"
+
+[[experiments]]
+id = "in_call_task_weighted_point"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_cs"]
+required_features = ["task_char_count"]
+calibrator = "task_weighted_point_conformal"
+
+[[experiments]]
+id = "in_call_point"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_cs"]
+required_features = ["task_char_count"]
+calibrator = "point_conformal"
+
+[[experiments]]
+id = "in_call_raw_heads"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_cs"]
+required_features = ["task_char_count"]
+calibrator = "none"
+
+[[experiments]]
+id = "in_call_point_width_scaled"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_cs"]
+required_features = ["task_char_count"]
+calibrator = "point_width_scaled_conformal"
+
+[[experiments]]
+id = "in_call_magnitude_bin"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_cs"]
+required_features = ["task_char_count"]
+calibrator = "magnitude_bin_conformal"

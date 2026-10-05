@@ -1,0 +1,13 @@
+{
+  "$include": [
+    "shared.json"
+  ],
+  "items": [],
+  "optional": false,
+  "service": {
+    "port": 9000,
+    "tls": {
+      "enabled": false
+    }
+  }
+}

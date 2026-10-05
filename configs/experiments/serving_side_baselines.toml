@@ -1,0 +1,89 @@
+
+
+
+config_id = "serving-side-baselines-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "canonical_jsonl"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.self_estimate_only]
+include_all = false
+include_features = ["llm_self_estimated_total_tokens"]
+
+[feature_sets.task_size]
+include_all = false
+include_features = ["task_tokens"]
+
+[feature_sets.task_text]
+include_all = false
+include_features = [
+  "task_tokens",
+  "task_char_count",
+  "task_word_count",
+  "task_line_count",
+  "task_code_fence_count",
+]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "llm_self_estimate"
+estimator = "direct_feature"
+feature_set = "self_estimate_only"
+role = "baseline"
+
+[candidates.params]
+feature_name = "llm_self_estimated_total_tokens"
+alpha = 0.10
+
+[[candidates]]
+id = "retrieval_knn"
+estimator = "retrieval_knn"
+feature_set = "task_text"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "scaling_power_law"
+estimator = "scaling_power_law"
+feature_set = "task_size"
+role = "baseline"
+
+[candidates.params]
+feature_name = "task_tokens"
+alpha = 0.10
+
+[[experiments]]
+id = "task_launch_serving_side"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = [
+  "empirical_quantile",
+  "llm_self_estimate",
+  "retrieval_knn",
+  "scaling_power_law",
+]
+required_features = ["llm_self_estimated_total_tokens", "task_tokens"]

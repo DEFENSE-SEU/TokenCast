@@ -1,0 +1,413 @@
+config_id = "dsh-hierarchical-blackbox-v3-v5"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v3"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v3.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.task_length]
+include_all = false
+include_features = ["task_char_count"]
+
+[feature_sets.request_length_only]
+include_all = false
+include_features = ["current_request_tokens_local"]
+
+[feature_sets.blackbox]
+include_all = true
+exclude_subgroups = ["raw_text", "context_text", "entropy_stop", "hidden_state", "stream_clock"]
+
+[feature_sets.generation_accounting]
+include_all = false
+include_features = [
+  "attempt_accounting_prior_q05",
+  "attempt_accounting_prior_q50",
+  "attempt_accounting_prior_q95",
+]
+
+[feature_sets.fixed_byte_token_progress]
+include_all = false
+include_features = [
+  "observer_generation_bytes",
+  "generation_unit_contract_id",
+  "provider_token_unit_contract_id",
+  "attempt_initializer_q05",
+  "attempt_initializer_q50",
+  "attempt_initializer_q95",
+]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "task_text_length"
+estimator = "length_only"
+feature_set = "task_length"
+role = "baseline"
+
+[candidates.params]
+feature_name = "task_char_count"
+alpha = 0.10
+
+[[candidates]]
+id = "request_local_length"
+estimator = "length_only"
+feature_set = "request_length_only"
+role = "baseline"
+
+[candidates.params]
+feature_name = "current_request_tokens_local"
+alpha = 0.10
+
+[[candidates]]
+id = "request_local_bucket_quantile"
+estimator = "bucket_quantile"
+feature_set = "request_length_only"
+role = "baseline"
+
+[candidates.params]
+feature_name = "current_request_tokens_local"
+n_buckets = 8
+min_bucket_tasks = 3
+alpha = 0.10
+
+[[candidates]]
+id = "request_local_residual_quantile"
+estimator = "additive_residual_quantile"
+feature_set = "request_length_only"
+role = "baseline"
+
+[candidates.params]
+feature_name = "current_request_tokens_local"
+alpha = 0.10
+
+[[candidates]]
+id = "point_mlp"
+estimator = "independent_mlp"
+feature_set = "blackbox"
+role = "model"
+
+[candidates.params]
+hidden_dims = [128, 64]
+learning_rate = 0.001
+weight_decay = 0.0001
+max_epochs = 100
+patience = 12
+output_transform = "direct_quantiles"
+training_device = "cpu"
+
+[[candidates]]
+id = "generation_accounting_prior"
+estimator = "quantile_features"
+feature_set = "generation_accounting"
+role = "baseline"
+
+[candidates.params]
+lower_feature = "attempt_accounting_prior_q05"
+point_feature = "attempt_accounting_prior_q50"
+upper_feature = "attempt_accounting_prior_q95"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "quantile_features"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[candidates]]
+id = "generation_fixed_byte_token_progress"
+estimator = "fixed_byte_token_progress"
+feature_set = "fixed_byte_token_progress"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "fixed_byte_token_progress"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+
+[[candidates]]
+id = "generation_byte_hazard"
+estimator = "proportional_hazard"
+feature_set = "blackbox"
+role = "model"
+
+[candidates.params]
+n_bins = 32
+iterations = 60
+learning_rate = 0.10
+l2 = 0.001
+alpha = 0.10
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "proportional_hazard"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+
+[[candidates]]
+id = "generation_residual_mlp"
+estimator = "independent_mlp"
+feature_set = "blackbox"
+role = "model"
+
+[candidates.params]
+hidden_dims = [128, 64]
+learning_rate = 0.001
+weight_decay = 0.0001
+max_epochs = 100
+patience = 12
+output_transform = "attempt_accounting_residual"
+residual_scale = 1.0
+training_device = "cpu"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "independent_mlp"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[candidates]]
+id = "generation_direct_mlp"
+estimator = "independent_mlp"
+feature_set = "blackbox"
+role = "ablation"
+
+[candidates.params]
+hidden_dims = [128, 64]
+learning_rate = 0.001
+weight_decay = 0.0001
+max_epochs = 100
+patience = 12
+output_transform = "direct_quantiles"
+residual_scale = 1.0
+training_device = "cpu"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "independent_mlp"
+lifecycle_schema = "attempt_generation_residual_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[candidates.ablation]
+reference_candidate_id = "generation_residual_mlp"
+axis = "method"
+allowed_config_paths = ["params.output_transform"]
+
+[[candidates]]
+id = "task_deduct"
+estimator = "cross_position_deduct"
+feature_set = "blackbox"
+role = "baseline"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "cross_position_deduct"
+lifecycle_schema = "task_lifecycle_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[candidates]]
+id = "task_gru"
+estimator = "gru_residual"
+feature_set = "blackbox"
+role = "model"
+
+[candidates.params]
+transition_dim = 64
+hidden_dim = 64
+residual_head_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+max_epochs = 100
+patience = 12
+residual_scale = 1.0
+training_device = "cpu"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "gru_residual"
+lifecycle_schema = "task_lifecycle_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[experiments]]
+id = "task_launch_total"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = ["empirical_quantile", "task_text_length", "point_mlp"]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "call_start_total"
+position = "call_pre"
+target = "call_billable_total_tokens"
+candidates = [
+  "empirical_quantile",
+  "task_text_length",
+  "request_local_length",
+  "request_local_bucket_quantile",
+  "request_local_residual_quantile",
+  "point_mlp",
+]
+required_features = ["task_char_count", "current_request_tokens_local"]
+
+[[experiments]]
+id = "call_start_input"
+position = "call_pre"
+target = "call_billable_input_tokens"
+candidates = [
+  "empirical_quantile",
+  "task_text_length",
+  "request_local_length",
+  "request_local_bucket_quantile",
+  "request_local_residual_quantile",
+  "point_mlp",
+]
+required_features = ["task_char_count", "current_request_tokens_local"]
+
+[[experiments]]
+id = "call_start_output"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "task_text_length",
+  "request_local_length",
+  "request_local_bucket_quantile",
+  "point_mlp",
+]
+required_features = ["task_char_count", "current_request_tokens_local"]
+
+[[experiments]]
+id = "call_start_post_initial_input"
+position = "call_pre"
+target = "call_post_initial_input_billable_tokens"
+candidates = [
+  "empirical_quantile",
+  "task_text_length",
+  "request_local_length",
+  "request_local_bucket_quantile",
+  "point_mlp",
+]
+required_features = ["task_char_count", "current_request_tokens_local"]
+
+[[experiments]]
+id = "attempt_start_visible_output"
+position = "attempt_init"
+target = "attempt_observer_final_visible_output_tokens"
+candidates = ["empirical_quantile", "task_text_length", "point_mlp"]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "attempt_start_provider_output"
+position = "attempt_init"
+target = "attempt_provider_final_output_tokens"
+candidates = ["empirical_quantile", "task_text_length", "point_mlp"]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "generation_update_visible_remaining"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "generation_accounting_prior",
+  "generation_residual_mlp",
+  "generation_direct_mlp",
+]
+
+[[experiments]]
+id = "generation_update_provider_final"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "generation_accounting_prior",
+  "generation_fixed_byte_token_progress",
+  "generation_residual_mlp",
+  "generation_direct_mlp",
+]
+required_features = [
+  "observer_generation_bytes",
+  "generation_unit_contract_id",
+  "provider_token_unit_contract_id",
+]
+
+[[experiments]]
+id = "task_update_provider_remaining"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = ["empirical_quantile", "task_deduct", "task_gru"]
+
+[[experiments]]
+id = "attempt_start_generation_bytes"
+position = "attempt_init"
+target = "attempt_observer_final_generation_bytes"
+candidates = ["empirical_quantile", "task_text_length", "point_mlp"]
+required_features = ["task_char_count"]
+token_unit_contract_id = "observer:generation-utf8-bytes-v2"
+
+[[experiments]]
+id = "generation_update_remaining_bytes"
+position = "call_update"
+target = "attempt_observer_remaining_generation_bytes"
+candidates = [
+  "empirical_quantile",
+  "generation_accounting_prior",
+  "generation_byte_hazard",
+  "generation_residual_mlp",
+  "generation_direct_mlp",
+]
+token_unit_contract_id = "observer:generation-utf8-bytes-v2"

@@ -1,0 +1,309 @@
+config_id = "three-position-refinement-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.call_current]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.call_count]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+include_features = ["completed_call_count"]
+
+[feature_sets.call_no_stall]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "current_progress",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.call_compact]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "current_progress",
+  "token_history",
+  "progress_change",
+]
+include_features = ["completed_call_count"]
+
+[feature_sets.in_call_current]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.in_call_prefix]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+include_features = ["generation_prefix_embedding"]
+
+[feature_sets.in_call_no_stall]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.in_call_prefix_no_stall]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+]
+include_features = ["generation_prefix_embedding"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "call_current"
+estimator = "lightgbm_quantile"
+feature_set = "call_current"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "call_count"
+estimator = "lightgbm_quantile"
+feature_set = "call_count"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "call_current"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "call_no_stall"
+estimator = "lightgbm_quantile"
+feature_set = "call_no_stall"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "call_current"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "call_compact"
+estimator = "lightgbm_quantile"
+feature_set = "call_compact"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "call_current"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "in_call_current"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_current"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "in_call_prefix"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_prefix"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_current"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "in_call_no_stall"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_no_stall"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_current"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "in_call_prefix_no_stall"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_prefix_no_stall"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "in_call_current"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "call_current",
+  "call_count",
+  "call_no_stall",
+  "call_compact",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = [
+  "empirical_quantile",
+  "in_call_current",
+  "in_call_prefix",
+  "in_call_no_stall",
+  "in_call_prefix_no_stall",
+]
+required_features = ["task_char_count"]

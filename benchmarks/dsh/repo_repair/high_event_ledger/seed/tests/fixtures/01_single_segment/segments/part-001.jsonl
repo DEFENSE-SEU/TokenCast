@@ -1,0 +1,3 @@
+{"event_id":"adj-1","kind":"adjustment","logical_clock":1,"source":"main","sequence":1,"sku":"GADGET","quantity":"0.1"}
+{"event_id":"adj-2","kind":"adjustment","logical_clock":2,"source":"main","sequence":2,"sku":"GADGET","quantity":"0.2"}
+{"event_id":"adj-3","kind":"adjustment","logical_clock":3,"source":"main","sequence":3,"sku":"WIDGET","quantity":"-2.500"}

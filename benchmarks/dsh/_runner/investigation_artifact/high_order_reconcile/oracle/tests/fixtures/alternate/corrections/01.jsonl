@@ -1,0 +1,2 @@
+{"event_time":"2026-02-01T00:02:10Z","from_state":"picked","order_id":"ORD-X","record_id":"CX-PACK","sequence":1,"to_state":"packed","type":"correction"}
+{"event_time":"2026-02-01T00:02:20Z","from_state":"created","order_id":"ORD-Y","record_id":"CY-BAD","sequence":1,"to_state":"picked","type":"correction"}

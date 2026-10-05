@@ -1,0 +1,212 @@
+config_id = "four-position-baseline-grid-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+
+
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.task_length]
+include_all = false
+include_features = ["task_char_count"]
+
+[feature_sets.request_messages]
+include_all = false
+include_features = ["request_message_count"]
+
+[feature_sets.call_index]
+include_all = false
+include_features = ["completed_call_count"]
+
+[feature_sets.prefix_tokens]
+include_all = false
+include_features = ["observer_committed_tokens"]
+
+[feature_sets.task_old]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+exclude_features = [
+  "last_call_argument_chars",
+  "last_call_observation_chars",
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[[candidates]]
+id = "empirical"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "task_length_linear"
+estimator = "length_only"
+feature_set = "task_length"
+role = "baseline"
+
+[candidates.params]
+feature_name = "task_char_count"
+alpha = 0.10
+
+[[candidates]]
+id = "request_messages_linear"
+estimator = "length_only"
+feature_set = "request_messages"
+role = "baseline"
+
+[candidates.params]
+feature_name = "request_message_count"
+alpha = 0.10
+
+[[candidates]]
+id = "prefix_length_linear"
+estimator = "length_only"
+feature_set = "prefix_tokens"
+role = "baseline"
+
+[candidates.params]
+feature_name = "observer_committed_tokens"
+alpha = 0.10
+
+[[candidates]]
+id = "call_index_bucket"
+estimator = "bucket_quantile"
+feature_set = "call_index"
+role = "baseline"
+
+[candidates.params]
+feature_name = "completed_call_count"
+n_buckets = 8
+min_bucket_tasks = 3
+alpha = 0.10
+
+[[candidates]]
+id = "empirical_hazard"
+estimator = "empirical_hazard"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+n_bins = 32
+alpha = 0.10
+
+[[candidates]]
+id = "deduct_only"
+estimator = "deduct_only"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "task_deduct"
+estimator = "cross_position_deduct"
+feature_set = "task_old"
+role = "baseline"
+
+[candidates.initializer_params]
+alpha = 0.10
+
+[candidates.graph]
+initializer = "empirical_quantile"
+updater = "cross_position_deduct"
+lifecycle_schema = "task_lifecycle_v1"
+seed_policy = "inner_oof_uncalibrated_repaired_quantile_mean_v1"
+inner_split_policy = "task_multicohort_balanced_inner_oof_v2"
+
+[[candidates]]
+id = "call_clock_compound"
+estimator = "call_clock_compound"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+cost_atoms = 32
+cost_buckets = 1
+alpha = 0.10
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = [
+  "empirical",
+  "task_length_linear",
+  "call_index_bucket",
+  "empirical_hazard",
+  "call_clock_compound",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = [
+  "empirical",
+  "task_length_linear",
+  "request_messages_linear",
+  "call_index_bucket",
+  "empirical_hazard",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = [
+  "empirical",
+  "prefix_length_linear",
+  "call_index_bucket",
+  "empirical_hazard",
+]
+required_features = ["observer_committed_tokens"]
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = [
+  "empirical",
+  "task_length_linear",
+  "call_index_bucket",
+  "empirical_hazard",
+  "deduct_only",
+  "task_deduct",
+  "call_clock_compound",
+]

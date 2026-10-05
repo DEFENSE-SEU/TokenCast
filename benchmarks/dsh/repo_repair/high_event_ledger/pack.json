@@ -1,0 +1,120 @@
+{
+  "schema_version": 2,
+  "task_pack_id": "dsh-p0-v1-repo-repair-high-event-ledger",
+  "version": 1,
+  "task_id": "p0v1-repo-repair-high-event-ledger",
+  "task_type": "repo_repair",
+  "difficulty_stratum": "high",
+  "task_statement": "task.md",
+  "seed_workspace": "seed",
+  "runtime": {
+    "python": "3.12",
+    "dependencies": []
+  },
+  "commands": {
+    "public_tests": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "oracle": [
+      "python",
+      ".dsh_oracle/evaluate.py"
+    ]
+  },
+  "runner_bundle": "_runner/repo_repair/high_event_ledger",
+  "difficulty_evidence": {
+    "components": [
+      "segmented JSONL ingestion",
+      "event schema and decimal parsing",
+      "identity reconciliation and logical ordering",
+      "reversal validation and application",
+      "exact per-SKU balance calculation",
+      "deterministic reports and CLI status mapping"
+    ],
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "reconcile events by logical ordering keys"
+      },
+      {
+        "id": "R2",
+        "text": "collapse byte-identical duplicate events"
+      },
+      {
+        "id": "R3",
+        "text": "reject conflicting duplicate identities"
+      },
+      {
+        "id": "R4",
+        "text": "apply reversal events exactly once"
+      },
+      {
+        "id": "R5",
+        "text": "retain exact decimal quantities"
+      },
+      {
+        "id": "R6",
+        "text": "emit deterministic balance and exception reports"
+      },
+      {
+        "id": "R7",
+        "text": "return stable CLI exit codes for invalid ledgers"
+      }
+    ],
+    "input_families": [
+      "valid single-segment adjustments",
+      "valid cross-segment logical interleaving",
+      "identical and conflicting event identities",
+      "valid and invalid reversal relationships",
+      "malformed files and event schemas"
+    ],
+    "deliverable_kinds": [
+      "Python source repair",
+      "deterministic JSON reports"
+    ],
+    "coordination_burden": 2,
+    "coordination_evidence": "The repair coordinates cross-segment identity and ordering, then carries reversal outcomes through exact balances, deterministic reports, and stable CLI statuses."
+  },
+  "oracle": {
+    "oracle_id": "dsh-p0-v1-repo-repair-high-event-ledger-oracle-v1",
+    "requirement_coverage": [
+      "R1",
+      "R2",
+      "R3",
+      "R4",
+      "R5",
+      "R6",
+      "R7"
+    ]
+  },
+  "licenses": {
+    "code": "MIT",
+    "fixture_data_and_task_text": "CC0-1.0"
+  },
+  "verification": {
+    "seed_public_tests": "expected_fail",
+    "seed_oracle": "expected_fail",
+    "reference_public_tests": "pass",
+    "reference_oracle": "pass",
+    "oracle_repetitions": 3
+  },
+  "budget": {
+    "max_task_statement_bytes": 12000,
+    "max_seed_files": 40,
+    "max_seed_bytes": 160000,
+    "max_public_test_output_bytes": 24000,
+    "max_oracle_seconds": 30
+  },
+  "asset_receipt": {
+    "task_statement_bytes": 4257,
+    "seed_file_count": 22,
+    "seed_total_bytes": 22596,
+    "seed_python_lines": 473,
+    "fixture_bytes": 1919
+  }
+}

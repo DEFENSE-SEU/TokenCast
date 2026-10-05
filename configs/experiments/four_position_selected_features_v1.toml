@@ -1,0 +1,148 @@
+config_id = "four-position-selected-features-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+
+
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.without_initial_info]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+
+[feature_sets.without_cumulative_history]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "call_start_selected"
+estimator = "lightgbm_quantile"
+feature_set = "without_cumulative_history"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "empirical_quantile"
+axis = "method"
+allowed_config_paths = [
+  "estimator_id",
+  "feature_set",
+  "params.alpha",
+  "params.num_boost_round",
+  "params.early_stopping_rounds",
+  "params.learning_rate",
+  "params.num_leaves",
+  "params.min_data_in_leaf",
+  "params.max_depth",
+  "params.lambda_l2",
+  "params.feature_fraction",
+  "params.bagging_fraction",
+  "params.bagging_freq",
+  "graph.updater_estimator_id",
+]
+
+[[candidates]]
+id = "without_initial_info_selected"
+estimator = "lightgbm_quantile"
+feature_set = "without_initial_info"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "empirical_quantile"
+axis = "method"
+allowed_config_paths = [
+  "estimator_id",
+  "feature_set",
+  "params.alpha",
+  "params.num_boost_round",
+  "params.early_stopping_rounds",
+  "params.learning_rate",
+  "params.num_leaves",
+  "params.min_data_in_leaf",
+  "params.max_depth",
+  "params.lambda_l2",
+  "params.feature_fraction",
+  "params.bagging_fraction",
+  "params.bagging_freq",
+  "graph.updater_estimator_id",
+]
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = ["empirical_quantile", "call_start_selected"]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "without_initial_info_selected"]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+candidates = ["empirical_quantile", "without_initial_info_selected"]
+required_features = ["task_char_count"]

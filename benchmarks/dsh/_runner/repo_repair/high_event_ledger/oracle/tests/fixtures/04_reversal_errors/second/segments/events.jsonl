@@ -1,0 +1,3 @@
+{"event_id":"second-adj","kind":"adjustment","logical_clock":1,"source":"clock","sequence":1,"sku":"SECOND","quantity":"5"}
+{"event_id":"second-rev-a","kind":"reversal","logical_clock":2,"source":"clock","sequence":2,"reversal_of":"second-adj"}
+{"event_id":"second-rev-b","kind":"reversal","logical_clock":3,"source":"clock","sequence":3,"reversal_of":"second-adj"}

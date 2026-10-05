@@ -1,0 +1,335 @@
+config_id = "in-call-billed-information-ablation-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.ic_billed_ref]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall", "stream_clock"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_billed_without_token_history]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "progress_change", "prefix_closure", "session_recall", "stream_clock"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_billed_without_current_progress]
+include_all = false
+include_subgroups = ["cumulative_history", "token_history", "progress_change", "prefix_closure", "session_recall", "stream_clock"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_billed_without_cumulative_history]
+include_all = false
+include_subgroups = ["current_progress", "token_history", "progress_change", "prefix_closure", "session_recall", "stream_clock"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_billed_without_progress_change]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "prefix_closure", "session_recall", "stream_clock"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_billed_with_task_info]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall", "stream_clock", "task_text", "task_metadata"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+
+[feature_sets.ic_billed_with_feedback]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall", "stream_clock"]
+include_features = ["generation_prefix_embedding"]
+
+[feature_sets.ic_billed_with_request]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall", "stream_clock", "request_context"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_billed_with_failure_stall]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall", "stream_clock", "failure_stall"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.ic_billed_with_previous_output]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall", "stream_clock", "previous_output"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[[candidates]]
+id = "empirical"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "ic_billed_ref"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_ref"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "ic_billed_without_token_history"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_without_token_history"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_billed_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "ic_billed_without_current_progress"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_without_current_progress"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_billed_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "ic_billed_without_cumulative_history"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_without_cumulative_history"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_billed_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "ic_billed_without_progress_change"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_without_progress_change"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_billed_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "ic_billed_with_task_info"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_with_task_info"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_billed_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "ic_billed_with_feedback"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_with_feedback"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_billed_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "ic_billed_with_request"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_with_request"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_billed_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "ic_billed_with_failure_stall"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_with_failure_stall"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_billed_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "ic_billed_with_previous_output"
+estimator = "lightgbm_quantile"
+feature_set = "ic_billed_with_previous_output"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ic_billed_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[experiments]]
+id = "in_call_billed"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = [
+  "empirical",
+  "ic_billed_ref",
+  "ic_billed_without_token_history",
+  "ic_billed_without_current_progress",
+  "ic_billed_without_cumulative_history",
+  "ic_billed_without_progress_change",
+  "ic_billed_with_task_info",
+  "ic_billed_with_feedback",
+  "ic_billed_with_request",
+  "ic_billed_with_failure_stall",
+  "ic_billed_with_previous_output",
+]
+required_features = ["observer_committed_tokens"]

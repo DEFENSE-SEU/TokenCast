@@ -1,0 +1,3 @@
+{"event_time":"2026-01-01T00:00:00Z","order_id":"ORD-100","record_id":"O100","sequence":1,"type":"order_created"}
+{"event_time":"2026-01-01T00:00:01Z","order_id":"ORD-200","record_id":"O200","sequence":1,"type":"order_created"}
+{"event_time":"2026-01-01T00:00:02Z","order_id":"ORD-300","record_id":"O300","sequence":1,"type":"order_created"}

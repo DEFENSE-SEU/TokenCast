@@ -1,0 +1,7 @@
+{"cause_event_id":"ctl-root","code":"LEASE_LOST","event_id":"worker-lease","kind":"error"}
+{"attempt":1,"cause_event_id":"worker-lease","event_id":"alpha-failed","job_id":"alpha","kind":"job","status":"failed"}
+{"attempt":1,"cause_event_id":"ctl-wrap","event_id":"beta-blocked","job_id":"beta","kind":"job","status":"blocked"}
+{"attempt":1,"cause_event_id":"worker-lease","event_id":"retry-failed","job_id":"retry","kind":"job","status":"failed"}
+{"attempt":2,"cause_event_id":"ctl-wrap","event_id":"retry-ok","job_id":"retry","kind":"job","status":"succeeded"}
+{"attempt":1,"cause_event_id":"ctl-root","event_id":"\u4e1c\u4eac-failed","job_id":"\u4e1c\u4eac","kind":"job","status":"failed"}
+{"attempt":1,"cause_event_id":"worker-lease","event_id":"ok","job_id":"ok","kind":"job","status":"succeeded"}

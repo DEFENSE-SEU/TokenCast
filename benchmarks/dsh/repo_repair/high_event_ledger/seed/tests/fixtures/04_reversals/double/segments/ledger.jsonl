@@ -1,0 +1,3 @@
+{"event_id":"adj-double","kind":"adjustment","logical_clock":1,"source":"main","sequence":1,"sku":"REV","quantity":"3"}
+{"event_id":"rev-first","kind":"reversal","logical_clock":2,"source":"main","sequence":2,"reversal_of":"adj-double"}
+{"event_id":"rev-second","kind":"reversal","logical_clock":3,"source":"main","sequence":3,"reversal_of":"adj-double"}

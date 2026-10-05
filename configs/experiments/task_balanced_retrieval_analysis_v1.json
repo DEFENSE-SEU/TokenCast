@@ -1,0 +1,304 @@
+{
+  "analysis_id": "task-balanced-retrieval-analysis-v1",
+  "bootstrap": {
+    "confidence_level": 0.95,
+    "iterations": 10000,
+    "method": "paired-percentile-bootstrap-over-unique-task-id",
+    "percentile_rule": "linear-type-7",
+    "relative_ratio_zero_denominator_rule": "exclude-resamples-with-zero-reference-mae-and-report-valid-draw-count; pooled-reference-mae-must-be-positive",
+    "seeds": {
+      "in_call_update": 20260905,
+      "task_update": 20260906
+    }
+  },
+  "budget": {
+    "aggregation": "row-weighted-within-task-source-split-fit_then-fit-mean_then-split-mean_then-available-source-mean_then-equal-task-mean",
+    "comparison_scope": "all-arm-summaries-and-primary-family-paired-deltas",
+    "decision_rules": {
+      "interval_risk": "upper_forecast_gt_budget",
+      "point": "median_forecast_gt_budget",
+      "realized": "target_gt_budget"
+    },
+    "interval_state_rules": {
+      "definite_overrun": "lower_forecast_gt_budget",
+      "definite_within": "upper_forecast_le_budget",
+      "uncertain": "lower_forecast_le_budget_and_upper_forecast_gt_budget"
+    },
+    "loss": {
+      "false_negative_cost": 4.0,
+      "false_positive_cost": 1.0,
+      "formula": "task_macro_mean_false_negative_cost_plus_false_positive_cost"
+    },
+    "metrics": [
+      "accuracy",
+      "precision",
+      "recall",
+      "false_negative_rate",
+      "false_positive_rate",
+      "weighted_decision_loss",
+      "interval_definite_overrun_rate",
+      "interval_definite_within_rate",
+      "interval_uncertain_rate",
+      "mean_missed_overrun_amount"
+    ],
+    "metric_rules": {
+      "mean_missed_overrun_amount": "task-cell-weighted-mean-of-max(target-minus-budget,0)-on-false-negatives-with-zero-for-all-other-points",
+      "zero_conditioning_mass": "precision-recall-false-negative-rate-and-false-positive-rate-equal-zero-when-their-denominator-is-zero"
+    },
+    "paired_uncertainty": "same_unique-task-percentile-bootstrap-as-primary-for-each-metric-threshold-and-decision-rule",
+    "thresholds_by_position": {
+      "in_call_update": {
+        "thresholds": [128, 256, 512, 1024, 2048, 4096, 8192],
+        "unit_contract_id": "observer:utf8-bytes-v1"
+      },
+      "task_update": {
+        "thresholds": [256, 512, 1024, 2048, 4096, 8192, 16384, 32768],
+        "target_accounting": "provider-accounted-remaining-total-input-plus-output-tokens",
+        "target_id": "task_provider_accounted_remaining_tokens",
+        "unit_contract_id": "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+      }
+    },
+    "weighting": "same_unique-task_condition_seed_hierarchy_as_primary_mae"
+  },
+  "calibration": {
+    "calibrator_id": "task_hierarchical_point_conformal",
+    "coverage_scope": "hierarchy-weighted-empirical-cqr",
+    "equal_coverage_rule": {
+      "claim_name": "calibration-target-matched-width",
+      "comparison": "paired_normalized_width_at_independently_calibrated_nominal_coverage",
+      "evaluation_label_matching": "descriptive-oracle-only",
+      "interpolation": "none-each-arm-uses-its-frozen-nominal-0.90-calibrator",
+      "nominal_coverage": 0.9,
+      "selection_use": false
+    },
+    "quantile_rule": "ascending_nonconformity_order_statistic_at_(1-alpha)*(calibration_task_mass+one_prospective_task_mass)",
+    "required_fold_diagnostics": [
+      "calibration_task_count",
+      "calibration_point_count",
+      "effective_task_mass",
+      "expansion_amount",
+      "point_coverage",
+      "lower_tail_failure_rate",
+      "upper_tail_failure_rate",
+      "task_simultaneous_coverage"
+    ]
+  },
+  "comparison_families": {
+    "mechanism": [
+      ["ic_task_knn", "ic_task_raw"],
+      ["tu_task_knn", "tu_task_raw"],
+      ["ic_row_knn_20", "ic_task_knn"],
+      ["tu_row_knn_20", "tu_task_knn"],
+      ["ic_row_knn_40", "ic_row_knn_20"],
+      ["tu_row_knn_40", "tu_row_knn_20"],
+      ["ic_task_knn_weighted", "ic_task_knn"],
+      ["tu_task_knn_weighted", "tu_task_knn"],
+      ["ic_task_knn_label_shuffle", "ic_task_knn"],
+      ["tu_task_knn_label_shuffle", "tu_task_knn"],
+      ["ic_task_knn_neighbor_shuffle", "ic_task_knn"],
+      ["tu_task_knn_neighbor_shuffle", "tu_task_knn"]
+    ],
+    "primary": [
+      ["ic_task_knn", "ic_selected"],
+      ["tu_task_knn", "tu_selected"]
+    ],
+    "sensitivity": {
+      "in_call_update": {
+        "base_candidate": "ic_task_knn",
+        "candidate_ids_by_neighbor_count": {
+          "5": "ic_task_knn--ic-neighbors-v0",
+          "10": "ic_task_knn--ic-neighbors-v1",
+          "20": "ic_task_knn",
+          "999": "ic_task_knn--ic-neighbors-v3"
+        },
+        "neighbor_counts": [5, 10, 20, 999]
+      },
+      "task_update": {
+        "base_candidate": "tu_task_knn",
+        "candidate_ids_by_neighbor_count": {
+          "5": "tu_task_knn--tu-neighbors-v0",
+          "10": "tu_task_knn--tu-neighbors-v1",
+          "20": "tu_task_knn",
+          "999": "tu_task_knn--tu-neighbors-v3"
+        },
+        "neighbor_counts": [5, 10, 20, 999]
+      }
+    }
+  },
+  "config_id": "task-balanced-retrieval-ablation-v1",
+  "decision": {
+    "classification": {
+      "core_meaningful_gain": "relative_delta_le_-0.08_and_ci_upper_lt_0_and_holm_p_le_0.05_and_no_condition_point_delta_gt_0",
+      "excludes_core_size_gain": "relative_ci_lower_gt_-0.08",
+      "harmful": "relative_ci_lower_gt_0",
+      "inconclusive": "all_other_interval_patterns",
+      "recipe_retention": "relative_delta_le_-0.02_and_ci_upper_lt_0_and_no_condition_ci_lower_gt_0"
+    },
+    "core_relative_mae_gain": 0.08,
+    "familywise_alpha": 0.05,
+    "familywise_method": "holm",
+    "recipe_retention_relative_mae_gain": 0.02
+  },
+  "estimands": {
+    "condition_specific": "within_each_source_key_average_each_task_over_fit-seeds-and-split-seeds_then-average-tasks-equally",
+    "delta_direction": "candidate_minus_reference",
+    "fit_seed_aggregation": "formal-grid-averages-three-fit-seeds-within-each-task-source-split-before-split-and-source-averaging",
+    "fold_wins": "descriptive_only",
+    "hierarchy_order": "row-weighted-task-cell_then-fit-seed-mean_then-split-seed-mean_then-available-source-key-mean_then-equal-task-mean",
+    "missing_condition_rule": "each_task_uses_the_equal_mean_over_its_observed_conditions",
+    "point_forecast": "median",
+    "pooled_mae": "average_each_task_over_available_conditions_and_split_seeds_then_average_unique_tasks_equally",
+    "primary_metric": "task_macro_mae",
+    "relative_delta": "pooled_mae_delta_divided_by_pooled_reference_mae",
+    "source_condition_unit": "source-key-with-v18-v19-v21-as-three-frozen-source-conditions",
+    "task_cell_metric": "hierarchy_weighted_mean_absolute_error_within_task_condition_split_seed",
+    "task_win_fraction": "fraction_of_unique_tasks_with_negative_condition_and_seed_mean_mae_delta",
+    "wape": "sum-over-tasks-of-hierarchically-averaged-within-task-weighted-absolute-error_divided-by-sum-over-tasks-of-matching-hierarchically-averaged-within-task-weighted-absolute-target"
+  },
+  "fit_seed_policy": {
+    "formal_fit_seeds": [20260719, 20260720, 20260721],
+    "pilot_fit_seeds": [20260719],
+    "pilot_scope": "operational-only-outside-formal-inference",
+    "single_realization_control_scope": "descriptive"
+  },
+  "interval_metrics": {
+    "paired": [
+      "interval_score",
+      "coverage",
+      "normalized_interval_width",
+      "task_simultaneous_coverage",
+      "calibration_target_matched_width"
+    ],
+    "raw_and_calibrated": true,
+    "selection_metrics": ["interval_score", "coverage", "normalized_interval_width"]
+  },
+  "multiplicity": {
+    "mechanism_randomization_seed_base": 20260917,
+    "primary_p_value": "two_sided_paired_task_sign_flip_randomization",
+    "primary_randomization_iterations": 100000,
+    "primary_randomization_seeds": {
+      "in_call_update": 20260915,
+      "task_update": 20260916
+    },
+    "randomization_counting_rule": "plus-one-corrected-count-of-absolute-null-means-at-least-observed-absolute-mean",
+    "secondary_p_value": "two-sided-paired-task-sign-flip-with-seed-base-plus-declared-pair-index",
+    "sensitivity_randomization_seed_base": 20260929,
+    "secondary_families": "reported_within_family_holm_adjustment_and_no_method_promotion",
+    "zero_effect_ties": "retain_with_zero_sign"
+  },
+  "reporting": {
+    "comparison_scope": "all-arm-summaries-and-primary-family-paired-deltas",
+    "low_support_slice_rule": "descriptive_when_unique_task_count_lt_20",
+    "low_support_task_threshold": 20,
+    "required_slices": [
+      "condition_id",
+      "reasoning_setting",
+      "retry_state",
+      "termination_state",
+      "trajectory_length_bucket",
+      "checkpoint_progress_quartile",
+      "long_generation_top_decile",
+      "repository"
+    ],
+    "slice_definitions": {
+      "checkpoint_progress_quartile": "causal-progress-known-amount-divided-by-causal-progress-known-amount-plus-remaining-target; bins-[0,0.25),[0.25,0.50),[0.50,0.75),[0.75,1.0]; unavailable-when-known-amount-or-positive-total-is-missing",
+      "condition_id": "prediction-condition-id",
+      "long_generation_top_decile": "final-total-at-or-above-the-within-source-position-linear-type-7-p90-over-unique-progress-entities; in-call-attempt-total-is-constant-known-bytes-plus-remaining-bytes; task-update-trajectory-total-is-known-provider-input-plus-output-plus-provider-accounted-remaining-total-at-the-latest-causal-cutoff",
+      "reasoning_setting": "frozen-source-reasoning-effort",
+      "repository": "prediction-repo-id",
+      "retry_state": "prediction-retry-state",
+      "termination_state": "prediction-termination-state",
+      "trajectory_length_bucket": "prediction-trajectory-length-bucket"
+    },
+    "retain_all_arms_and_failures": true,
+    "retrieval_diagnostics": [
+      "zero_vector_count",
+      "requested_neighbor_count",
+      "realized_neighbor_count",
+      "similarity_distribution",
+      "nonpositive_similarity_fallback_count",
+      "fold_reference_task_roster"
+    ],
+    "systems_metrics": [
+      "warm_query_latency_task_attempt_balanced",
+      "cold_bundle_load_latency",
+      "embedding_time",
+      "reference_build_time",
+      "end_to_end_forecast_latency",
+      "raw_reference_array_bytes",
+      "serialized_retrieval_bytes",
+      "fold_bundle_bytes",
+      "total_grid_bytes",
+      "peak_rss_bytes",
+      "peak_temporary_storage_bytes",
+      "resumed_candidate_count",
+      "published_candidate_checkpoint_count",
+      "audit_wall_seconds"
+    ],
+    "systems_procedures": {
+      "cold_bundle_load_latency": "single-thread-wall-time-to-load-each-verified-fold-bundle-and-calibrator-once-in-canonical-path-order",
+      "audit_wall_seconds": "persisted-saved-bundle-replay-wall-time-plus-current-grid-and-pooled-recomputation-wall-time",
+      "embedding_time": "recorded-separately-during-causal-feature-construction; unavailable-must-remain-null",
+      "end_to_end_forecast_latency": "cold-load-plus-recorded-feature-preparation-when-available-plus-warm-query-time",
+      "fold_bundle_bytes": "recursive-byte-size-of-each-verified-fitted-fold-package",
+      "peak_rss_bytes": "maximum-process-rss-recorded-by-the-formal-runner",
+      "peak_temporary_storage_bytes": "maximum-staging-plus-checkpoint-bytes-sampled-after-each-fit-run-finalizer-receipt-write-and-transient-or-durable-checkpoint-publication",
+      "published_candidate_checkpoint_count": "count-of-durable-completed-candidate-checkpoints-present-after-all-formal-fit-runs",
+      "raw_reference_array_bytes": "sum-of-uncompressed-retrieval-array-nbytes-from-each-bundle",
+      "reference_build_time": "fit-report-retrieval-build-wall-time; unavailable-must-remain-null",
+      "resumed_candidate_count": "count-of-completed-candidate-checkpoints-present-before-each-fit-run-start",
+      "serialized_retrieval_bytes": "sum-of-retrieval-npz-file-sizes",
+      "total_grid_bytes": "recursive-byte-size-before-root-manifest-publication",
+      "warm_query_latency_task_attempt_balanced": "mean-row-latency-within-attempt_then-mean-attempt-within-task_then-fit-split-source-task-hierarchy"
+    }
+  },
+  "schema_id": "task-balanced-retrieval-analysis-plan-v1",
+  "split_seeds": [20260719, 20260720, 20260721],
+  "validation": {
+    "candidate_groups_per_fit": 24,
+    "experiment_cells_per_fit": 2,
+    "formal_fit_files": [
+      "comparison_family_correction.json",
+      "comparisons.json",
+      "development_protocol.json",
+      "metrics.json",
+      "predictions.jsonl",
+      "run.json",
+      "sweeps.json"
+    ],
+    "formal_pooled_files": [
+      "analysis-plan.json",
+      "execution-receipt.json",
+      "manifest.json",
+      "task-retrieval-analysis.json",
+      "task-retrieval-grid-audit.json",
+      "task-retrieval-pooled-tasks.jsonl",
+      "task-retrieval-replay-audits.json",
+      "task-retrieval-systems.json",
+      "task-retrieval-task-cells.jsonl"
+    ],
+    "formal_root_files": [
+      "analysis-plan.json",
+      "collection-manifest.json",
+      "dependency-lock.txt",
+      "execution-plan.json",
+      "execution-provenance.json",
+      "execution-receipt.json",
+      "experiment-config.toml",
+      "grid.json",
+      "input-roster.json",
+      "manifest.json",
+      "partition-authority.json",
+      "source-descriptor.json",
+      "task-retrieval-analysis.json",
+      "task-retrieval-grid-audit.json",
+      "task-retrieval-pooled-tasks.jsonl",
+      "task-retrieval-replay-audit.json",
+      "task-retrieval-replay-audits.json",
+      "task-retrieval-systems.json",
+      "task-retrieval-task-cells.jsonl"
+    ],
+    "outer_folds": 5,
+    "source_keys": ["v18", "v19", "v21"]
+  }
+}

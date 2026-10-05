@@ -1,0 +1,53 @@
+
+
+
+- id: persona
+  name: '@deepseek-ai/dsh-persona'
+  config:
+    text: You are a helpful software engineer assistant.
+
+- id: agent-instructions
+  name: '@deepseek-ai/dsh-agent-instructions'
+  config:
+    dshHome: !!js process.env.DSH_PRESET_ROOT + '/runtime-home'
+    maxBytes: 65536
+
+- id: router-bootstrap
+  name: ./router-bootstrap.mjs
+  config: {}
+
+- id: tool-pwsh
+  name: '@deepseek-ai/dsh-tool-pwsh'
+
+- id: tool-fs
+  name: '@deepseek-ai/dsh-tool-fs'
+
+- id: tool-fs-search
+  name: '@deepseek-ai/dsh-tool-fs-search'
+  config:
+    sampleOverCapGlobResults: false
+
+- id: tool-jobs
+  name: '@deepseek-ai/dsh-tool-jobs'
+
+- id: skill-filesystem
+  name: '@deepseek-ai/dsh-skill-filesystem'
+  config:
+    includeDefaultRoots: true
+    dshHome: !!js process.env.DSH_PRESET_ROOT + '/runtime-home'
+    agentsHome: !!js process.env.DSH_PRESET_ROOT + '/runtime-agents'
+    bundledSkillDir: !!js process.env.DSH_PRESET_ROOT + '/runtime-bundled-skills'
+    watch: false
+
+- id: tool-skill
+  name: '@deepseek-ai/dsh-tool-skill'
+
+- id: tool-str-replace-editor
+  name: '@deepseek-ai/dsh-tool-str-replace-editor'
+  config:
+    maxOutputChars: 16000
+
+- id: tool-todo
+  name: '@deepseek-ai/dsh-tool-todo'
+  config:
+    allowParallelInProgress: true

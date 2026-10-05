@@ -1,0 +1,3034 @@
+{
+  "schema_version": 1,
+  "manifest_id": "longbench-gpt-oauth-development-v1",
+  "protocol_id": "longbench-gpt-oauth-collection-v1",
+  "source_id": "dsh_session_observer_v2",
+  "status": "design_frozen",
+  "collection_authorized": false,
+  "data_role": "protocol_development",
+  "split": "development",
+  "taxonomy": {
+    "task_types": [
+      "repo_repair"
+    ],
+    "difficulty_strata": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "difficulty_policy_id": "source-benchmark-annotation-v1"
+  },
+  "repeat_ids": [
+    "r1"
+  ],
+  "runtime": {
+    "platform": "windows",
+    "profile": "dsh-headless",
+    "base_profile": "headless",
+    "dsh_cli_version": "0.1.1-rc.2",
+    "headless_integration_version": "0.5.0",
+    "batch_protocol_version": 2,
+    "dsh_components": {
+      "@deepseek-ai/dsh-agent": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-agent-presets": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-agent-loop": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-headless": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm-deepseek": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-llm-retry": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-checkpoint-policy": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-persistence": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-session-persistence-jsonl": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-token-meter": "0.1.1-rc.2",
+      "@deepseek-ai/dsh-tools": "0.1.1-rc.2"
+    },
+    "session_persistence": {
+      "compression": "zstd",
+      "pack_chunks": true,
+      "one_live_writer_per_session": true,
+      "write_batch_max_delay_ms": 200
+    },
+    "preset_roster": {
+      "owner": "experiment",
+      "trust": "system",
+      "include_user_root": false
+    },
+    "profile_policy": {
+      "bundle_hmr": false,
+      "user_patch_hot_reload": true,
+      "tools_mode": "native",
+      "bundled_skills": false,
+      "settings_hot_reload": false,
+      "model_title": false,
+      "compaction": false,
+      "web": false,
+      "delegation_workflow": false,
+      "telemetry": false
+    },
+    "hosted_provider": {
+      "provider": "deepseek-official",
+      "exclusive": true,
+      "base_url": "https://api.deepseek.com",
+      "max_tokens": 256000,
+      "default_context_window": 1000000,
+      "stream_idle_timeout_ms": 300000,
+      "models": [
+        {
+          "id": "deepseek-v4-flash",
+          "name": "DeepSeek-V4-Flash",
+          "context_window": 1000000,
+          "max_tokens": 256000,
+          "input_modalities": [
+            "text"
+          ]
+        },
+        {
+          "id": "deepseek-v4-pro",
+          "name": "DeepSeek-V4-Pro",
+          "context_window": 1000000,
+          "max_tokens": 256000,
+          "input_modalities": [
+            "text"
+          ]
+        }
+      ],
+      "native_reasoning_mapping": {
+        "off": {
+          "thinking": "disabled"
+        },
+        "high": {
+          "thinking": "enabled",
+          "reasoning_effort": "high"
+        }
+      },
+      "retry": {
+        "mode": "normal",
+        "max_retries": 4,
+        "retryable_codes": [
+          "EMPTY_RESPONSE",
+          "RATE_LIMIT",
+          "SERVER",
+          "TIMEOUT",
+          "TRANSPORT"
+        ],
+        "initial_delay_ms": 500,
+        "max_delay_ms": 10000,
+        "jitter_ratio": 0
+      }
+    },
+    "max_parallel_tool_calls": 10,
+    "attempt_boundary_contract": "llm-stream-one-provider-attempt-v1",
+    "single_attempt_boundary": true,
+    "composed_profile_preflight_required": true,
+    "boundary_proof_policy_id": "composed-profile-single-send-preflight-v1",
+    "opaque_provider_retry_allowed": false,
+    "max_attempts_per_logical_call": 5
+  },
+  "actor": {
+    "agent_id": "deepseek-harness",
+    "agent_version": "0.1.1-rc.2",
+    "preset_id": "router-standard",
+    "permission_preset": "unrestricted",
+    "sandbox_mode": "danger-full-access",
+    "approval_policy": "never",
+    "tool_surface_id": "router-standard-windows-no-delegation-v1",
+    "allowed_tool_names": [
+      "edit",
+      "glob",
+      "grep",
+      "job_kill",
+      "job_list",
+      "job_output",
+      "pwsh",
+      "read",
+      "skill",
+      "str_replace_editor",
+      "todo_write",
+      "write"
+    ],
+    "system_prompt_policy_id": "swebench-source-patch-submit-v4",
+    "subagents_enabled": false,
+    "turns_per_run": 1
+  },
+  "router": {
+    "router_id": "dsh-router-standard",
+    "router_version": "0.3.0",
+    "mode": "auto",
+    "fallback_allowed": false,
+    "resolved_route_must_equal_configured_route": true,
+    "resolution_recording": [
+      "continuous_mode",
+      "band",
+      "persona_text",
+      "first_request_tool_names",
+      "promoted_tool_names"
+    ]
+  },
+  "observer": {
+    "plugin_id": "@token-prediction/dsh-token-observer",
+    "plugin_version": "0.4.0",
+    "durability_contract_id": "observer-jsonl-fsync-on-session-flush-v1",
+    "checkpoint_interval_bytes": 128,
+    "checkpoint_policy_id": "dsh-text-chunk-at-least-128-utf8-bytes-v1",
+    "observer_unit_contract_id": "observer:utf8-bytes-v1",
+    "observer_tokenizer_id": "utf8-byte-256",
+    "observer_normalization_id": "utf16-to-well-formed-v1",
+    "observer_carry_policy_id": "utf16-high-surrogate-carry-v1",
+    "observer_boundary_policy_id": "dsh-text-delta-chunk-v1"
+  },
+  "run_policy": {
+    "run_policy_id": "dsh-run-v2",
+    "fresh_session_per_run": true,
+    "workspace_reset": "fresh_copy",
+    "ledger_write_boundary": "before_workspace_reset",
+    "zero_attempt": "retain_sample_flow_exclude_supervision",
+    "terminal_resume": "validate_and_skip",
+    "pre_provider_interruption_resume": "resume_same_run_preserve_incident_history",
+    "post_provider_interruption_resume": "complete_runner_interrupted_and_continue",
+    "provider_entry_started_recorded": true,
+    "implicit_rerun": false,
+    "parallel_runner_supported": false,
+    "oracle_execution": "after_actor_terminal_under_runner_identity",
+    "target_status_policy_id": "external-source-patch-terminal-v6",
+    "supervision_eligibility": "validated_task_finished_capture_only",
+    "missing_attempt_usage": "terminate_before_next_logical_call",
+    "cap_hit_and_overshoot_recorded": true
+  },
+  "condition_policy": {
+    "requested_effective_match_required": true,
+    "verify_each_logical_call": [
+      "provider",
+      "model",
+      "reasoning_effort",
+      "temperature",
+      "max_tokens",
+      "stop"
+    ],
+    "hosted_provenance_fields": [
+      "collection_started_at",
+      "collection_ended_at"
+    ],
+    "unavailable_hosted_provenance_fields": {
+      "provider_response_model": "unavailable_in_dsh_success_stream",
+      "provider_request_id": "unavailable_in_dsh_success_stream"
+    }
+  },
+  "schedule": {
+    "policy_id": "task-block-rotating-condition-v1",
+    "task_order": [
+      "longbench-66eae4de5a08c7b9b35dd12d",
+      "longbench-66ebb0e55a08c7b9b35ddd6a",
+      "longbench-66ebbe4f5a08c7b9b35de533",
+      "longbench-66ebc0c95a08c7b9b35de7f3",
+      "longbench-66ebc4af5a08c7b9b35dede0",
+      "longbench-66ebc7445a08c7b9b35df155",
+      "longbench-66ebc95f5a08c7b9b35df497",
+      "longbench-66ebca1e5a08c7b9b35df5e8",
+      "longbench-66ebd3075a08c7b9b35e02bd",
+      "longbench-66ebd5675a08c7b9b35e06bf",
+      "longbench-66ebd9895a08c7b9b35e0c7c",
+      "longbench-66ebda775a08c7b9b35e0dcb",
+      "longbench-66ebdadd5a08c7b9b35e0e5b",
+      "longbench-66ebde0f5a08c7b9b35e1256",
+      "longbench-66ebe0fb5a08c7b9b35e14f5",
+      "longbench-66ebe30a5a08c7b9b35e1693",
+      "longbench-66ebe68d5a08c7b9b35e190b",
+      "longbench-66ebed525a08c7b9b35e1cb4",
+      "longbench-66ebee0a5a08c7b9b35e1d05",
+      "longbench-66ebf9bf5a08c7b9b35e1f85",
+      "longbench-66ec052a5a08c7b9b35e29c7",
+      "longbench-66ec0874821e116aacb194a4",
+      "longbench-66ec09ec821e116aacb19620",
+      "longbench-66ec0d4b821e116aacb19af8",
+      "longbench-66ec0d51821e116aacb19b0f",
+      "longbench-66ec0f3c821e116aacb19d70",
+      "longbench-66ec0f7f821e116aacb19dde",
+      "longbench-66ec18a7821e116aacb1a72e",
+      "longbench-66ec1db2821e116aacb1ad69",
+      "longbench-66ec1de5821e116aacb1adca",
+      "longbench-66ec1e3f821e116aacb1ae7d",
+      "longbench-66ec25a5821e116aacb1b5d1",
+      "longbench-66ec2e2a821e116aacb1bb9f",
+      "longbench-66ec2fde821e116aacb1bd18",
+      "longbench-66ec356a821e116aacb1c22b",
+      "longbench-66ec3a46821e116aacb1c49f",
+      "longbench-66ec3d1d821e116aacb1c622",
+      "longbench-66ec41d3821e116aacb1c874",
+      "longbench-66ec5af0821e116aacb1ce41",
+      "longbench-66ec7ba6821e116aacb1d114",
+      "longbench-66ece358821e116aacb1dc08",
+      "longbench-66ece958821e116aacb1df04",
+      "longbench-66ecf139821e116aacb1e0e1",
+      "longbench-66ed0cb0821e116aacb1e6c1",
+      "longbench-66ed1556821e116aacb1ea14",
+      "longbench-66ed2c87821e116aacb1f149",
+      "longbench-66ed3148821e116aacb1f2ce",
+      "longbench-66ed3ae5821e116aacb1f729",
+      "longbench-66ed910a821e116aacb2033b",
+      "longbench-66ee3c6d821e116aacb20f6f",
+      "longbench-66ee496a821e116aacb214d5",
+      "longbench-66eecc45821e116aacb225c3",
+      "longbench-66eefa2f821e116aacb2284f",
+      "longbench-66efa466821e116aacb23219",
+      "longbench-66f0ed5a821e116aacb265ab",
+      "longbench-66f10d67821e116aacb268d0",
+      "longbench-66f120a9821e116aacb26d02",
+      "longbench-66f14c70821e116aacb271ee",
+      "longbench-66f245cc821e116aacb28698",
+      "longbench-66f284ff821e116aacb29763",
+      "longbench-66f2a557821e116aacb2a510",
+      "longbench-66f2a98a821e116aacb2a8bf",
+      "longbench-66f2aac2821e116aacb2a9de",
+      "longbench-66f2ad2b821e116aacb2ac0f",
+      "longbench-66f2ad89821e116aacb2ac92",
+      "longbench-66f2b676821e116aacb2b27a",
+      "longbench-66f2e0bc821e116aacb2bf37",
+      "longbench-66f36490821e116aacb2cc22",
+      "longbench-66f37635821e116aacb2d017",
+      "longbench-66f37eb9821e116aacb2d295",
+      "longbench-66f3918f821e116aacb2d8b7",
+      "longbench-66f39aa7821e116aacb2da76",
+      "longbench-66f3abe6821e116aacb2e1d2",
+      "longbench-66f3ad93821e116aacb2e29f",
+      "longbench-66f3b843821e116aacb2e692",
+      "longbench-66f3c1c3821e116aacb2eaf6",
+      "longbench-66f3edfb821e116aacb2fc91",
+      "longbench-66f41348821e116aacb30c89",
+      "longbench-66f41e45821e116aacb30ec3",
+      "longbench-66f52567821e116aacb329bc",
+      "longbench-66f52926821e116aacb32b5e",
+      "longbench-66f52c6d821e116aacb32cb0",
+      "longbench-66f530ce821e116aacb32f09",
+      "longbench-66f53892821e116aacb33225",
+      "longbench-66f53b9b821e116aacb332fc",
+      "longbench-66f53f2b821e116aacb3335a",
+      "longbench-66f55d66821e116aacb33734",
+      "longbench-66f578fa821e116aacb33c58",
+      "longbench-66f58d6c821e116aacb33e76",
+      "longbench-66f599ef821e116aacb34099",
+      "longbench-66f59d31821e116aacb340f6",
+      "longbench-66f618f1bb02136c067c16f9",
+      "longbench-66f67c18bb02136c067c21b8",
+      "longbench-66f68b33bb02136c067c2303",
+      "longbench-66f6909bbb02136c067c2380",
+      "longbench-66f6a14dbb02136c067c2453",
+      "longbench-66f6bcf3bb02136c067c2703",
+      "longbench-66f78ecfbb02136c067c2f12",
+      "longbench-66f7a96cbb02136c067c3255",
+      "longbench-66f7aa19bb02136c067c327e",
+      "longbench-66f8c6b4bb02136c067c4480",
+      "longbench-66f8d84cbb02136c067c465f",
+      "longbench-66f91f2cbb02136c067c4b1e",
+      "longbench-66f95126bb02136c067c5070",
+      "longbench-66f958b3bb02136c067c5219",
+      "longbench-66f95c18bb02136c067c52e1",
+      "longbench-66f96115bb02136c067c541c",
+      "longbench-66f9625fbb02136c067c5456",
+      "longbench-66fa6867bb02136c067c6b3b",
+      "longbench-66fa7f1dbb02136c067c6e6b",
+      "longbench-66faac15bb02136c067c73f3",
+      "longbench-66fab090bb02136c067c74e7",
+      "longbench-66fab4bfbb02136c067c754c",
+      "longbench-66fb5f73bb02136c067c7ae7",
+      "longbench-66fbab85bb02136c067c81dc",
+      "longbench-66fc0152bb02136c067c8826",
+      "longbench-66fcfb5fbb02136c067c93ae",
+      "longbench-66fe8eb3bb02136c067ca35f",
+      "longbench-66fea153bb02136c067ca3e7",
+      "longbench-6701cda0bb02136c067cb6eb",
+      "longbench-6703fc69bb02136c067cd7c2",
+      "longbench-67040276bb02136c067cd8ae",
+      "longbench-6704a83dbb02136c067cde1b",
+      "longbench-67062a63bb02136c067cf5ac",
+      "longbench-67078ecabb02136c067d0b89",
+      "longbench-6708a096bb02136c067d1789",
+      "longbench-6713066fbb02136c067d3214",
+      "longbench-6719b96abb02136c067d4358",
+      "longbench-6719b9f1bb02136c067d4389",
+      "longbench-6719bc01bb02136c067d43fa",
+      "longbench-6719bce5bb02136c067d4447",
+      "longbench-671b080abb02136c067d4dde",
+      "longbench-671b08c8bb02136c067d4e19",
+      "longbench-671b1335bb02136c067d4e88",
+      "longbench-671b13f5bb02136c067d4ee3",
+      "longbench-671b1480bb02136c067d4f14",
+      "longbench-671b170cbb02136c067d4f4a",
+      "longbench-671b17d5bb02136c067d4f7d",
+      "longbench-671b2b57bb02136c067d508b",
+      "longbench-671b2c05bb02136c067d50c8",
+      "longbench-671b2c67bb02136c067d50f7",
+      "longbench-671b3cabbb02136c067d5252",
+      "longbench-671b3d9fbb02136c067d52b2",
+      "longbench-671b3e0cbb02136c067d52e5"
+    ],
+    "condition_order": [
+      "swebench-gpt-5-4-low"
+    ]
+  },
+  "cap_profiles": {
+    "low": {
+      "max_wall_seconds": 7200,
+      "max_logical_calls": 500,
+      "max_provider_attempts": 2500,
+      "max_attempt_output_tokens": 65536,
+      "max_provider_accounted_tokens": 30000000,
+      "token_cap_enforcement": "before_next_logical_call"
+    },
+    "medium": {
+      "max_wall_seconds": 7200,
+      "max_logical_calls": 500,
+      "max_provider_attempts": 2500,
+      "max_attempt_output_tokens": 65536,
+      "max_provider_accounted_tokens": 30000000,
+      "token_cap_enforcement": "before_next_logical_call"
+    },
+    "high": {
+      "max_wall_seconds": 7200,
+      "max_logical_calls": 500,
+      "max_provider_attempts": 2500,
+      "max_attempt_output_tokens": 65536,
+      "max_provider_accounted_tokens": 30000000,
+      "token_cap_enforcement": "before_next_logical_call"
+    }
+  },
+  "tasks": [
+    {
+      "task_id": "longbench-66eae4de5a08c7b9b35dd12d",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66eae4de5a08c7b9b35dd12d",
+      "title": "longbench longbench-66eae4de5a08c7b9b35dd12d (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66eae4de5a08c7b9b35dd12d",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebb0e55a08c7b9b35ddd6a",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ebb0e55a08c7b9b35ddd6a",
+      "title": "longbench longbench-66ebb0e55a08c7b9b35ddd6a (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebb0e55a08c7b9b35ddd6a",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebbe4f5a08c7b9b35de533",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ebbe4f5a08c7b9b35de533",
+      "title": "longbench longbench-66ebbe4f5a08c7b9b35de533 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebbe4f5a08c7b9b35de533",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebc0c95a08c7b9b35de7f3",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ebc0c95a08c7b9b35de7f3",
+      "title": "longbench longbench-66ebc0c95a08c7b9b35de7f3 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebc0c95a08c7b9b35de7f3",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebc4af5a08c7b9b35dede0",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ebc4af5a08c7b9b35dede0",
+      "title": "longbench longbench-66ebc4af5a08c7b9b35dede0 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebc4af5a08c7b9b35dede0",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebc7445a08c7b9b35df155",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ebc7445a08c7b9b35df155",
+      "title": "longbench longbench-66ebc7445a08c7b9b35df155 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebc7445a08c7b9b35df155",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebc95f5a08c7b9b35df497",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ebc95f5a08c7b9b35df497",
+      "title": "longbench longbench-66ebc95f5a08c7b9b35df497 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebc95f5a08c7b9b35df497",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebca1e5a08c7b9b35df5e8",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ebca1e5a08c7b9b35df5e8",
+      "title": "longbench longbench-66ebca1e5a08c7b9b35df5e8 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebca1e5a08c7b9b35df5e8",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebd3075a08c7b9b35e02bd",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ebd3075a08c7b9b35e02bd",
+      "title": "longbench longbench-66ebd3075a08c7b9b35e02bd (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebd3075a08c7b9b35e02bd",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebd5675a08c7b9b35e06bf",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ebd5675a08c7b9b35e06bf",
+      "title": "longbench longbench-66ebd5675a08c7b9b35e06bf (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebd5675a08c7b9b35e06bf",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebd9895a08c7b9b35e0c7c",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ebd9895a08c7b9b35e0c7c",
+      "title": "longbench longbench-66ebd9895a08c7b9b35e0c7c (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebd9895a08c7b9b35e0c7c",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebda775a08c7b9b35e0dcb",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ebda775a08c7b9b35e0dcb",
+      "title": "longbench longbench-66ebda775a08c7b9b35e0dcb (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebda775a08c7b9b35e0dcb",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebdadd5a08c7b9b35e0e5b",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ebdadd5a08c7b9b35e0e5b",
+      "title": "longbench longbench-66ebdadd5a08c7b9b35e0e5b (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebdadd5a08c7b9b35e0e5b",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebde0f5a08c7b9b35e1256",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ebde0f5a08c7b9b35e1256",
+      "title": "longbench longbench-66ebde0f5a08c7b9b35e1256 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebde0f5a08c7b9b35e1256",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebe0fb5a08c7b9b35e14f5",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ebe0fb5a08c7b9b35e14f5",
+      "title": "longbench longbench-66ebe0fb5a08c7b9b35e14f5 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebe0fb5a08c7b9b35e14f5",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebe30a5a08c7b9b35e1693",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ebe30a5a08c7b9b35e1693",
+      "title": "longbench longbench-66ebe30a5a08c7b9b35e1693 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebe30a5a08c7b9b35e1693",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebe68d5a08c7b9b35e190b",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ebe68d5a08c7b9b35e190b",
+      "title": "longbench longbench-66ebe68d5a08c7b9b35e190b (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebe68d5a08c7b9b35e190b",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebed525a08c7b9b35e1cb4",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ebed525a08c7b9b35e1cb4",
+      "title": "longbench longbench-66ebed525a08c7b9b35e1cb4 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebed525a08c7b9b35e1cb4",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebee0a5a08c7b9b35e1d05",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ebee0a5a08c7b9b35e1d05",
+      "title": "longbench longbench-66ebee0a5a08c7b9b35e1d05 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebee0a5a08c7b9b35e1d05",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ebf9bf5a08c7b9b35e1f85",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ebf9bf5a08c7b9b35e1f85",
+      "title": "longbench longbench-66ebf9bf5a08c7b9b35e1f85 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ebf9bf5a08c7b9b35e1f85",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec052a5a08c7b9b35e29c7",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ec052a5a08c7b9b35e29c7",
+      "title": "longbench longbench-66ec052a5a08c7b9b35e29c7 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec052a5a08c7b9b35e29c7",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec0874821e116aacb194a4",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ec0874821e116aacb194a4",
+      "title": "longbench longbench-66ec0874821e116aacb194a4 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec0874821e116aacb194a4",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec09ec821e116aacb19620",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ec09ec821e116aacb19620",
+      "title": "longbench longbench-66ec09ec821e116aacb19620 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec09ec821e116aacb19620",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec0d4b821e116aacb19af8",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ec0d4b821e116aacb19af8",
+      "title": "longbench longbench-66ec0d4b821e116aacb19af8 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec0d4b821e116aacb19af8",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec0d51821e116aacb19b0f",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ec0d51821e116aacb19b0f",
+      "title": "longbench longbench-66ec0d51821e116aacb19b0f (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec0d51821e116aacb19b0f",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec0f3c821e116aacb19d70",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ec0f3c821e116aacb19d70",
+      "title": "longbench longbench-66ec0f3c821e116aacb19d70 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec0f3c821e116aacb19d70",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec0f7f821e116aacb19dde",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ec0f7f821e116aacb19dde",
+      "title": "longbench longbench-66ec0f7f821e116aacb19dde (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec0f7f821e116aacb19dde",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec18a7821e116aacb1a72e",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ec18a7821e116aacb1a72e",
+      "title": "longbench longbench-66ec18a7821e116aacb1a72e (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec18a7821e116aacb1a72e",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec1db2821e116aacb1ad69",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ec1db2821e116aacb1ad69",
+      "title": "longbench longbench-66ec1db2821e116aacb1ad69 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec1db2821e116aacb1ad69",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec1de5821e116aacb1adca",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ec1de5821e116aacb1adca",
+      "title": "longbench longbench-66ec1de5821e116aacb1adca (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec1de5821e116aacb1adca",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec1e3f821e116aacb1ae7d",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ec1e3f821e116aacb1ae7d",
+      "title": "longbench longbench-66ec1e3f821e116aacb1ae7d (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec1e3f821e116aacb1ae7d",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec25a5821e116aacb1b5d1",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ec25a5821e116aacb1b5d1",
+      "title": "longbench longbench-66ec25a5821e116aacb1b5d1 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec25a5821e116aacb1b5d1",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec2e2a821e116aacb1bb9f",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ec2e2a821e116aacb1bb9f",
+      "title": "longbench longbench-66ec2e2a821e116aacb1bb9f (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec2e2a821e116aacb1bb9f",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec2fde821e116aacb1bd18",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ec2fde821e116aacb1bd18",
+      "title": "longbench longbench-66ec2fde821e116aacb1bd18 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec2fde821e116aacb1bd18",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec356a821e116aacb1c22b",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ec356a821e116aacb1c22b",
+      "title": "longbench longbench-66ec356a821e116aacb1c22b (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec356a821e116aacb1c22b",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec3a46821e116aacb1c49f",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ec3a46821e116aacb1c49f",
+      "title": "longbench longbench-66ec3a46821e116aacb1c49f (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec3a46821e116aacb1c49f",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec3d1d821e116aacb1c622",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ec3d1d821e116aacb1c622",
+      "title": "longbench longbench-66ec3d1d821e116aacb1c622 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec3d1d821e116aacb1c622",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec41d3821e116aacb1c874",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ec41d3821e116aacb1c874",
+      "title": "longbench longbench-66ec41d3821e116aacb1c874 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec41d3821e116aacb1c874",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec5af0821e116aacb1ce41",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ec5af0821e116aacb1ce41",
+      "title": "longbench longbench-66ec5af0821e116aacb1ce41 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec5af0821e116aacb1ce41",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ec7ba6821e116aacb1d114",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ec7ba6821e116aacb1d114",
+      "title": "longbench longbench-66ec7ba6821e116aacb1d114 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ec7ba6821e116aacb1d114",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ece358821e116aacb1dc08",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66ece358821e116aacb1dc08",
+      "title": "longbench longbench-66ece358821e116aacb1dc08 (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ece358821e116aacb1dc08",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ece958821e116aacb1df04",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ece958821e116aacb1df04",
+      "title": "longbench longbench-66ece958821e116aacb1df04 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ece958821e116aacb1df04",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ecf139821e116aacb1e0e1",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ecf139821e116aacb1e0e1",
+      "title": "longbench longbench-66ecf139821e116aacb1e0e1 (Code Repository Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ecf139821e116aacb1e0e1",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ed0cb0821e116aacb1e6c1",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ed0cb0821e116aacb1e6c1",
+      "title": "longbench longbench-66ed0cb0821e116aacb1e6c1 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ed0cb0821e116aacb1e6c1",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ed1556821e116aacb1ea14",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ed1556821e116aacb1ea14",
+      "title": "longbench longbench-66ed1556821e116aacb1ea14 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ed1556821e116aacb1ea14",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ed2c87821e116aacb1f149",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ed2c87821e116aacb1f149",
+      "title": "longbench longbench-66ed2c87821e116aacb1f149 (Long Structured Data Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ed2c87821e116aacb1f149",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ed3148821e116aacb1f2ce",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ed3148821e116aacb1f2ce",
+      "title": "longbench longbench-66ed3148821e116aacb1f2ce (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ed3148821e116aacb1f2ce",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ed3ae5821e116aacb1f729",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ed3ae5821e116aacb1f729",
+      "title": "longbench longbench-66ed3ae5821e116aacb1f729 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ed3ae5821e116aacb1f729",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ed910a821e116aacb2033b",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66ed910a821e116aacb2033b",
+      "title": "longbench longbench-66ed910a821e116aacb2033b (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ed910a821e116aacb2033b",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ee3c6d821e116aacb20f6f",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ee3c6d821e116aacb20f6f",
+      "title": "longbench longbench-66ee3c6d821e116aacb20f6f (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ee3c6d821e116aacb20f6f",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66ee496a821e116aacb214d5",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66ee496a821e116aacb214d5",
+      "title": "longbench longbench-66ee496a821e116aacb214d5 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66ee496a821e116aacb214d5",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66eecc45821e116aacb225c3",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66eecc45821e116aacb225c3",
+      "title": "longbench longbench-66eecc45821e116aacb225c3 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66eecc45821e116aacb225c3",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66eefa2f821e116aacb2284f",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66eefa2f821e116aacb2284f",
+      "title": "longbench longbench-66eefa2f821e116aacb2284f (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66eefa2f821e116aacb2284f",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66efa466821e116aacb23219",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66efa466821e116aacb23219",
+      "title": "longbench longbench-66efa466821e116aacb23219 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66efa466821e116aacb23219",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f0ed5a821e116aacb265ab",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f0ed5a821e116aacb265ab",
+      "title": "longbench longbench-66f0ed5a821e116aacb265ab (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f0ed5a821e116aacb265ab",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f10d67821e116aacb268d0",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f10d67821e116aacb268d0",
+      "title": "longbench longbench-66f10d67821e116aacb268d0 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f10d67821e116aacb268d0",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f120a9821e116aacb26d02",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f120a9821e116aacb26d02",
+      "title": "longbench longbench-66f120a9821e116aacb26d02 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f120a9821e116aacb26d02",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f14c70821e116aacb271ee",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f14c70821e116aacb271ee",
+      "title": "longbench longbench-66f14c70821e116aacb271ee (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f14c70821e116aacb271ee",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f245cc821e116aacb28698",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f245cc821e116aacb28698",
+      "title": "longbench longbench-66f245cc821e116aacb28698 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f245cc821e116aacb28698",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f284ff821e116aacb29763",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f284ff821e116aacb29763",
+      "title": "longbench longbench-66f284ff821e116aacb29763 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f284ff821e116aacb29763",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f2a557821e116aacb2a510",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f2a557821e116aacb2a510",
+      "title": "longbench longbench-66f2a557821e116aacb2a510 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f2a557821e116aacb2a510",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f2a98a821e116aacb2a8bf",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f2a98a821e116aacb2a8bf",
+      "title": "longbench longbench-66f2a98a821e116aacb2a8bf (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f2a98a821e116aacb2a8bf",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f2aac2821e116aacb2a9de",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f2aac2821e116aacb2a9de",
+      "title": "longbench longbench-66f2aac2821e116aacb2a9de (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f2aac2821e116aacb2a9de",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f2ad2b821e116aacb2ac0f",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f2ad2b821e116aacb2ac0f",
+      "title": "longbench longbench-66f2ad2b821e116aacb2ac0f (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f2ad2b821e116aacb2ac0f",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f2ad89821e116aacb2ac92",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f2ad89821e116aacb2ac92",
+      "title": "longbench longbench-66f2ad89821e116aacb2ac92 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f2ad89821e116aacb2ac92",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f2b676821e116aacb2b27a",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f2b676821e116aacb2b27a",
+      "title": "longbench longbench-66f2b676821e116aacb2b27a (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f2b676821e116aacb2b27a",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f2e0bc821e116aacb2bf37",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f2e0bc821e116aacb2bf37",
+      "title": "longbench longbench-66f2e0bc821e116aacb2bf37 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f2e0bc821e116aacb2bf37",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f36490821e116aacb2cc22",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f36490821e116aacb2cc22",
+      "title": "longbench longbench-66f36490821e116aacb2cc22 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f36490821e116aacb2cc22",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f37635821e116aacb2d017",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f37635821e116aacb2d017",
+      "title": "longbench longbench-66f37635821e116aacb2d017 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f37635821e116aacb2d017",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f37eb9821e116aacb2d295",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f37eb9821e116aacb2d295",
+      "title": "longbench longbench-66f37eb9821e116aacb2d295 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f37eb9821e116aacb2d295",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f3918f821e116aacb2d8b7",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f3918f821e116aacb2d8b7",
+      "title": "longbench longbench-66f3918f821e116aacb2d8b7 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f3918f821e116aacb2d8b7",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f39aa7821e116aacb2da76",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f39aa7821e116aacb2da76",
+      "title": "longbench longbench-66f39aa7821e116aacb2da76 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f39aa7821e116aacb2da76",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f3abe6821e116aacb2e1d2",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f3abe6821e116aacb2e1d2",
+      "title": "longbench longbench-66f3abe6821e116aacb2e1d2 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f3abe6821e116aacb2e1d2",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f3ad93821e116aacb2e29f",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f3ad93821e116aacb2e29f",
+      "title": "longbench longbench-66f3ad93821e116aacb2e29f (Code Repository Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f3ad93821e116aacb2e29f",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f3b843821e116aacb2e692",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f3b843821e116aacb2e692",
+      "title": "longbench longbench-66f3b843821e116aacb2e692 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f3b843821e116aacb2e692",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f3c1c3821e116aacb2eaf6",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f3c1c3821e116aacb2eaf6",
+      "title": "longbench longbench-66f3c1c3821e116aacb2eaf6 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f3c1c3821e116aacb2eaf6",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f3edfb821e116aacb2fc91",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f3edfb821e116aacb2fc91",
+      "title": "longbench longbench-66f3edfb821e116aacb2fc91 (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f3edfb821e116aacb2fc91",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f41348821e116aacb30c89",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f41348821e116aacb30c89",
+      "title": "longbench longbench-66f41348821e116aacb30c89 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f41348821e116aacb30c89",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f41e45821e116aacb30ec3",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f41e45821e116aacb30ec3",
+      "title": "longbench longbench-66f41e45821e116aacb30ec3 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f41e45821e116aacb30ec3",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f52567821e116aacb329bc",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f52567821e116aacb329bc",
+      "title": "longbench longbench-66f52567821e116aacb329bc (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f52567821e116aacb329bc",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f52926821e116aacb32b5e",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f52926821e116aacb32b5e",
+      "title": "longbench longbench-66f52926821e116aacb32b5e (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f52926821e116aacb32b5e",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f52c6d821e116aacb32cb0",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f52c6d821e116aacb32cb0",
+      "title": "longbench longbench-66f52c6d821e116aacb32cb0 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f52c6d821e116aacb32cb0",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f530ce821e116aacb32f09",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f530ce821e116aacb32f09",
+      "title": "longbench longbench-66f530ce821e116aacb32f09 (Code Repository Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f530ce821e116aacb32f09",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f53892821e116aacb33225",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f53892821e116aacb33225",
+      "title": "longbench longbench-66f53892821e116aacb33225 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f53892821e116aacb33225",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f53b9b821e116aacb332fc",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f53b9b821e116aacb332fc",
+      "title": "longbench longbench-66f53b9b821e116aacb332fc (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f53b9b821e116aacb332fc",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f53f2b821e116aacb3335a",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f53f2b821e116aacb3335a",
+      "title": "longbench longbench-66f53f2b821e116aacb3335a (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f53f2b821e116aacb3335a",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f55d66821e116aacb33734",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f55d66821e116aacb33734",
+      "title": "longbench longbench-66f55d66821e116aacb33734 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f55d66821e116aacb33734",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f578fa821e116aacb33c58",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f578fa821e116aacb33c58",
+      "title": "longbench longbench-66f578fa821e116aacb33c58 (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f578fa821e116aacb33c58",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f58d6c821e116aacb33e76",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f58d6c821e116aacb33e76",
+      "title": "longbench longbench-66f58d6c821e116aacb33e76 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f58d6c821e116aacb33e76",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f599ef821e116aacb34099",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f599ef821e116aacb34099",
+      "title": "longbench longbench-66f599ef821e116aacb34099 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f599ef821e116aacb34099",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f59d31821e116aacb340f6",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f59d31821e116aacb340f6",
+      "title": "longbench longbench-66f59d31821e116aacb340f6 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f59d31821e116aacb340f6",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f618f1bb02136c067c16f9",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f618f1bb02136c067c16f9",
+      "title": "longbench longbench-66f618f1bb02136c067c16f9 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f618f1bb02136c067c16f9",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f67c18bb02136c067c21b8",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f67c18bb02136c067c21b8",
+      "title": "longbench longbench-66f67c18bb02136c067c21b8 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f67c18bb02136c067c21b8",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f68b33bb02136c067c2303",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f68b33bb02136c067c2303",
+      "title": "longbench longbench-66f68b33bb02136c067c2303 (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f68b33bb02136c067c2303",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f6909bbb02136c067c2380",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f6909bbb02136c067c2380",
+      "title": "longbench longbench-66f6909bbb02136c067c2380 (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f6909bbb02136c067c2380",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f6a14dbb02136c067c2453",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f6a14dbb02136c067c2453",
+      "title": "longbench longbench-66f6a14dbb02136c067c2453 (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f6a14dbb02136c067c2453",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f6bcf3bb02136c067c2703",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f6bcf3bb02136c067c2703",
+      "title": "longbench longbench-66f6bcf3bb02136c067c2703 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f6bcf3bb02136c067c2703",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f78ecfbb02136c067c2f12",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f78ecfbb02136c067c2f12",
+      "title": "longbench longbench-66f78ecfbb02136c067c2f12 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f78ecfbb02136c067c2f12",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f7a96cbb02136c067c3255",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f7a96cbb02136c067c3255",
+      "title": "longbench longbench-66f7a96cbb02136c067c3255 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f7a96cbb02136c067c3255",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f7aa19bb02136c067c327e",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f7aa19bb02136c067c327e",
+      "title": "longbench longbench-66f7aa19bb02136c067c327e (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f7aa19bb02136c067c327e",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f8c6b4bb02136c067c4480",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f8c6b4bb02136c067c4480",
+      "title": "longbench longbench-66f8c6b4bb02136c067c4480 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f8c6b4bb02136c067c4480",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f8d84cbb02136c067c465f",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f8d84cbb02136c067c465f",
+      "title": "longbench longbench-66f8d84cbb02136c067c465f (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f8d84cbb02136c067c465f",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f91f2cbb02136c067c4b1e",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f91f2cbb02136c067c4b1e",
+      "title": "longbench longbench-66f91f2cbb02136c067c4b1e (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f91f2cbb02136c067c4b1e",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f95126bb02136c067c5070",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f95126bb02136c067c5070",
+      "title": "longbench longbench-66f95126bb02136c067c5070 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f95126bb02136c067c5070",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f958b3bb02136c067c5219",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f958b3bb02136c067c5219",
+      "title": "longbench longbench-66f958b3bb02136c067c5219 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f958b3bb02136c067c5219",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f95c18bb02136c067c52e1",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66f95c18bb02136c067c52e1",
+      "title": "longbench longbench-66f95c18bb02136c067c52e1 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f95c18bb02136c067c52e1",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f96115bb02136c067c541c",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66f96115bb02136c067c541c",
+      "title": "longbench longbench-66f96115bb02136c067c541c (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f96115bb02136c067c541c",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66f9625fbb02136c067c5456",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66f9625fbb02136c067c5456",
+      "title": "longbench longbench-66f9625fbb02136c067c5456 (Long In-context Learning)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66f9625fbb02136c067c5456",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fa6867bb02136c067c6b3b",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66fa6867bb02136c067c6b3b",
+      "title": "longbench longbench-66fa6867bb02136c067c6b3b (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fa6867bb02136c067c6b3b",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fa7f1dbb02136c067c6e6b",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66fa7f1dbb02136c067c6e6b",
+      "title": "longbench longbench-66fa7f1dbb02136c067c6e6b (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fa7f1dbb02136c067c6e6b",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66faac15bb02136c067c73f3",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66faac15bb02136c067c73f3",
+      "title": "longbench longbench-66faac15bb02136c067c73f3 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66faac15bb02136c067c73f3",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fab090bb02136c067c74e7",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66fab090bb02136c067c74e7",
+      "title": "longbench longbench-66fab090bb02136c067c74e7 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fab090bb02136c067c74e7",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fab4bfbb02136c067c754c",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66fab4bfbb02136c067c754c",
+      "title": "longbench longbench-66fab4bfbb02136c067c754c (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fab4bfbb02136c067c754c",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fb5f73bb02136c067c7ae7",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66fb5f73bb02136c067c7ae7",
+      "title": "longbench longbench-66fb5f73bb02136c067c7ae7 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fb5f73bb02136c067c7ae7",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fbab85bb02136c067c81dc",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66fbab85bb02136c067c81dc",
+      "title": "longbench longbench-66fbab85bb02136c067c81dc (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fbab85bb02136c067c81dc",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fc0152bb02136c067c8826",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-66fc0152bb02136c067c8826",
+      "title": "longbench longbench-66fc0152bb02136c067c8826 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fc0152bb02136c067c8826",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fcfb5fbb02136c067c93ae",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66fcfb5fbb02136c067c93ae",
+      "title": "longbench longbench-66fcfb5fbb02136c067c93ae (Code Repository Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fcfb5fbb02136c067c93ae",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fe8eb3bb02136c067ca35f",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-66fe8eb3bb02136c067ca35f",
+      "title": "longbench longbench-66fe8eb3bb02136c067ca35f (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fe8eb3bb02136c067ca35f",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-66fea153bb02136c067ca3e7",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-66fea153bb02136c067ca3e7",
+      "title": "longbench longbench-66fea153bb02136c067ca3e7 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_66fea153bb02136c067ca3e7",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-6701cda0bb02136c067cb6eb",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-6701cda0bb02136c067cb6eb",
+      "title": "longbench longbench-6701cda0bb02136c067cb6eb (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_6701cda0bb02136c067cb6eb",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-6703fc69bb02136c067cd7c2",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-6703fc69bb02136c067cd7c2",
+      "title": "longbench longbench-6703fc69bb02136c067cd7c2 (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_6703fc69bb02136c067cd7c2",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-67040276bb02136c067cd8ae",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-67040276bb02136c067cd8ae",
+      "title": "longbench longbench-67040276bb02136c067cd8ae (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_67040276bb02136c067cd8ae",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-6704a83dbb02136c067cde1b",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "low",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:low"
+      },
+      "task_family_id": "longbench-6704a83dbb02136c067cde1b",
+      "title": "longbench longbench-6704a83dbb02136c067cde1b (Single-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_6704a83dbb02136c067cde1b",
+      "cap_profile": "low",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-67062a63bb02136c067cf5ac",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-67062a63bb02136c067cf5ac",
+      "title": "longbench longbench-67062a63bb02136c067cf5ac (Long Structured Data Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_67062a63bb02136c067cf5ac",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-67078ecabb02136c067d0b89",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-67078ecabb02136c067d0b89",
+      "title": "longbench longbench-67078ecabb02136c067d0b89 (Multi-Document QA)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_67078ecabb02136c067d0b89",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-6708a096bb02136c067d1789",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-6708a096bb02136c067d1789",
+      "title": "longbench longbench-6708a096bb02136c067d1789 (Code Repository Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_6708a096bb02136c067d1789",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-6713066fbb02136c067d3214",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-6713066fbb02136c067d3214",
+      "title": "longbench longbench-6713066fbb02136c067d3214 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_6713066fbb02136c067d3214",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-6719b96abb02136c067d4358",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-6719b96abb02136c067d4358",
+      "title": "longbench longbench-6719b96abb02136c067d4358 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_6719b96abb02136c067d4358",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-6719b9f1bb02136c067d4389",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-6719b9f1bb02136c067d4389",
+      "title": "longbench longbench-6719b9f1bb02136c067d4389 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_6719b9f1bb02136c067d4389",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-6719bc01bb02136c067d43fa",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-6719bc01bb02136c067d43fa",
+      "title": "longbench longbench-6719bc01bb02136c067d43fa (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_6719bc01bb02136c067d43fa",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-6719bce5bb02136c067d4447",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-6719bce5bb02136c067d4447",
+      "title": "longbench longbench-6719bce5bb02136c067d4447 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_6719bce5bb02136c067d4447",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b080abb02136c067d4dde",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-671b080abb02136c067d4dde",
+      "title": "longbench longbench-671b080abb02136c067d4dde (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b080abb02136c067d4dde",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b08c8bb02136c067d4e19",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b08c8bb02136c067d4e19",
+      "title": "longbench longbench-671b08c8bb02136c067d4e19 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b08c8bb02136c067d4e19",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b1335bb02136c067d4e88",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b1335bb02136c067d4e88",
+      "title": "longbench longbench-671b1335bb02136c067d4e88 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b1335bb02136c067d4e88",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b13f5bb02136c067d4ee3",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b13f5bb02136c067d4ee3",
+      "title": "longbench longbench-671b13f5bb02136c067d4ee3 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b13f5bb02136c067d4ee3",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b1480bb02136c067d4f14",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b1480bb02136c067d4f14",
+      "title": "longbench longbench-671b1480bb02136c067d4f14 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b1480bb02136c067d4f14",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b170cbb02136c067d4f4a",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-671b170cbb02136c067d4f4a",
+      "title": "longbench longbench-671b170cbb02136c067d4f4a (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b170cbb02136c067d4f4a",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b17d5bb02136c067d4f7d",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b17d5bb02136c067d4f7d",
+      "title": "longbench longbench-671b17d5bb02136c067d4f7d (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b17d5bb02136c067d4f7d",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b2b57bb02136c067d508b",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b2b57bb02136c067d508b",
+      "title": "longbench longbench-671b2b57bb02136c067d508b (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b2b57bb02136c067d508b",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b2c05bb02136c067d50c8",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b2c05bb02136c067d50c8",
+      "title": "longbench longbench-671b2c05bb02136c067d50c8 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b2c05bb02136c067d50c8",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b2c67bb02136c067d50f7",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b2c67bb02136c067d50f7",
+      "title": "longbench longbench-671b2c67bb02136c067d50f7 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b2c67bb02136c067d50f7",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b3cabbb02136c067d5252",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "high",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:high"
+      },
+      "task_family_id": "longbench-671b3cabbb02136c067d5252",
+      "title": "longbench longbench-671b3cabbb02136c067d5252 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b3cabbb02136c067d5252",
+      "cap_profile": "high",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b3d9fbb02136c067d52b2",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b3d9fbb02136c067d52b2",
+      "title": "longbench longbench-671b3d9fbb02136c067d52b2 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b3d9fbb02136c067d52b2",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    },
+    {
+      "task_id": "longbench-671b3e0cbb02136c067d52e5",
+      "task_type": "repo_repair",
+      "difficulty_stratum": "medium",
+      "difficulty_evidence": {
+        "source": "longbench-input-length-stratified",
+        "label": "input-length-stratified:medium"
+      },
+      "task_family_id": "longbench-671b3e0cbb02136c067d52e5",
+      "title": "longbench longbench-671b3e0cbb02136c067d52e5 (Long-dialogue History Understanding)",
+      "requirements": [
+        "answer the supplied benchmark question in answer.md"
+      ],
+      "pack_path": "benchmarks/dsh/repo_repair/longbench_671b3e0cbb02136c067d52e5",
+      "cap_profile": "medium",
+      "asset_status": "pack_verified"
+    }
+  ],
+  "model_conditions": [
+    {
+      "condition_id": "swebench-gpt-5-4-low",
+      "actor_model_id": "gpt-5.4",
+      "model_family_id": "gpt-5",
+      "access_mode": "hosted_api_blackbox",
+      "configured_provider": "openai-codex",
+      "configured_model": "gpt-5.4",
+      "model_revision": null,
+      "precision": "provider_managed",
+      "reasoning_effort": "low",
+      "decoding": {
+        "temperature": 0,
+        "seed": null,
+        "stop": [],
+        "max_output_tokens": "task_cap_profile"
+      },
+      "credential_source": "codex-auth-file-read-only",
+      "readiness": "provider-entitlement-confirmed"
+    }
+  ],
+  "launch_blockers": [
+    "provider-backed-collection-requires-explicit-authorization",
+    "final-held-out-test-remains-closed"
+  ],
+  "development_selection": {
+    "policy_id": "domain-pack-cohort-all-v1",
+    "benchmark": "longbench",
+    "selection_seed": null,
+    "available_pack_count": 144,
+    "selection_count": 144,
+    "per_stratum_count": {
+      "low": 48,
+      "medium": 48,
+      "high": 48
+    },
+    "repeat_count": 1,
+    "execution_count": 144,
+    "instance_ids": [
+      "longbench-66eae4de5a08c7b9b35dd12d",
+      "longbench-66ebb0e55a08c7b9b35ddd6a",
+      "longbench-66ebbe4f5a08c7b9b35de533",
+      "longbench-66ebc0c95a08c7b9b35de7f3",
+      "longbench-66ebc4af5a08c7b9b35dede0",
+      "longbench-66ebc7445a08c7b9b35df155",
+      "longbench-66ebc95f5a08c7b9b35df497",
+      "longbench-66ebca1e5a08c7b9b35df5e8",
+      "longbench-66ebd3075a08c7b9b35e02bd",
+      "longbench-66ebd5675a08c7b9b35e06bf",
+      "longbench-66ebd9895a08c7b9b35e0c7c",
+      "longbench-66ebda775a08c7b9b35e0dcb",
+      "longbench-66ebdadd5a08c7b9b35e0e5b",
+      "longbench-66ebde0f5a08c7b9b35e1256",
+      "longbench-66ebe0fb5a08c7b9b35e14f5",
+      "longbench-66ebe30a5a08c7b9b35e1693",
+      "longbench-66ebe68d5a08c7b9b35e190b",
+      "longbench-66ebed525a08c7b9b35e1cb4",
+      "longbench-66ebee0a5a08c7b9b35e1d05",
+      "longbench-66ebf9bf5a08c7b9b35e1f85",
+      "longbench-66ec052a5a08c7b9b35e29c7",
+      "longbench-66ec0874821e116aacb194a4",
+      "longbench-66ec09ec821e116aacb19620",
+      "longbench-66ec0d4b821e116aacb19af8",
+      "longbench-66ec0d51821e116aacb19b0f",
+      "longbench-66ec0f3c821e116aacb19d70",
+      "longbench-66ec0f7f821e116aacb19dde",
+      "longbench-66ec18a7821e116aacb1a72e",
+      "longbench-66ec1db2821e116aacb1ad69",
+      "longbench-66ec1de5821e116aacb1adca",
+      "longbench-66ec1e3f821e116aacb1ae7d",
+      "longbench-66ec25a5821e116aacb1b5d1",
+      "longbench-66ec2e2a821e116aacb1bb9f",
+      "longbench-66ec2fde821e116aacb1bd18",
+      "longbench-66ec356a821e116aacb1c22b",
+      "longbench-66ec3a46821e116aacb1c49f",
+      "longbench-66ec3d1d821e116aacb1c622",
+      "longbench-66ec41d3821e116aacb1c874",
+      "longbench-66ec5af0821e116aacb1ce41",
+      "longbench-66ec7ba6821e116aacb1d114",
+      "longbench-66ece358821e116aacb1dc08",
+      "longbench-66ece958821e116aacb1df04",
+      "longbench-66ecf139821e116aacb1e0e1",
+      "longbench-66ed0cb0821e116aacb1e6c1",
+      "longbench-66ed1556821e116aacb1ea14",
+      "longbench-66ed2c87821e116aacb1f149",
+      "longbench-66ed3148821e116aacb1f2ce",
+      "longbench-66ed3ae5821e116aacb1f729",
+      "longbench-66ed910a821e116aacb2033b",
+      "longbench-66ee3c6d821e116aacb20f6f",
+      "longbench-66ee496a821e116aacb214d5",
+      "longbench-66eecc45821e116aacb225c3",
+      "longbench-66eefa2f821e116aacb2284f",
+      "longbench-66efa466821e116aacb23219",
+      "longbench-66f0ed5a821e116aacb265ab",
+      "longbench-66f10d67821e116aacb268d0",
+      "longbench-66f120a9821e116aacb26d02",
+      "longbench-66f14c70821e116aacb271ee",
+      "longbench-66f245cc821e116aacb28698",
+      "longbench-66f284ff821e116aacb29763",
+      "longbench-66f2a557821e116aacb2a510",
+      "longbench-66f2a98a821e116aacb2a8bf",
+      "longbench-66f2aac2821e116aacb2a9de",
+      "longbench-66f2ad2b821e116aacb2ac0f",
+      "longbench-66f2ad89821e116aacb2ac92",
+      "longbench-66f2b676821e116aacb2b27a",
+      "longbench-66f2e0bc821e116aacb2bf37",
+      "longbench-66f36490821e116aacb2cc22",
+      "longbench-66f37635821e116aacb2d017",
+      "longbench-66f37eb9821e116aacb2d295",
+      "longbench-66f3918f821e116aacb2d8b7",
+      "longbench-66f39aa7821e116aacb2da76",
+      "longbench-66f3abe6821e116aacb2e1d2",
+      "longbench-66f3ad93821e116aacb2e29f",
+      "longbench-66f3b843821e116aacb2e692",
+      "longbench-66f3c1c3821e116aacb2eaf6",
+      "longbench-66f3edfb821e116aacb2fc91",
+      "longbench-66f41348821e116aacb30c89",
+      "longbench-66f41e45821e116aacb30ec3",
+      "longbench-66f52567821e116aacb329bc",
+      "longbench-66f52926821e116aacb32b5e",
+      "longbench-66f52c6d821e116aacb32cb0",
+      "longbench-66f530ce821e116aacb32f09",
+      "longbench-66f53892821e116aacb33225",
+      "longbench-66f53b9b821e116aacb332fc",
+      "longbench-66f53f2b821e116aacb3335a",
+      "longbench-66f55d66821e116aacb33734",
+      "longbench-66f578fa821e116aacb33c58",
+      "longbench-66f58d6c821e116aacb33e76",
+      "longbench-66f599ef821e116aacb34099",
+      "longbench-66f59d31821e116aacb340f6",
+      "longbench-66f618f1bb02136c067c16f9",
+      "longbench-66f67c18bb02136c067c21b8",
+      "longbench-66f68b33bb02136c067c2303",
+      "longbench-66f6909bbb02136c067c2380",
+      "longbench-66f6a14dbb02136c067c2453",
+      "longbench-66f6bcf3bb02136c067c2703",
+      "longbench-66f78ecfbb02136c067c2f12",
+      "longbench-66f7a96cbb02136c067c3255",
+      "longbench-66f7aa19bb02136c067c327e",
+      "longbench-66f8c6b4bb02136c067c4480",
+      "longbench-66f8d84cbb02136c067c465f",
+      "longbench-66f91f2cbb02136c067c4b1e",
+      "longbench-66f95126bb02136c067c5070",
+      "longbench-66f958b3bb02136c067c5219",
+      "longbench-66f95c18bb02136c067c52e1",
+      "longbench-66f96115bb02136c067c541c",
+      "longbench-66f9625fbb02136c067c5456",
+      "longbench-66fa6867bb02136c067c6b3b",
+      "longbench-66fa7f1dbb02136c067c6e6b",
+      "longbench-66faac15bb02136c067c73f3",
+      "longbench-66fab090bb02136c067c74e7",
+      "longbench-66fab4bfbb02136c067c754c",
+      "longbench-66fb5f73bb02136c067c7ae7",
+      "longbench-66fbab85bb02136c067c81dc",
+      "longbench-66fc0152bb02136c067c8826",
+      "longbench-66fcfb5fbb02136c067c93ae",
+      "longbench-66fe8eb3bb02136c067ca35f",
+      "longbench-66fea153bb02136c067ca3e7",
+      "longbench-6701cda0bb02136c067cb6eb",
+      "longbench-6703fc69bb02136c067cd7c2",
+      "longbench-67040276bb02136c067cd8ae",
+      "longbench-6704a83dbb02136c067cde1b",
+      "longbench-67062a63bb02136c067cf5ac",
+      "longbench-67078ecabb02136c067d0b89",
+      "longbench-6708a096bb02136c067d1789",
+      "longbench-6713066fbb02136c067d3214",
+      "longbench-6719b96abb02136c067d4358",
+      "longbench-6719b9f1bb02136c067d4389",
+      "longbench-6719bc01bb02136c067d43fa",
+      "longbench-6719bce5bb02136c067d4447",
+      "longbench-671b080abb02136c067d4dde",
+      "longbench-671b08c8bb02136c067d4e19",
+      "longbench-671b1335bb02136c067d4e88",
+      "longbench-671b13f5bb02136c067d4ee3",
+      "longbench-671b1480bb02136c067d4f14",
+      "longbench-671b170cbb02136c067d4f4a",
+      "longbench-671b17d5bb02136c067d4f7d",
+      "longbench-671b2b57bb02136c067d508b",
+      "longbench-671b2c05bb02136c067d50c8",
+      "longbench-671b2c67bb02136c067d50f7",
+      "longbench-671b3cabbb02136c067d5252",
+      "longbench-671b3d9fbb02136c067d52b2",
+      "longbench-671b3e0cbb02136c067d52e5"
+    ],
+    "label_fields_used": [
+      "difficulty_stratum (input length)"
+    ]
+  },
+  "condition_digest": "8fccb5afdeb2389fe541abb600e841762c474859e34e52b9e1d8c0475a1479b8"
+}

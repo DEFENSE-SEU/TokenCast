@@ -1,0 +1,2 @@
+{"event_id":"unicode-dup","kind":"adjustment","logical_clock":1,"source":"\u62a5\u544a","sequence":1,"sku":"Alpha","quantity":"1.0"}
+{"event_id":"unicode-rev","kind":"reversal","logical_clock":4,"source":"\u62a5\u544a","sequence":4,"reversal_of":"unicode-target"}

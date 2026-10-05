@@ -1,0 +1,192 @@
+config_id = "call-start-task-prior-refinement-v14"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.call_base]
+include_all = false
+include_subgroups = ["current_progress", "token_history", "progress_change"]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.call_output_rate]
+include_all = false
+include_subgroups = ["current_progress", "token_history", "progress_change"]
+include_features = ["task_workload_score"]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.call_task_calls]
+include_all = false
+include_subgroups = ["current_progress", "token_history", "progress_change"]
+include_features = ["estimated_call_count"]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.call_rate_and_calls]
+include_all = false
+include_subgroups = ["current_progress", "token_history", "progress_change"]
+include_features = ["task_workload_score", "estimated_call_count"]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[[candidates]]
+id = "empirical"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "call_base"
+estimator = "lightgbm_quantile"
+feature_set = "call_base"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "call_output_rate"
+estimator = "lightgbm_quantile"
+feature_set = "call_output_rate"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "call_base"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "call_task_calls"
+estimator = "lightgbm_quantile"
+feature_set = "call_task_calls"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "call_base"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[candidates]]
+id = "call_rate_and_calls"
+estimator = "lightgbm_quantile"
+feature_set = "call_rate_and_calls"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "call_base"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+candidates = [
+  "empirical",
+  "call_base",
+  "call_output_rate",
+  "call_task_calls",
+  "call_rate_and_calls",
+]
+required_features = ["task_char_count"]

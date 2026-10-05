@@ -1,0 +1,6 @@
+[project]
+name = "catalog-lookup"
+version = "0.1.0"
+description = "A small canonical catalog lookup library."
+requires-python = ">=3.12"
+dependencies = []

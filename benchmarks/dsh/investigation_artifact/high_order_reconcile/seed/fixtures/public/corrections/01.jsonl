@@ -1,0 +1,2 @@
+{"event_time":"2026-01-01T00:03:10Z","from_state":"picked","order_id":"ORD-200","record_id":"C200-PACK","sequence":1,"to_state":"packed","type":"correction"}
+{"event_time":"2026-01-01T00:05:20Z","from_state":"packed","order_id":"ORD-300","record_id":"C300-BAD","sequence":1,"to_state":"shipped","type":"correction"}

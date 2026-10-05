@@ -1,0 +1,20 @@
+{
+  "name": "token-prediction",
+  "version": "0.1.3",
+  "description": "Run supported TokenCast checkpoints locally and pair token forecasts with measured usage.",
+  "author": {
+    "name": "ChaoqianO"
+  },
+  "repository": "https://github.com/DEFENSE-SEU/TokenCast",
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "TokenCast",
+    "shortDescription": "Local token forecasts for supported agent trajectories.",
+    "longDescription": "Predict token use for supported DSH observations and fresh Codex task packs, then pair measured usage.",
+    "developerName": "ChaoqianO",
+    "category": "Productivity",
+    "capabilities": [],
+    "defaultPrompt": "Check TokenCast model status and explain which observations it supports."
+  },
+  "mcpServers": "./.mcp.json"
+}

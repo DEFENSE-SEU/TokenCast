@@ -1,0 +1,7 @@
+{
+  "capacities": {"cpu": 2, "memory": 3},
+  "tasks": [
+    {"dependencies": [], "duration": 2, "id": "alpha", "resources": {"cpu": 1}},
+    {"dependencies": ["alpha"], "duration": 3, "id": "\u4e1c\u4eac", "resources": {"memory": 2}}
+  ]
+}

@@ -1,0 +1,802 @@
+
+
+
+config_id = "tool-reference-ablation-v2"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.1
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.cs_ref]
+include_all = false
+include_subgroups = ["current_progress", "token_history", "progress_change"]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.cs_full]
+include_all = false
+include_subgroups = [
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+  "action_reference",
+  "action_reference_difference",
+  "action_reference_text",
+]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.cs_without_reference]
+include_all = false
+include_subgroups = [
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.cs_without_text]
+include_all = false
+include_subgroups = [
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_reference",
+  "action_reference_difference",
+]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.cs_without_difference]
+include_all = false
+include_subgroups = [
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+  "action_reference",
+  "action_reference_text",
+]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.cs_exact_key]
+include_all = false
+include_subgroups = [
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+  "action_reference_exact",
+  "action_reference_exact_difference",
+  "action_reference_exact_text",
+]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.cs_window_only]
+include_all = false
+include_subgroups = [
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+  "action_reference_window",
+  "action_reference_window_difference",
+  "action_reference_window_text",
+]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.tu_ref]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.tu_full]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+  "action_reference",
+  "action_reference_difference",
+  "action_reference_text",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.tu_without_reference]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.tu_without_text]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_reference",
+  "action_reference_difference",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.tu_without_difference]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+  "action_reference",
+  "action_reference_text",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.tu_exact_key]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+  "action_reference_exact",
+  "action_reference_exact_difference",
+  "action_reference_exact_text",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.tu_window_only]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+  "action_record",
+  "action_record_text",
+  "action_reference_window",
+  "action_reference_window_difference",
+  "action_reference_window_text",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = [
+  "empirical",
+  "cs_ref",
+  "cs_records",
+  "cs_full",
+  "cs_without_reference",
+  "cs_without_text",
+  "cs_without_difference",
+  "cs_exact_key",
+  "cs_window_only",
+]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = [
+  "empirical",
+  "tu_ref",
+  "tu_records",
+  "tu_full",
+  "tu_without_reference",
+  "tu_without_text",
+  "tu_without_difference",
+  "tu_exact_key",
+  "tu_window_only",
+]
+
+[[candidates]]
+id = "empirical"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[[candidates]]
+id = "cs_ref"
+estimator = "lightgbm_quantile"
+role = "model"
+feature_set = "cs_ref"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[[candidates]]
+id = "cs_records"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "cs_full"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "cs_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "cs_full"
+estimator = "lightgbm_quantile"
+role = "model"
+feature_set = "cs_full"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[[candidates]]
+id = "cs_without_reference"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "cs_without_reference"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "cs_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "cs_without_text"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "cs_without_text"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "cs_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "cs_without_difference"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "cs_without_difference"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "cs_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "cs_exact_key"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "cs_exact_key"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "cs_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "cs_window_only"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "cs_window_only"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "cs_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "tu_ref"
+estimator = "lightgbm_quantile"
+role = "model"
+feature_set = "tu_ref"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[[candidates]]
+id = "tu_records"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "tu_full"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "tu_ref"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "tu_full"
+estimator = "lightgbm_quantile"
+role = "model"
+feature_set = "tu_full"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[[candidates]]
+id = "tu_without_reference"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "tu_without_reference"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "tu_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "tu_without_text"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "tu_without_text"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "tu_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "tu_without_difference"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "tu_without_difference"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "tu_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "tu_exact_key"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "tu_exact_key"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "tu_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+
+[[candidates]]
+id = "tu_window_only"
+estimator = "lightgbm_quantile"
+role = "ablation"
+feature_set = "tu_window_only"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+record_slots = [3, 5, 8]
+record_text_dims = [4, 8, 16]
+
+
+[candidates.ablation]
+reference_candidate_id = "tu_full"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]

@@ -1,0 +1,144 @@
+config_id = "task-initialization-feature-screen-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.task_text]
+include_all = false
+include_features = ["task_text"]
+
+[feature_sets.issue_length]
+include_all = false
+include_features = ["task_issue_char_count"]
+
+[feature_sets.difficulty]
+include_all = false
+include_features = ["task_difficulty_ordinal"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "retrieval_knn"
+estimator = "retrieval_knn"
+feature_set = "task_text"
+role = "ablation"
+
+[candidates.params]
+k = 5
+max_features = 4096
+alpha = 0.10
+
+[candidates.ablation]
+reference_candidate_id = "empirical_quantile"
+axis = "method"
+allowed_config_paths = [
+  "estimator_id",
+  "feature_set",
+  "params.k",
+  "params.max_features",
+  "graph.updater_estimator_id",
+]
+
+[[candidates]]
+id = "issue_length_scaling"
+estimator = "scaling_power_law"
+feature_set = "issue_length"
+role = "ablation"
+
+[candidates.params]
+feature_name = "task_issue_char_count"
+alpha = 0.10
+
+[candidates.ablation]
+reference_candidate_id = "empirical_quantile"
+axis = "method"
+allowed_config_paths = [
+  "estimator_id",
+  "feature_set",
+  "params.feature_name",
+  "graph.updater_estimator_id",
+]
+
+[[candidates]]
+id = "issue_length_bucket"
+estimator = "bucket_quantile"
+feature_set = "issue_length"
+role = "ablation"
+
+[candidates.params]
+feature_name = "task_issue_char_count"
+n_buckets = 5
+min_bucket_tasks = 5
+alpha = 0.10
+
+[candidates.ablation]
+reference_candidate_id = "empirical_quantile"
+axis = "method"
+allowed_config_paths = [
+  "estimator_id",
+  "feature_set",
+  "params.feature_name",
+  "params.min_bucket_tasks",
+  "params.n_buckets",
+  "graph.updater_estimator_id",
+]
+
+[[candidates]]
+id = "difficulty_bucket"
+estimator = "bucket_quantile"
+feature_set = "difficulty"
+role = "ablation"
+
+[candidates.params]
+feature_name = "task_difficulty_ordinal"
+n_buckets = 3
+min_bucket_tasks = 5
+alpha = 0.10
+
+[candidates.ablation]
+reference_candidate_id = "empirical_quantile"
+axis = "method"
+allowed_config_paths = [
+  "estimator_id",
+  "feature_set",
+  "params.feature_name",
+  "params.min_bucket_tasks",
+  "params.n_buckets",
+  "graph.updater_estimator_id",
+]
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+candidates = [
+  "empirical_quantile",
+  "retrieval_knn",
+  "issue_length_scaling",
+  "issue_length_bucket",
+  "difficulty_bucket",
+]
+required_features = ["task_text", "task_issue_char_count", "task_difficulty_ordinal"]

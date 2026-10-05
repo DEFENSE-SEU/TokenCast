@@ -1,0 +1,140 @@
+config_id = "in-call-phase-posterior-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.in_call_update_selected]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "in_call_update_selected"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_update_selected"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+
+[[candidates]]
+id = "in_call_phase_k8"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_update_selected"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+phase_clusters = 8
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["params.phase_clusters"]
+
+[[candidates]]
+id = "in_call_phase_k16"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_update_selected"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+phase_clusters = 16
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["params.phase_clusters"]
+
+[[candidates]]
+id = "in_call_phase_k8_keep"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_update_selected"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+phase_clusters = 8
+phase_keep_source = true
+
+[candidates.ablation]
+reference_candidate_id = "in_call_update_selected"
+axis = "method"
+allowed_config_paths = ["params.phase_clusters", "params.phase_keep_source"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_update_selected", "in_call_phase_k8", "in_call_phase_k16", "in_call_phase_k8_keep"]
+required_features = ["task_char_count"]

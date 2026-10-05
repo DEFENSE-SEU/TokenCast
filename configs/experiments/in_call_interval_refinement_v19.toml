@@ -1,0 +1,98 @@
+config_id = "in-call-interval-refinement-v19"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_width_scaled_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.in_call_selected]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+]
+include_features = ["generation_prefix_embedding"]
+exclude_features = [
+  "last_call_argument_chars",
+  "last_call_diagnostic_line_count",
+  "last_call_edit_result_chars",
+  "last_call_observation_chars",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_path_revisit_count",
+  "last_call_read_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "in_call_selected"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_selected"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "empirical_quantile"
+axis = "method"
+allowed_config_paths = [
+  "estimator_id",
+  "feature_set",
+  "params.alpha",
+  "params.num_boost_round",
+  "params.early_stopping_rounds",
+  "params.learning_rate",
+  "params.num_leaves",
+  "params.min_data_in_leaf",
+  "params.max_depth",
+  "params.lambda_l2",
+  "params.feature_fraction",
+  "params.bagging_fraction",
+  "params.bagging_freq",
+  "graph.updater_estimator_id",
+]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+candidates = ["empirical_quantile", "in_call_selected"]
+required_features = ["task_char_count"]

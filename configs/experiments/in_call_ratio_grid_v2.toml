@@ -1,0 +1,174 @@
+config_id = "in-call-ratio-grid-v2"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.in_call_closure_recall]
+include_all = false
+include_subgroups = ["cumulative_history", "current_progress", "token_history", "progress_change", "prefix_closure", "session_recall"]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.10
+
+[[candidates]]
+id = "in_call_cs"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_closure_recall"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "ratio_grid_prior"
+estimator = "ratio_grid"
+feature_set = "in_call_closure_recall"
+role = "model"
+
+[candidates.params]
+n_intervals = 48
+hidden_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+batch_size = 256
+max_rounds = 60
+epochs_per_round = 1
+patience = 10
+replay_folds = 3
+recursive = true
+initializer = "prior"
+
+[[candidates]]
+id = "ratio_grid_lgb"
+estimator = "ratio_grid"
+feature_set = "in_call_closure_recall"
+role = "model"
+
+[candidates.params]
+n_intervals = 48
+hidden_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+batch_size = 256
+max_rounds = 60
+epochs_per_round = 1
+patience = 10
+replay_folds = 3
+recursive = true
+initializer = "lightgbm_quantile"
+initializer_mix = 0.1
+
+[candidates.params.initializer_params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "ratio_grid_lgb_fresh"
+estimator = "ratio_grid"
+feature_set = "in_call_closure_recall"
+role = "ablation"
+
+[candidates.params]
+n_intervals = 48
+hidden_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+batch_size = 256
+max_rounds = 60
+epochs_per_round = 1
+patience = 10
+replay_folds = 3
+recursive = false
+initializer = "lightgbm_quantile"
+initializer_mix = 0.1
+
+[candidates.params.initializer_params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "ratio_grid_lgb"
+axis = "method"
+allowed_config_paths = ["params.recursive"]
+
+[[candidates]]
+id = "ratio_grid_prior_wide"
+estimator = "ratio_grid"
+feature_set = "in_call_closure_recall"
+role = "ablation"
+
+[candidates.params]
+n_intervals = 48
+hidden_dim = 128
+learning_rate = 0.001
+weight_decay = 0.0001
+batch_size = 256
+max_rounds = 60
+epochs_per_round = 2
+patience = 10
+replay_folds = 3
+recursive = true
+initializer = "prior"
+
+[candidates.ablation]
+reference_candidate_id = "ratio_grid_prior"
+axis = "method"
+allowed_config_paths = ["params.hidden_dim", "params.epochs_per_round"]
+
+[[experiments]]
+id = "in_call_update"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+token_unit_contract_id = "observer:utf8-bytes-v1"
+candidates = ["empirical_quantile", "in_call_cs", "ratio_grid_prior", "ratio_grid_lgb", "ratio_grid_lgb_fresh", "ratio_grid_prior_wide"]
+required_features = ["task_char_count"]

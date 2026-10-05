@@ -1,0 +1,4 @@
+- insert:
+    - id: token-prediction-dsh-observer
+      name: '@token-prediction/dsh-token-observer'
+      config: {}

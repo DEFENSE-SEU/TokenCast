@@ -1,0 +1,108 @@
+config_id = "task-update-tree-model-v2"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+[collection]
+source = "canonical_jsonl"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "task_max_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.request_length]
+include_all = false
+include_features = ["current_request_tokens_local"]
+
+[feature_sets.structured]
+include_all = false
+include_groups = ["g0", "g1", "g2"]
+exclude_features = [
+  "task_embedding",
+  "new_context_embedding",
+  "llm_self_estimated_total_tokens",
+]
+
+[feature_sets.history_only]
+include_all = false
+include_groups = ["g1"]
+
+[[candidates]]
+id = "empirical_quantile"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[[candidates]]
+id = "request_length_linear"
+estimator = "length_only"
+feature_set = "request_length"
+role = "baseline"
+
+[candidates.params]
+feature_name = "current_request_tokens_local"
+
+[[candidates]]
+id = "deduct_only"
+estimator = "deduct_only"
+feature_set = "none"
+role = "baseline"
+
+[[candidates]]
+id = "lightgbm_structured"
+estimator = "lightgbm_quantile"
+feature_set = "structured"
+role = "model"
+
+[candidates.params]
+num_boost_round = 400
+early_stopping_rounds = 40
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "lightgbm_history_only"
+estimator = "lightgbm_quantile"
+feature_set = "history_only"
+role = "ablation"
+
+[candidates.params]
+num_boost_round = 400
+early_stopping_rounds = 40
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[candidates.ablation]
+reference_candidate_id = "lightgbm_structured"
+axis = "feature_set"
+allowed_config_paths = ["feature_set"]
+
+[[experiments]]
+id = "task_update_lightgbm"
+position = "task_update"
+target = "task_unknown_remaining_tokens"
+candidates = [
+  "empirical_quantile",
+  "request_length_linear",
+  "deduct_only",
+  "lightgbm_structured",
+  "lightgbm_history_only",
+]
+required_features = ["current_request_tokens_local"]

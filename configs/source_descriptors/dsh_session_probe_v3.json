@@ -1,0 +1,27 @@
+{
+  "descriptor_schema_version": 2,
+  "descriptor_id": "source-descriptor:v2:dsh_session_probe_v3:dsh-generation-probe-v3",
+  "source_id": "dsh_session_probe_v3",
+  "revision": "dsh-generation-probe-v3",
+  "manifest_path": "configs/collection/dsh_generation_probe_v3.json",
+  "capabilities": {
+    "capability_profile_id": "capability-profile:v1:dsh_session_probe_v3:declared:attempt_boundaries+attempt_usage+call_usage+hidden_state+logprobs+observer_token_accounting+output_deltas+request_boundaries+task_aggregate_usage+task_termination+task_text+task_usage+tool_events",
+    "source_id": "dsh_session_probe_v3",
+    "source": "declared",
+    "observables": [
+      "attempt_boundaries",
+      "attempt_usage",
+      "call_usage",
+      "hidden_state",
+      "logprobs",
+      "observer_token_accounting",
+      "output_deltas",
+      "request_boundaries",
+      "task_aggregate_usage",
+      "task_termination",
+      "task_text",
+      "task_usage",
+      "tool_events"
+    ]
+  }
+}

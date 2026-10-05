@@ -1,0 +1,14 @@
+{
+  "$include": [
+    "common.json",
+    "environments/dev.json"
+  ],
+  "features": {
+    "audit": false
+  },
+  "optional": null,
+  "retries": 0,
+  "service": {
+    "host": "app.internal"
+  }
+}

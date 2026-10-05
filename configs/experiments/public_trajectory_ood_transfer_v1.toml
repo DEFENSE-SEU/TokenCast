@@ -1,0 +1,113 @@
+config_id = "public-trajectory-ood-transfer-v1"
+
+[source]
+dataset = "netpreme/coding_agent_traces"
+revision = "d56ae0d0bc80f3663a7a61a38c4ee60c26ce7b67"
+subset = "opus-pro"
+split = "train"
+license = "MIT"
+url = "https://huggingface.co/datasets/netpreme/coding_agent_traces/resolve/d56ae0d0bc80f3663a7a61a38c4ee60c26ce7b67/opus-pro/train-00000-of-00001.parquet"
+local_path = "workspace/external/public_trajectory_validation/source.parquet"
+sha256 = "3071c2ea1b5a8104c0caa6378c9446b02c7c1d7335a00054a59b2ac21e58c0df"
+token_unit_contract_id = "provider-output-token-v1"
+
+[task_metadata]
+dataset = "ScaleAI/SWE-bench_Pro"
+revision = "7ab5114912baf22bb098818e604c02fe7ad2c11f"
+subset = "default"
+split = "test"
+url = "https://huggingface.co/datasets/ScaleAI/SWE-bench_Pro/resolve/7ab5114912baf22bb098818e604c02fe7ad2c11f/data/test-00000-of-00001.parquet"
+local_path = "workspace/external/public_trajectory_validation/task_metadata.parquet"
+sha256 = "c8cd7115496ad4e9a8b21d088cef576a65bf821bb542b24336f13f714cef13f8"
+visible_columns = ["repo", "repo_language", "problem_statement", "requirements", "interface"]
+
+[ood_source]
+dataset = "netpreme/coding_agent_traces"
+revision = "d56ae0d0bc80f3663a7a61a38c4ee60c26ce7b67"
+subset = "gpt-oss-120b-pro"
+split = "train"
+license = "MIT"
+url_base = "https://huggingface.co/datasets/netpreme/coding_agent_traces/resolve/d56ae0d0bc80f3663a7a61a38c4ee60c26ce7b67/gpt-oss-120b-pro/"
+local_directory = "workspace/external/public_trajectory_ood/gpt-oss-120b-pro"
+files = [
+  "train-00000-of-00009.parquet",
+  "train-00001-of-00009.parquet",
+  "train-00002-of-00009.parquet",
+  "train-00003-of-00009.parquet",
+  "train-00004-of-00009.parquet",
+  "train-00005-of-00009.parquet",
+  "train-00006-of-00009.parquet",
+  "train-00007-of-00009.parquet",
+  "train-00008-of-00009.parquet",
+]
+sha256 = [
+  "ba389b533ea93c9f6c84d8b42754ecdda57f6197981914d5de60ab30fd556a55",
+  "31879ad0fefb1a54c53039e936fad678420448611d9e73bb993dcd5857751a32",
+  "19f17d0d85df4940d1e0faa072ed9a31d13eb7992cc46918ee44bae4ef7983a6",
+  "e932531e4a5519af336c61355e2d276a297f618964bff7b48cd961cbe401c55a",
+  "8805cec38f62ee1a41a0ccfdef8a24257f112fb82791e5a71430477d7cbeea63",
+  "76717f42abd20666bb26f9096368ca18c2ac159a9cf4fdd0829e645d83264bb1",
+  "985698f91c72c50fab885b97d01bafab396019348fb75b9f8771721fd245d22f",
+  "92f397822ab2498295d5da4fe7ccaaba93cd62194e3c50215d16d3a3c4b0f2cf",
+  "29e0366ba14dff41dd5f2588b484fc91a2520456fb949f29e4107321bb13ee46",
+]
+
+[protocol]
+split_seed = 20260901
+bootstrap_seed = 20260902
+final_holdout_fraction = 0.20
+pilot_tasks = 300
+folds = 5
+alpha = 0.10
+bootstrap_iterations = 5000
+min_call_clock_tasks = 10
+
+[task_initialization_refinement]
+experiment_id = "public-trajectory-ood-transfer-v1"
+candidate = "prompt_structure_text_fusion"
+prompt_fields = ["problem_statement", "requirements", "interface"]
+length_component = "full_prompt_length"
+text_component = "full_prompt_text_ridge"
+structure_component = "full_prompt_structure_gbr"
+text_ridge_alpha = 0.3
+structure_loss = "huber"
+structure_estimators = 100
+structure_learning_rate = 0.03
+structure_max_depth = 2
+structure_min_samples_leaf = 25
+residual_candidate = "full_prompt_length_text_residual"
+residual_text_ridge_alpha = 3.0
+hybrid_candidate = "full_prompt_residual_point_fusion_interval"
+confirmation_seed = 20260903
+confirmation_calibration_fold = 0
+embedding_reference = "full_prompt_embedding_ridge"
+embedding_model_id = "BAAI/bge-small-en-v1.5"
+embedding_model_revision = "5c38ec7c405ec4b44b94cc5a9bb96e735b38267a"
+embedding_ridge_alpha = 30.0
+proxy_lm_reference = "full_prompt_proxy_lm"
+proxy_lm_model_id = "distilbert/distilbert-base-uncased"
+proxy_lm_model_revision = "12040accade4e8a0f71eabdb258fecc2e7e948be"
+proxy_lm_epochs = 4
+proxy_lm_learning_rate = 2e-5
+proxy_lm_batch_size = 16
+proxy_lm_seed = 20260904
+
+[model]
+rounds = 240
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+threads = 4
+
+[gru]
+hidden_dim = 32
+learning_rate = 0.01
+max_epochs = 200
+patience = 20
+threads = 4
+
+[output]
+directory = "workspace/experiments/public_trajectory_ood_transfer_v1"

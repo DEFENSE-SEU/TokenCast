@@ -1,0 +1,60 @@
+{
+  "schema_version": 3,
+  "contract_id": "dsh-generation-probe-v3",
+  "source_id": "dsh_session_probe_v3",
+  "sidecar_filename": "generation-probe.jsonl",
+  "session_capture_fields": [
+    "capture_revision"
+  ],
+  "session_model_fields": [
+    "model_id",
+    "model_revision"
+  ],
+  "join_key": [
+    "session_id",
+    "attempt_id",
+    "checkpoint_ordinal",
+    "observer_committed_tokens"
+  ],
+  "projection": {
+    "policy_id": "rademacher-last-layer-v2",
+    "policy_version": 2,
+    "source_layer": "last",
+    "dimension": 64,
+    "seed": 729,
+    "hidden_size": {
+      "type": "integer",
+      "minimum": 1,
+      "source": "runtime_model_config"
+    },
+    "distribution": "rademacher",
+    "scaling": "inverse_sqrt_hidden_size",
+    "dtype": "float32",
+    "rng_algorithm": "torch-cpu-generator-v1",
+    "fit_scope": "fixed_without_dataset_fit"
+  },
+  "checkpoint_payload_additions": [
+    "hidden_state_projection",
+    "source_output_tokens",
+    "stop_prob_mean_16",
+    "next_token_entropy_mean_16"
+  ],
+  "forbidden_sidecar_fields": [
+    "label",
+    "target",
+    "final_output_tokens",
+    "remaining_tokens",
+    "task_terminal"
+  ],
+  "causal_alignment": "post_source_output_token_prefix_before_next_sample",
+  "stop_signal": {
+    "policy_id": "eos-entropy-window-16-v1",
+    "window_tokens": 16,
+    "aggregation": "mean_over_window",
+    "stop_token": {
+      "type": "string",
+      "source": "runtime_chat_template",
+      "note": "the token whose probability is recorded; names the one stopping channel this signal identifies"
+    }
+  }
+}

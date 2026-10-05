@@ -1,0 +1,45 @@
+config_id = "workload-retention-mini-pilot-v1"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.10
+calibrator = "point_conformal"
+
+[feature_sets.task_update_ours]
+include_all = false
+include_subgroups = [
+  "cumulative_history", "current_progress", "failure_stall", "token_history",
+  "progress_change", "request_context", "agent_config",
+]
+include_features = ["task_char_count", "task_word_count", "task_line_count", "task_code_fence_count"]
+exclude_features = [
+  "last_call_read_result_chars", "last_call_edit_result_chars", "last_call_run_result_chars",
+  "last_call_test_result_chars", "last_call_tracking_result_chars", "last_call_unique_path_count",
+  "last_call_path_revisit_count", "last_call_observation_lines", "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[[candidates]]
+id = "task_update_ours"
+estimator = "lightgbm_quantile"
+feature_set = "task_update_ours"
+role = "model"
+
+[[experiments]]
+id = "task_update_retention"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4-mini"
+candidates = ["task_update_ours"]

@@ -1,0 +1,362 @@
+{
+  "schema_version": 2,
+  "matrix_id": "dsh-dataset-matrix-v2",
+  "status": {
+    "allocation": "frozen",
+    "task_roster": "pending",
+    "model_roster": "pending",
+    "collection_authorized": false
+  },
+  "axes": {
+    "task_types": [
+      "repo_repair",
+      "repo_change",
+      "greenfield_build",
+      "investigation_artifact"
+    ],
+    "difficulty_strata": [
+      "low",
+      "medium",
+      "high"
+    ],
+    "native_reasoning_modes": [
+      "off",
+      "high"
+    ],
+    "public_positions": [
+      {
+        "position_id": "task_launch",
+        "display_name": "Task launch"
+      },
+      {
+        "position_id": "call_pre",
+        "display_name": "Call start"
+      },
+      {
+        "position_id": "call_update",
+        "display_name": "In-call update"
+      },
+      {
+        "position_id": "task_update",
+        "display_name": "Task update"
+      }
+    ],
+    "internal_cutoffs": [
+      "task_seed",
+      "attempt_init"
+    ]
+  },
+  "grouping": {
+    "split_group_key": "split_group_id",
+    "split_containment": [
+      "sibling_task",
+      "base_model",
+      "reasoning_mode",
+      "natural_repeat",
+      "continuation",
+      "logical_call",
+      "attempt",
+      "checkpoint",
+      "public_position",
+      "target",
+      "token_unit"
+    ],
+    "task_family_as_model_feature": false,
+    "split_group_as_model_feature": false
+  },
+  "condition_contract": {
+    "product_axes": [
+      "base_model",
+      "native_reasoning_mode"
+    ],
+    "native_toggle_required": true,
+    "prompt_only_proxy_allowed": false,
+    "paired_fixed_fields": [
+      "model_revision_or_provider_route",
+      "precision",
+      "chat_template",
+      "agent",
+      "tool_surface",
+      "dsh_runtime",
+      "router_mode_and_version",
+      "context_limit",
+      "cap_and_termination_policy",
+      "decoding"
+    ],
+    "distinct_model_family_ids_required": true,
+    "unseen_model_family_excluded_from_all_training_sources": true,
+    "cross_model_evaluation_modes": [
+      "unseen_task_family_seen_model_family",
+      "seen_task_family_unseen_model_family_zero_shot",
+      "seen_task_family_unseen_model_family_few_shot",
+      "joint_unseen_task_and_model_family"
+    ]
+  },
+  "source_roles": [
+    {
+      "source_id": "external_multi_model_trajectories",
+      "role": "multi_model_warm_start",
+      "allowed_uses": [
+        "representation_pretraining",
+        "pipeline_validation",
+        "condition_specific_baselines",
+        "learning_curve_analysis",
+        "cross_model_descriptive_analysis"
+      ],
+      "forbidden_final_uses": [
+        "hyperparameter_selection",
+        "calibration",
+        "final_evaluation",
+        "publication_level_final_claims",
+        "raw_trajectory_redistribution_without_permission"
+      ],
+      "publication_final_claim_scope": "forbidden"
+    },
+    {
+      "source_id": "external_repeated_blackbox_trajectories",
+      "role": "repeatability_warm_start",
+      "allowed_uses": [
+        "representation_pretraining",
+        "pipeline_validation",
+        "condition_specific_baselines",
+        "learning_curve_analysis",
+        "within_task_repeatability_analysis"
+      ],
+      "forbidden_final_uses": [
+        "hyperparameter_selection",
+        "calibration",
+        "final_evaluation",
+        "publication_level_final_claims",
+        "raw_trajectory_redistribution_without_permission"
+      ],
+      "publication_final_claim_scope": "forbidden"
+    },
+    {
+      "source_id": "author_qwen_four_position_v1",
+      "role": "single_model_four_position_warm_start",
+      "allowed_uses": [
+        "representation_pretraining",
+        "pipeline_validation",
+        "blackbox_head_warm_start",
+        "whitebox_probe_warm_start",
+        "ablation_development"
+      ],
+      "forbidden_final_uses": [
+        "final_calibration",
+        "final_evaluation",
+        "multi_task_type_claims",
+        "multi_base_model_claims",
+        "publication_level_final_claims"
+      ],
+      "publication_final_claim_scope": "forbidden"
+    },
+    {
+      "source_id": "dsh_p0_v1",
+      "role": "protocol_development",
+      "allowed_uses": [
+        "adapter_validation",
+        "event_semantics_validation",
+        "accounting_validation",
+        "observer_preflight"
+      ],
+      "forbidden_final_uses": [
+        "predictor_training",
+        "calibration",
+        "final_evaluation",
+        "publication_level_final_claims"
+      ],
+      "publication_final_claim_scope": "forbidden"
+    },
+    {
+      "source_id": "dsh_v1",
+      "role": "protocol_development",
+      "allowed_uses": [
+        "predictor_training",
+        "model_selection",
+        "calibration",
+        "development_evaluation",
+        "adapter_validation",
+        "event_semantics_validation",
+        "accounting_validation"
+      ],
+      "forbidden_final_uses": [
+        "final_evaluation",
+        "publication_level_final_claims"
+      ],
+      "publication_final_claim_scope": "forbidden"
+    },
+    {
+      "source_id": "dsh_p1_v2",
+      "role": "author_collected_successor_pilot",
+      "allowed_uses": [
+        "p1_training",
+        "p1_calibration",
+        "p1_pilot_test",
+        "main_training_warm_start"
+      ],
+      "forbidden_final_uses": [
+        "publication_level_final_claims",
+        "main_calibration",
+        "main_final_test"
+      ],
+      "publication_final_claim_scope": "forbidden"
+    },
+    {
+      "source_id": "dsh_main_v2",
+      "role": "author_collected_publication_main",
+      "allowed_uses": [
+        "main_training",
+        "main_calibration",
+        "main_final_test"
+      ],
+      "forbidden_final_uses": [
+        "train_or_calibration_reuse_as_final_test",
+        "access_mode_as_independent_causal_effect",
+        "unpaired_or_prompt_proxy_reasoning_effect_claims",
+        "final_claims_before_roster_and_gate_freeze"
+      ],
+      "publication_final_claim_scope": "main_final_test_after_frozen_rosters_and_gates"
+    }
+  ],
+  "generation": {
+    "closed_blackbox_core": [
+      {
+        "target_id": "provider_final_output_total",
+        "token_unit": "provider_output_tokens",
+        "label_rule": "terminal_usage_direct"
+      },
+      {
+        "target_id": "observer_remaining_visible_output",
+        "token_unit": "observer_visible_tokens",
+        "label_rule": "final_visible_minus_committed_prefix"
+      }
+    ],
+    "open_weight_extension": [
+      {
+        "target_id": "provider_native_remaining_output",
+        "token_unit": "provider_output_tokens",
+        "label_rule": "terminal_output_minus_same_unit_prefix"
+      }
+    ],
+    "open_weight_inherits_blackbox_core": true,
+    "cross_unit_subtraction_allowed": false,
+    "whitebox_probe_role": "optional_paired_same_trajectory_extension",
+    "whitebox_additional_actor_runs": 0
+  },
+  "allocations": {
+    "p1": {
+      "stage_role": "successor_pilot",
+      "families_per_cell": 3,
+      "sibling_tasks_per_family": 2,
+      "base_models_by_access": {
+        "open_weight": 1,
+        "hosted_blackbox": 1
+      },
+      "base_repeat_ids": [
+        "r0",
+        "r1"
+      ],
+      "anchor_tasks_per_cell_by_partition": {
+        "pilot_test": 1
+      },
+      "additional_repeat_ids": [
+        "r2",
+        "r3",
+        "r4",
+        "r5"
+      ],
+      "split_families_per_cell": {
+        "train": 1,
+        "calibration": 1,
+        "pilot_test": 1
+      },
+      "publication_final_claim_scope": "forbidden",
+      "declared_counts": {
+        "cells": 12,
+        "families": 36,
+        "tasks": 72,
+        "base_models": 2,
+        "conditions": 4,
+        "base_runs": 576,
+        "anchor_tasks": 12,
+        "additional_runs": 192,
+        "total_runs": 768,
+        "split_families": {
+          "train": 12,
+          "calibration": 12,
+          "pilot_test": 12
+        },
+        "split_tasks": {
+          "train": 24,
+          "calibration": 24,
+          "pilot_test": 24
+        }
+      }
+    },
+    "main": {
+      "stage_role": "publication_main",
+      "families_per_cell": 12,
+      "sibling_tasks_per_family": 2,
+      "base_models_by_access": {
+        "open_weight": 2,
+        "hosted_blackbox": 2
+      },
+      "base_repeat_ids": [
+        "r0",
+        "r1"
+      ],
+      "anchor_tasks_per_cell_by_partition": {
+        "train": 1,
+        "final_test": 1
+      },
+      "additional_repeat_ids": [
+        "r2",
+        "r3",
+        "r4",
+        "r5"
+      ],
+      "split_families_per_cell": {
+        "train": 8,
+        "calibration": 2,
+        "final_test": 2
+      },
+      "publication_final_claim_scope": "final_test_only",
+      "declared_counts": {
+        "cells": 12,
+        "families": 144,
+        "tasks": 288,
+        "base_models": 4,
+        "conditions": 8,
+        "base_runs": 4608,
+        "anchor_tasks": 24,
+        "additional_runs": 768,
+        "total_runs": 5376,
+        "split_families": {
+          "train": 96,
+          "calibration": 24,
+          "final_test": 24
+        },
+        "split_tasks": {
+          "train": 192,
+          "calibration": 48,
+          "final_test": 48
+        }
+      }
+    }
+  },
+  "deferred_extensions": [
+    "continuation_subset_requires_successor_matrix_after_p1_closure"
+  ],
+  "launch_gates": [
+    "successor_task_roster_frozen",
+    "successor_model_roster_frozen",
+    "family_split_authority_frozen",
+    "native_reasoning_parity_verified",
+    "dsh_agent_router_tool_caps_schedule_runtime_policy_frozen",
+    "observer_128_byte_policy_preflight",
+    "commercial_collection_authorization"
+  ],
+  "main_launch_gates": [
+    "p1_capture_closed_hierarchical_ready_and_power_gate_before_main"
+  ]
+}

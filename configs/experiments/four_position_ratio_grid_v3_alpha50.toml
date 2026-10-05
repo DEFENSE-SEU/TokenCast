@@ -1,0 +1,411 @@
+config_id = "four-position-ratio-grid-v3-alpha50"
+schema_version = 2
+workspace = "workspace"
+seed = 20260719
+
+
+[collection]
+source = "dsh_session_observer_v2"
+dataset = "hierarchical"
+descriptor_path = "configs/source_descriptors/dsh_session_observer_v2.json"
+
+[split]
+unit = "task_id"
+folds = 5
+
+[interval]
+alpha = 0.50
+calibrator = "point_conformal"
+
+[feature_sets.none]
+include_all = false
+
+[feature_sets.six_full]
+include_all = false
+include_subgroups = [
+  "initial_info",
+  "cumulative_history",
+  "current_progress",
+  "progress_change",
+  "failure_stall",
+  "token_history",
+]
+
+[feature_sets.call_start_ours]
+include_all = false
+include_subgroups = ["current_progress", "token_history", "progress_change"]
+exclude_features = [
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[feature_sets.in_call_ours]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "prefix_closure",
+  "session_recall",
+]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.in_call_ours_clock]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "token_history",
+  "progress_change",
+  "prefix_closure",
+  "session_recall",
+  "stream_clock",
+]
+include_features = ["generation_prefix_embedding"]
+exclude_features = ["last_call_argument_chars", "last_call_observation_chars"]
+
+[feature_sets.task_update_ours]
+include_all = false
+include_subgroups = [
+  "cumulative_history",
+  "current_progress",
+  "failure_stall",
+  "token_history",
+  "progress_change",
+]
+exclude_features = [
+  "last_call_read_result_chars",
+  "last_call_edit_result_chars",
+  "last_call_run_result_chars",
+  "last_call_test_result_chars",
+  "last_call_tracking_result_chars",
+  "last_call_unique_path_count",
+  "last_call_path_revisit_count",
+  "last_call_observation_lines",
+  "last_call_partial_result_count",
+  "last_call_diagnostic_line_count",
+]
+
+[[candidates]]
+id = "empirical"
+estimator = "empirical_quantile"
+feature_set = "none"
+role = "baseline"
+
+[candidates.params]
+alpha = 0.50
+
+[[candidates]]
+id = "lightgbm_generic"
+estimator = "lightgbm_quantile"
+feature_set = "six_full"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "call_start_ours"
+estimator = "lightgbm_quantile"
+feature_set = "call_start_ours"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "in_call_ours"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_ours"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "in_call_ours_clock"
+estimator = "lightgbm_quantile"
+feature_set = "in_call_ours_clock"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "task_update_ours"
+estimator = "lightgbm_quantile"
+feature_set = "task_update_ours"
+role = "model"
+
+[candidates.params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "grid_task_start"
+estimator = "ratio_grid"
+feature_set = "six_full"
+role = "model"
+
+[candidates.params]
+n_intervals = 128
+hidden_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+batch_size = 256
+max_rounds = 60
+epochs_per_round = 1
+patience = 10
+replay_folds = 3
+recursive = false
+initializer = "lightgbm_quantile"
+initializer_mix = 0.01
+scorer = "tilt"
+tilt_curvature = "nonpositive"
+
+[candidates.params.initializer_params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "grid_call_start"
+estimator = "ratio_grid"
+feature_set = "call_start_ours"
+role = "model"
+
+[candidates.params]
+n_intervals = 128
+hidden_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+batch_size = 256
+max_rounds = 60
+epochs_per_round = 1
+patience = 10
+replay_folds = 3
+recursive = false
+initializer = "lightgbm_quantile"
+initializer_mix = 0.01
+scorer = "tilt"
+tilt_curvature = "nonpositive"
+
+[candidates.params.initializer_params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "grid_in_call"
+estimator = "ratio_grid"
+feature_set = "in_call_ours"
+role = "model"
+
+[candidates.params]
+n_intervals = 128
+hidden_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+batch_size = 256
+max_rounds = 60
+epochs_per_round = 1
+patience = 10
+replay_folds = 3
+recursive = false
+initializer = "lightgbm_quantile"
+initializer_mix = 0.01
+scorer = "tilt"
+tilt_curvature = "nonpositive"
+
+[candidates.params.initializer_params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "grid_in_call_clock"
+estimator = "ratio_grid"
+feature_set = "in_call_ours_clock"
+role = "model"
+
+[candidates.params]
+n_intervals = 128
+hidden_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+batch_size = 256
+max_rounds = 60
+epochs_per_round = 1
+patience = 10
+replay_folds = 3
+recursive = false
+initializer = "lightgbm_quantile"
+initializer_mix = 0.01
+scorer = "tilt"
+tilt_curvature = "nonpositive"
+
+[candidates.params.initializer_params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[candidates]]
+id = "grid_task_update"
+estimator = "ratio_grid"
+feature_set = "task_update_ours"
+role = "model"
+
+[candidates.params]
+n_intervals = 128
+hidden_dim = 64
+learning_rate = 0.001
+weight_decay = 0.0001
+batch_size = 256
+max_rounds = 60
+epochs_per_round = 1
+patience = 10
+replay_folds = 3
+recursive = false
+initializer = "lightgbm_quantile"
+initializer_mix = 0.01
+scorer = "tilt"
+tilt_curvature = "nonpositive"
+offset_features = ["cumulative_provider_input_tokens", "cumulative_provider_output_tokens"]
+
+[candidates.params.initializer_params]
+num_boost_round = 300
+early_stopping_rounds = 30
+learning_rate = 0.03
+num_leaves = 15
+min_data_in_leaf = 10
+max_depth = 6
+lambda_l2 = 1.0
+feature_fraction = 1.0
+bagging_fraction = 1.0
+bagging_freq = 0
+
+[[experiments]]
+id = "task_initialization"
+position = "task_launch"
+target = "task_total_accounted_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "lightgbm_generic", "grid_task_start"]
+required_features = [
+  "task_text",
+  "task_char_count",
+  "task_issue_char_count",
+  "task_difficulty_ordinal",
+]
+
+[[experiments]]
+id = "call_start"
+position = "call_pre"
+target = "call_billable_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "call_start_ours", "grid_call_start"]
+required_features = ["task_char_count"]
+
+[[experiments]]
+id = "in_call_visible"
+position = "call_update"
+target = "attempt_observer_remaining_visible_output_tokens"
+token_unit_contract_id = "observer:utf8-bytes-v1"
+candidates = ["empirical", "in_call_ours", "grid_in_call"]
+required_features = ["observer_committed_tokens"]
+
+[[experiments]]
+id = "in_call_billed"
+position = "call_update"
+target = "attempt_provider_final_output_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "in_call_ours_clock", "grid_in_call_clock"]
+required_features = ["observer_committed_tokens"]
+
+[[experiments]]
+id = "task_update"
+position = "task_update"
+target = "task_provider_accounted_remaining_tokens"
+token_unit_contract_id = "provider:dsh-outputTokens-v1:openai-codex:gpt-5.4"
+candidates = ["empirical", "task_update_ours", "grid_task_update"]
+required_features = ["task_char_count"]

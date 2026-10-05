@@ -1,0 +1,93 @@
+{
+  "schema_version": 2,
+  "task_pack_id": "dsh-p0-v1-greenfield-build-low-text-tally",
+  "version": 1,
+  "task_id": "p0v1-greenfield-low-text-tally",
+  "task_type": "greenfield_build",
+  "difficulty_stratum": "low",
+  "task_statement": "task.md",
+  "seed_workspace": "seed",
+  "runtime": {
+    "python": "3.12",
+    "dependencies": []
+  },
+  "commands": {
+    "public_tests": [
+      "python",
+      "-m",
+      "unittest",
+      "discover",
+      "-s",
+      "tests",
+      "-v"
+    ],
+    "oracle": [
+      "python",
+      ".dsh_oracle/evaluate.py"
+    ]
+  },
+  "runner_bundle": "_runner/greenfield_build/low_text_tally",
+  "difficulty_evidence": {
+    "components": [
+      "Unicode tokenization and term-count library",
+      "canonical JSON and command-line surface"
+    ],
+    "requirements": [
+      {
+        "id": "R1",
+        "text": "read UTF-8 input under the frozen tokenization rule"
+      },
+      {
+        "id": "R2",
+        "text": "count terms with Unicode casefold semantics"
+      },
+      {
+        "id": "R3",
+        "text": "emit sorted canonical JSON through both library and CLI surfaces"
+      }
+    ],
+    "input_families": [
+      "UTF-8 text containing Unicode alphanumeric and separator characters",
+      "case variants rendered through library and command-line JSON surfaces"
+    ],
+    "deliverable_kinds": [
+      "reusable Python tally library",
+      "command-line canonical JSON output"
+    ],
+    "coordination_burden": 1,
+    "coordination_evidence": "The library and command-line entry point share one tokenizer, counter, and canonical byte representation."
+  },
+  "oracle": {
+    "oracle_id": "dsh-p0-v1-greenfield-build-low-text-tally-oracle-v1",
+    "requirement_coverage": [
+      "R1",
+      "R2",
+      "R3"
+    ]
+  },
+  "licenses": {
+    "code": "MIT",
+    "fixture_data_and_task_text": "CC0-1.0"
+  },
+  "verification": {
+    "seed_public_tests": "expected_fail",
+    "seed_oracle": "expected_fail",
+    "reference_public_tests": "pass",
+    "reference_oracle": "pass",
+    "oracle_repetitions": 3
+  },
+  "budget": {
+    "max_task_statement_bytes": 4096,
+    "max_seed_files": 16,
+    "max_seed_bytes": 49152,
+    "max_public_test_output_bytes": 16384,
+    "max_oracle_seconds": 30
+  },
+  "asset_receipt": {
+    "task_statement_bytes": 1740,
+    "seed_file_count": 9,
+    "seed_total_bytes": 4328,
+    "seed_python_lines": 101,
+    "fixture_bytes": 58
+  }
+}

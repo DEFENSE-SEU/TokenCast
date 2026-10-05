@@ -1,0 +1,2 @@
+{"event_id":"forward-rev","kind":"reversal","logical_clock":1,"source":"clock","sequence":1,"reversal_of":"forward-adj"}
+{"event_id":"forward-adj","kind":"adjustment","logical_clock":2,"source":"clock","sequence":2,"sku":"FORWARD","quantity":"5"}

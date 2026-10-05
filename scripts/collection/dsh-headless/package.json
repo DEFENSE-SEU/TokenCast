@@ -1,0 +1,58 @@
+{
+  "name": "@token-prediction/dsh-headless",
+  "version": "0.5.0",
+  "description": "Preset-aware DSH headless runners and deterministic DSH preflight adapter.",
+  "type": "module",
+  "main": "./runner.mjs",
+  "exports": {
+    "./adapter": "./fixture-adapter.mjs",
+    "./aggregator-adapter": "./aggregator-adapter.mjs",
+    "./batch-runner": "./batch-runner.mjs",
+    "./subscription-adapter": "./subscription-adapter.mjs",
+    "./qwen-adapter": "./qwen-adapter.mjs",
+    "./runner": "./runner.mjs"
+  },
+  "files": [
+    "aggregator-adapter.mjs",
+    "budget-shadow.mjs",
+    "paid-budget-gate.mjs",
+    "cordis.patch.yml",
+    "batch-preflight-contract.mjs",
+    "batch-preflight-receipt.json",
+    "batch-preflight-transcript.jsonl",
+    "batch-runner.mjs",
+    "fixture-adapter.mjs",
+    "host.mjs",
+    "tool-policy.mjs",
+    "provider-accounting.mjs",
+    "preflight-contract.mjs",
+    "preflight-receipt.json",
+    "preset-root/",
+    "provider-request-options.mjs",
+    "qwen-adapter.mjs",
+    "qwen-preflight-contract.mjs",
+    "qwen-preflight-receipt.json",
+    "qwen-protocol.mjs",
+    "qwen_probe.py",
+    "qwen-worker.py",
+    "runner.mjs",
+    "run-batch-preflight.mjs",
+    "run-preflight.mjs",
+    "run-qwen-preflight.mjs",
+    "run-subscription-preflight.mjs",
+    "subscription-adapter.mjs",
+    "README.md"
+  ],
+  "scripts": {
+    "test": "node --test test/*.test.mjs"
+  },
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "undici": "7.28.0"
+  }
+}

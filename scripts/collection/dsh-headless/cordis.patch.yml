@@ -1,0 +1,344 @@
+
+
+
+- id: hmr
+  disabled: true
+
+- id: tools
+  config:
+    mode: native
+
+- id: sandbox-policy
+  config:
+    mode: danger-full-access
+    workspaceRoot: !!js process.cwd()
+
+- id: approval
+  config:
+    policy: never
+
+- id: permission
+  config:
+    defaultPreset: unrestricted
+    presets:
+      unrestricted:
+        sandbox: danger-full-access
+        approval: never
+
+- id: session-title-llm
+  disabled: true
+
+- id: user-questions
+  disabled: true
+
+- id: agent-instructions
+  disabled: true
+
+- id: tool-bash
+  disabled: true
+
+- id: tool-pwsh
+  disabled: true
+
+- id: tool-jobs
+  disabled: true
+
+- id: tool-fs
+  disabled: true
+
+- id: tool-fs-search
+  disabled: true
+
+- id: skill-filesystem
+  disabled: true
+
+- id: tool-skill
+  disabled: true
+
+- id: goal
+  disabled: true
+
+- id: goal-round-driver
+  disabled: true
+
+- id: command-goal
+  disabled: true
+
+- id: plan-mode
+  disabled: true
+
+- id: tool-goal
+  disabled: true
+
+- id: tool-str-replace-editor
+  disabled: true
+
+- id: tool-todo
+  disabled: true
+
+- id: settings
+  disabled: true
+
+
+- id: llm-pi-ai
+  disabled: !!js process.env.DSH_PROVIDER !== 'qwen-compatible'
+  config:
+    providers:
+      qwen-compatible:
+        displayName: Hosted OpenAI-compatible
+        apiKeyEnv: !!js process.env.DSH_API_KEY_ENV || 'QWEN_API_KEY'
+        api: openai-completions
+        baseURL: !!js process.env.DSH_BASE_URL
+        defaultContextWindow: !!js Number(process.env.DSH_CONTEXT_WINDOW || '131072')
+        defaultMaxTokens: !!js Number(process.env.DSH_MAX_TOKENS_CEILING || '8192')
+        defaultInput: [text]
+        transport: sse
+        timeoutMs: 300000
+        streamIdleTimeoutMs: 300000
+        compat:
+          supportsUsageInStreaming: true
+          maxTokensField: max_tokens
+        models:
+          - id: !!js process.env.DSH_MODEL || 'qwen3-235b-a22b-instruct-2507'
+            name: !!js process.env.DSH_MODEL || 'qwen3-235b-a22b-instruct-2507'
+            contextWindow: !!js Number(process.env.DSH_CONTEXT_WINDOW || '131072')
+            maxTokens: !!js Number(process.env.DSH_MAX_TOKENS_CEILING || '8192')
+            input: [text]
+
+
+            reasoningEfforts: !!js "new RegExp('^(?:anthropic/)?claude-', 'i').test(process.env.DSH_MODEL || '') ? false : new RegExp('^(?:google/)?gemini-', 'i').test(process.env.DSH_MODEL || '') ? { off: 'none', minimal: 'minimal', low: 'low', medium: 'medium', high: 'high' } : new RegExp('^(?:(?:moonshotai/)?kimi-|(?:deepseek/)?deepseek-v4-)', 'i').test(process.env.DSH_MODEL || '') ? { off: 'none', high: 'high' } : { off: null, low: 'low' }"
+            compat:
+              maxTokensField: !!js "new RegExp('^(?:openai/)?gpt-5\\.4$', 'i').test(process.env.DSH_MODEL || '') && process.env.DSH_REASONING_EFFORT === 'low' ? 'max_completion_tokens' : 'max_tokens'"
+              supportsDeveloperRole: false
+              supportsReasoningEffort: !!js "!new RegExp('^(?:(?:moonshotai/)?kimi-|(?:anthropic/)?claude-)', 'i').test(process.env.DSH_MODEL || '')"
+              requiresReasoningContentOnAssistantMessages: !!js "new RegExp('^(?:(?:moonshotai/)?kimi-|(?:deepseek/)?deepseek-v4-)', 'i').test(process.env.DSH_MODEL || '')"
+              thinkingFormat: !!js "new RegExp('^(?:(?:google/)?gemini-|(?:anthropic/)?claude-)', 'i').test(process.env.DSH_MODEL || '') || (new RegExp('^(?:openai/)?gpt-5\\.4$', 'i').test(process.env.DSH_MODEL || '') && process.env.DSH_REASONING_EFFORT === 'low') ? 'openai' : new RegExp('^(?:(?:moonshotai/)?kimi-|(?:deepseek/)?deepseek-v4-)', 'i').test(process.env.DSH_MODEL || '') ? 'deepseek' : 'qwen'"
+        retryPolicy:
+          mode: normal
+          maxRetries: !!js Number(process.env.DSH_MAX_RETRIES || '1')
+          retryableCodes:
+            - EMPTY_RESPONSE
+            - RATE_LIMIT
+            - SERVER
+            - TIMEOUT
+            - TRANSPORT
+          backoff:
+            initialDelayMs: 500
+            maxDelayMs: 10000
+            jitterRatio: 0
+
+- id: session-telemetry-otel
+  disabled: true
+
+- id: compaction-basic
+  disabled: true
+
+- id: command-compact
+  disabled: true
+
+- id: tool-result-pruner
+  disabled: true
+
+- id: web
+  disabled: true
+
+- id: web-search-deepseek
+  disabled: true
+
+- id: tool-web
+  disabled: true
+
+- id: subagent
+  disabled: true
+
+- id: subagent-spawn-in-process
+  disabled: true
+
+- id: subagent-fork-in-process
+  disabled: true
+
+- id: tool-subagent-control
+  disabled: true
+
+- id: tool-subagent-list-agents
+  disabled: true
+
+- id: tool-subagent
+  disabled: true
+
+- id: tool-subagent-fork
+  disabled: true
+
+- id: tool-subagent-report
+  disabled: true
+
+- id: workflow-worker-thread
+  disabled: true
+
+- id: tool-workflow
+  disabled: true
+
+- id: tool-ralph
+  disabled: true
+
+
+- id: llm-deepseek
+  disabled: !!js process.env.DSH_LOCAL_QWEN === '1' || process.env.DSH_FIXTURE === '1' || process.env.DSH_PROVIDER === 'openai-codex' || process.env.DSH_PROVIDER === 'qwen-compatible'
+  config:
+    apiKeyEnv: !!js process.env.DSH_API_KEY_ENV || 'DEEPSEEK_API_KEY'
+    baseURL: !!js process.env.DSH_BASE_URL || 'https://api.deepseek.com'
+    thinking: disabled
+    reasoningEffort: off
+    maxTokens: !!js Number(process.env.DSH_MAX_TOKENS_CEILING || '8192')
+    defaultContextWindow: !!js Number(process.env.DSH_CONTEXT_WINDOW || '200000')
+    models:
+      - id: deepseek-v4-flash
+        name: DeepSeek-V4-Flash
+        contextWindow: 1000000
+        maxTokens: 8192
+        inputModalities: [text]
+      - id: deepseek-v4-pro
+        name: DeepSeek-V4-Pro
+        contextWindow: 1000000
+        maxTokens: 8192
+        inputModalities: [text]
+      - id: deepseek/deepseek-v4-pro
+        name: DeepSeek-V4-Pro-Routed
+        contextWindow: 200000
+        maxTokens: 8192
+        inputModalities: [text]
+      - id: openai/gpt-5.6-terra
+        name: GPT-5.6-Terra
+        contextWindow: 200000
+        maxTokens: 8192
+        inputModalities: [text]
+      - id: anthropic/claude-sonnet-5
+        name: Claude-Sonnet-5
+        contextWindow: 200000
+        maxTokens: 8192
+        inputModalities: [text]
+      - id: google/gemini-3.5-flash
+        name: Gemini-3.5-Flash
+        contextWindow: 200000
+        maxTokens: 8192
+        inputModalities: [text]
+      - id: qwen3-32b
+        name: Qwen3-32B
+        contextWindow: 128000
+        maxTokens: 8192
+        inputModalities: [text]
+      - id: moonshotai/kimi-k2.5
+        name: Kimi-K2.5
+        contextWindow: 200000
+        maxTokens: 8192
+        inputModalities: [text]
+    streamIdleTimeoutMs: 300000
+    retryPolicy:
+      mode: normal
+      maxRetries: 1
+      retryableCodes:
+        - EMPTY_RESPONSE
+        - RATE_LIMIT
+        - SERVER
+        - TIMEOUT
+        - TRANSPORT
+      backoff:
+        initialDelayMs: 500
+        maxDelayMs: 10000
+        jitterRatio: 0
+
+- id: headless-runner
+  disabled: true
+
+- id: session-persistence-jsonl
+  config:
+    root: !!js process.env.DSH_SESSION_DIR
+    compression: zstd
+    packChunks: true
+    writeBatchMaxDelayMs: 200
+
+- id: agent-loop
+  config:
+    maxParallelToolCalls: 10
+
+- id: token-prediction-dsh-observer
+  config:
+    outputDir: !!js process.env.DSH_OBSERVER_DIR
+    checkpointIntervalBytes: !!js Number(process.env.DSH_CHECKPOINT_INTERVAL_BYTES || '128')
+    countToolArguments: !!js process.env.DSH_COUNT_TOOL_ARGUMENTS === '1'
+    requestContentLedger: !!js process.env.DSH_REQUEST_CONTENT_LEDGER === '1'
+    requestContentOutputDir: !!js process.env.DSH_REQUEST_CONTENT_DIR || ''
+
+- insert:
+    - id: dsh-agent-presets
+      name: '@deepseek-ai/dsh-agent-presets'
+      config:
+        default: !!js process.env.DSH_AGENT_PRESET || 'router-standard'
+        roots:
+          - path: !!js process.env.DSH_PRESET_ROOT
+            trust: system
+        includeUserRoot: false
+
+    - id: dsh-fixture-adapter
+      name: '@token-prediction/dsh-headless/adapter'
+      disabled: !!js process.env.DSH_FIXTURE !== '1'
+      config:
+        provider: dsh-fixture
+        model: dsh-fixture-model
+
+    - id: dsh-local-qwen-adapter
+      name: '@token-prediction/dsh-headless/qwen-adapter'
+      disabled: !!js process.env.DSH_LOCAL_QWEN !== '1'
+      config:
+        python: !!js process.env.DSH_QWEN_PYTHON || 'python'
+        worker: !!js process.env.DSH_QWEN_WORKER
+        snapshot: !!js process.env.DSH_QWEN_SNAPSHOT
+        generationProbeDir: !!js process.env.DSH_GENERATION_PROBE_DIR || ''
+        generationProbeCaptureRevisionPrefix: !!js process.env.DSH_GENERATION_PROBE_CAPTURE_REVISION_PREFIX || ''
+
+    - id: dsh-aggregator-adapter
+      name: '@token-prediction/dsh-headless/aggregator-adapter'
+      disabled: !!js process.env.DSH_PROVIDER !== 'qwen-compatible'
+      config:
+        host: !!js process.env.DSH_AGGREGATOR_HOST || process.env.DSH_BASE_URL || ''
+
+
+    - id: dsh-subscription-adapter
+      name: '@token-prediction/dsh-headless/subscription-adapter'
+      disabled: !!js process.env.DSH_PROVIDER !== 'openai-codex'
+      config:
+        authFile: !!js process.env.DSH_OPENAI_AUTH_FILE || ''
+        provider: openai-codex
+        model: !!js process.env.DSH_MODEL || 'gpt-5.4'
+        streamIdleTimeoutMs: 300000
+        maxRetries: !!js Number(process.env.DSH_MAX_RETRIES || '1')
+
+    - id: dsh-headless-runner
+      name: '@token-prediction/dsh-headless/runner'
+      disabled: !!js process.env.DSH_BATCH === '1'
+      inject: [headlessStartup]
+      config:
+        task: !!js ctx.headlessStartup.task
+        provider: !!js process.env.DSH_PROVIDER || 'dsh-fixture'
+        model: !!js process.env.DSH_MODEL || 'dsh-fixture-model'
+        agentPreset: !!js process.env.DSH_AGENT_PRESET || 'router-standard'
+        reasoningEffort: !!js process.env.DSH_REASONING_EFFORT || 'off'
+        temperature: !!js Number(process.env.DSH_TEMPERATURE || '0')
+        maxTokens: !!js Number(process.env.DSH_MAX_TOKENS || '64')
+        stop: []
+        maxLogicalCalls: !!js "process.env.DSH_MAX_LOGICAL_CALLS === 'unbounded' ? undefined : Number(process.env.DSH_MAX_LOGICAL_CALLS || '64')"
+        toolResultMaxUtf8Bytes: !!js "process.env.DSH_TOOL_RESULT_MAX_UTF8_BYTES ? Number(process.env.DSH_TOOL_RESULT_MAX_UTF8_BYTES) : undefined"
+        toolResultHistoryKeepRecent: !!js "process.env.DSH_TOOL_RESULT_HISTORY_KEEP_RECENT ? Number(process.env.DSH_TOOL_RESULT_HISTORY_KEEP_RECENT) : undefined"
+        maxProviderAccountedTokens: !!js "process.env.DSH_MAX_PROVIDER_ACCOUNTED_TOKENS === 'unbounded' ? undefined : Number(process.env.DSH_MAX_PROVIDER_ACCOUNTED_TOKENS || '1000000')"
+        exclusiveProvider: !!js process.env.DSH_EXCLUSIVE_PROVIDER
+        sessionExportPath: !!js process.env.DSH_SESSION_EXPORT_PATH || ''
+        dryRun: !!js process.env.DSH_DRY_RUN === '1'
+
+    - id: dsh-batch-runner
+      name: '@token-prediction/dsh-headless/batch-runner'
+      disabled: !!js process.env.DSH_BATCH !== '1'
+      config:
+        provider: !!js process.env.DSH_PROVIDER || 'dsh-fixture'
+        model: !!js process.env.DSH_MODEL || 'dsh-fixture-model'
+        agentPreset: !!js process.env.DSH_AGENT_PRESET || 'router-standard'
+        exclusiveProvider: !!js process.env.DSH_EXCLUSIVE_PROVIDER
