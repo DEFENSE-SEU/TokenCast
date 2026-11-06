@@ -6,22 +6,6 @@
 [![License: AGPL-3.0](https://img.shields.io/badge/License-AGPL--3.0-yellow.svg?style=flat-square)](LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/DEFENSE-SEU/TokenCast.svg)](https://github.com/DEFENSE-SEU/TokenCast/stargazers)
 
-[Chaoqian Ouyang (欧阳超前)*](https://scholar.google.com/citations?hl=zh-CN&user=dJUqJ0oAAAAJ)<img src="assets/SYSU.png" alt="SYSU" width="20">, &nbsp; &nbsp;
-[Ling Yue (岳凌)*](https://scholar.google.com/citations?user=EhgyJeYAAAAJ&hl=en)<img src="assets/RPI.png" alt="RPI" width="24">, &nbsp; &nbsp;
-[Libin Zheng (郑立彬)](https://scholar.google.com/citations?user=_zsllSIAAAAJ&hl=en)✉️<img src="assets/SYSU.png" alt="SYSU" width="20">, &nbsp; &nbsp;
-[Hanghui Guo (郭杭辉)](https://scholar.google.com/citations?user=S34GF9wAAAAJ&hl=en)<img src="assets/SEU.png" alt="SEU" width="20">
-
-[Shengxiang Xu (徐圣翔)](https://scholar.google.com/citations?user=L-uWIQUAAAAJ&hl=en)<img src="assets/SEU.png" alt="SEU" width="20">, &nbsp;
-[YiShu Wang (汪毅书)](https://scholar.google.com/citations?user=lGqBE5gAAAAJ&hl=en)<img src="assets/SEU.png" alt="SEU" width="20">, &nbsp;
-[Ran Li (李冉)](https://dblp.org/pid/96/6628.html "DBLP record includes namesakes")<img src="assets/hkust.png" alt="hkust" height="20">, &nbsp;
-[Jian Yin (印鉴)](https://dblp.org/pid/95/578-1.html)<img src="assets/SYSU.png" alt="SYSU" width="20">, &nbsp;
-[Shaowu Pan (潘韶武)](https://scholar.google.com/citations?user=VOv3F18AAAAJ&hl=en)&nbsp;<img src="assets/RPI.png" alt="RPI" width="24">
-
-[Shimin Di (邸世民)](https://scholar.google.com/citations?user=zLAZJLMAAAAJ&hl=en)✉️<img src="assets/SEU.png" alt="SEU" width="20">
-
-\* *Equal Contribution*
-✉️ *Corresponding Author*
-
 </div>
 
 ## Overview
